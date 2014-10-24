@@ -1,3 +1,8 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class Comm {
@@ -10,6 +15,10 @@ public class Comm {
 		// Exists only to defeat instantiation.
 	}
 	
+	public static void main(String[] args) {
+
+	}
+
 	public static Comm getInstance() {
 		if (instance == null) {
 			return new Comm();
@@ -38,8 +47,32 @@ public class Comm {
 	}
 	
 	private int apiRequest() {
-		
-		
-		return -1;
+		String line;
+		StringBuffer jsonString = new StringBuffer();
+		try {
+			URL url = new URL("http://96.126.122.162:9222/chef/v1/");
+			String payload = "[\"json goes here\"]";
+
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+			connection.setDoInput(true);
+	        connection.setDoOutput(true);
+	        connection.setRequestMethod("POST");
+	        connection.setRequestProperty("Accept", "application/json");
+	        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+	        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+	        writer.write(payload);
+	        writer.close();
+	        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	        while ((line = br.readLine()) != null) {
+	                jsonString.append(line);
+	        }
+	        br.close();
+	        connection.disconnect();
+			return -1;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return -1;
+		}
 	}
 }
