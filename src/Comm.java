@@ -12,14 +12,14 @@ import org.codehaus.jackson.map.*;
 
 public class Comm {
 	private static Comm instance;
-	
+
 	public int CONN_FAILED = -1;
 	public int CONN_TIMEOUT = -2;
-	
+
 	protected Comm() {
 		// Exists only to defeat instantiation.
 	}
-	
+
 	public static void main(String[] args) {
 		getInstance().apiRequest("", null);
 		getInstance().newAccount("test@test.net", "test1234");
