@@ -16,7 +16,7 @@ public class Comm {
 	}
 	
 	public static void main(String[] args) {
-
+		getInstance().apiRequest();
 	}
 
 	public static Comm getInstance() {
@@ -69,6 +69,7 @@ public class Comm {
 	        }
 	        br.close();
 	        connection.disconnect();
+	        System.out.println(jsonString);
 			return -1;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
