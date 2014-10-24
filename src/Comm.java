@@ -1,9 +1,14 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.codehaus.jackson.*;
+import org.codehaus.jackson.map.*;
 
 public class Comm {
 	private static Comm instance;
@@ -16,7 +21,8 @@ public class Comm {
 	}
 	
 	public static void main(String[] args) {
-		getInstance().apiRequest();
+		getInstance().apiRequest("", null);
+		getInstance().newAccount("test@test.net", "test1234");
 	}
 
 	public static Comm getInstance() {
@@ -27,7 +33,10 @@ public class Comm {
 	}
 	
 	public int newAccount(String email, String password) {
-		return -1;
+		HashMap<String, String> req = new HashMap<>();
+		req.put("email",  email);
+		req.put("password", password);
+		return apiRequest("login", req);
 	}
 	
 	public int login(String email, String password) {
@@ -46,12 +55,34 @@ public class Comm {
 		return -1;
 	}
 	
-	private int apiRequest() {
+	private int apiRequest(String relUrl, Object o) {
+		if (o == null) {
+
+			return apiRequestPayload(relUrl, "");
+		}
+		ObjectWriter ow = new ObjectMapper().writer();
+		try {
+			return apiRequestPayload(relUrl, ow.writeValueAsString(o));
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+	private int apiRequestPayload(String relUrl, String payload) {
 		String line;
 		StringBuffer jsonString = new StringBuffer();
 		try {
-			URL url = new URL("http://127.0.0.1:9222/chef/v1/");
-			String payload = "[\"json goes here\"]";
+			URL url = new URL("http://127.0.0.1:9222/chef/" + relUrl);
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
