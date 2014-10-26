@@ -1,0 +1,6 @@
+INDEX VERSION 1.126+C:\Users\Nick\Documents\GitHub\UCRCS180Project\.metadata\.plugins\org.eclipse.jdt.core
+804743946.index
+512114724.index
+3849482007.index
+1284074322.index
+3282711902.index
