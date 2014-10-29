@@ -51,6 +51,13 @@ public class Comm {
 	}
 	
 	public ArrayList<Recipe> searchRecipes(String search) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("keyword", search);
+		apiRequest("search", req);
+
+		// TODO: process whatever JSON we are handed back and
+		//       spin up some Recipe objects, fill them in
+		//       and return those
 		return null;
 	}
 	
@@ -64,7 +71,6 @@ public class Comm {
 	
 	private int apiRequest(String relUrl, Object o) {
 		if (o == null) {
-
 			return apiRequestPayload(relUrl, "");
 		}
 		ObjectWriter ow = new ObjectMapper().writer();
