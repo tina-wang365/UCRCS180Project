@@ -28,6 +28,7 @@ public class Comm {
 		getInstance().login("bob@test.net", "bobhasGOODpasswords");
 
 		getInstance().searchRecipes("cheese");
+		getInstance().getRecipe(42);
 	}
 
 	public static Comm getInstance() {
@@ -64,6 +65,9 @@ public class Comm {
 	}
 	
 	public Recipe getRecipe(int recipeID) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("rid", Integer.toString(recipeID));
+		apiRequest("get", req);
 		return null;
 	}
 	
