@@ -22,7 +22,10 @@ public class Comm {
 
 	public static void main(String[] args) {
 		getInstance().apiRequest("", null);
-		getInstance().newAccount("test@test.net", "test1234");
+		getInstance().login("test@test.net", "test1234");
+		getInstance().newAccount("bob@test.net", "bobhasbadpasswords");
+		getInstance().login("bob@test.net", "bobhasbadpasswords");
+		getInstance().login("bob@test.net", "bobhasGOODpasswords");
 	}
 
 	public static Comm getInstance() {
@@ -34,13 +37,17 @@ public class Comm {
 	
 	public int newAccount(String email, String password) {
 		HashMap<String, String> req = new HashMap<>();
+		req.put("email", email);
 		req.put("email",  email);
 		req.put("password", password);
-		return apiRequest("login", req);
+		return apiRequest("signup", req);
 	}
 	
 	public int login(String email, String password) {
-		return -1;
+		HashMap<String, String> req = new HashMap<>();
+		req.put("email",  email);
+		req.put("password", password);
+		return apiRequest("login", req);
 	}
 	
 	public ArrayList<Recipe> searchRecipes(String search) {
