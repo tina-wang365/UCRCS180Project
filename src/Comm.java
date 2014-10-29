@@ -82,7 +82,7 @@ public class Comm {
 		String line;
 		StringBuffer jsonString = new StringBuffer();
 		try {
-			URL url = new URL("http://127.0.0.1:9222/chef/" + relUrl);
+			URL url = new URL("http://96.126.122.162:9222/chef/" + relUrl);
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
