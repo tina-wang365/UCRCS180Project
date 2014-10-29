@@ -26,6 +26,8 @@ public class Comm {
 		getInstance().newAccount("bob@test.net", "bobhasbadpasswords");
 		getInstance().login("bob@test.net", "bobhasbadpasswords");
 		getInstance().login("bob@test.net", "bobhasGOODpasswords");
+
+		getInstance().searchRecipes("cheese");
 	}
 
 	public static Comm getInstance() {
