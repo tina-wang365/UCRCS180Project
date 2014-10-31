@@ -10,6 +10,8 @@
 
 # Generated files
 bin/
+HighlanderChef/bin/
+appcompat_v7/bin/
 gen/
 
 # Gradle files
@@ -24,3 +26,5 @@ proguard/
 
 # Log Files
 *.log
+
+.metadata
