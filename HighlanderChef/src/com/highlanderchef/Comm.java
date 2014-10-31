@@ -10,12 +10,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
 public class Comm {
 	private static Comm instance;
+	private static String lastJSON;
 
 	public int CONN_FAILED = -1;
 	public int CONN_TIMEOUT = -2;
@@ -64,7 +67,23 @@ public class Comm {
 		// TODO: process whatever JSON we are handed back and
 		//       spin up some Recipe objects, fill them in
 		//       and return those
-		return null;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			JsonNode rootNode = mapper.readTree(lastJSON);
+
+			//Recipe[] recipes = mapper.readValue(rootNode.path("recipes"),
+			//									  Recipe[]);
+			// TODO: walk the list and add elems to ls
+			ArrayList<Recipe> ls = new ArrayList<>();
+
+			return ls;
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public Recipe getRecipe(int recipeID) {
@@ -79,7 +98,7 @@ public class Comm {
 		return null;
 	}
 
-	public int UploadRecipe(int stub) {
+	public int uploadRecipe(int stub) {
 		return -1;
 	}
 
@@ -128,6 +147,7 @@ public class Comm {
 			br.close();
 			connection.disconnect();
 			System.out.println(jsonString);
+			lastJSON = jsonString.toString();
 			return 0;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
