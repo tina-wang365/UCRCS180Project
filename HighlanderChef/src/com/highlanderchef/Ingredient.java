@@ -1,3 +1,4 @@
+package com.highlanderchef;
 
 public class Ingredient {
 	String name;
