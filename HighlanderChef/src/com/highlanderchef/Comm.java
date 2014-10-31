@@ -9,8 +9,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 
 public class Comm {
 	private static Comm instance;
@@ -39,22 +41,21 @@ public class Comm {
 		}
 		return instance;
 	}
-	
+
 	public int newAccount(String email, String password) {
 		HashMap<String, String> req = new HashMap<String, String>();
 		req.put("email", email);
-		req.put("email",  email);
 		req.put("password", password);
 		return apiRequest("signup", req);
 	}
-	
+
 	public int login(String email, String password) {
 		HashMap<String, String> req = new HashMap<String, String>();
-		req.put("email",  email);
+		req.put("email", email);
 		req.put("password", password);
 		return apiRequest("login", req);
 	}
-	
+
 	public ArrayList<Recipe> searchRecipes(String search) {
 		HashMap<String, String> req = new HashMap<String, String>();
 		req.put("keyword", search);
@@ -65,23 +66,23 @@ public class Comm {
 		//       and return those
 		return null;
 	}
-	
+
 	public Recipe getRecipe(int recipeID) {
 		HashMap<String, String> req = new HashMap<String, String>();
 		req.put("rid", Integer.toString(recipeID));
 		apiRequest("get", req);
-		
+
 		// parse the request, pull any image URLs as a byte array, then:
 		//  (where bitmapdata is a byte array)
 		//Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata , 0, bitmapdata .length);
-		
+
 		return null;
 	}
-	
+
 	public int UploadRecipe(int stub) {
 		return -1;
 	}
-	
+
 	private int apiRequest(String relUrl, Object o) {
 		if (o == null) {
 			return apiRequestPayload(relUrl, "");
@@ -113,21 +114,21 @@ public class Comm {
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 			connection.setDoInput(true);
-	        connection.setDoOutput(true);
-	        connection.setRequestMethod("POST");
-	        connection.setRequestProperty("Accept", "application/json");
-	        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-	        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-	        writer.write(payload);
-	        writer.close();
-	        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-	        while ((line = br.readLine()) != null) {
-	                jsonString.append(line);
-	        }
-	        br.close();
-	        connection.disconnect();
-	        System.out.println(jsonString);
-			return -1;
+			connection.setDoOutput(true);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+			writer.write(payload);
+			writer.close();
+			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			while ((line = br.readLine()) != null) {
+				jsonString.append(line);
+			}
+			br.close();
+			connection.disconnect();
+			System.out.println(jsonString);
+			return 0;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return -1;
