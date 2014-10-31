@@ -70,6 +70,11 @@ public class Comm {
 		HashMap<String, String> req = new HashMap<String, String>();
 		req.put("rid", Integer.toString(recipeID));
 		apiRequest("get", req);
+		
+		// parse the request, pull any image URLs as a byte array, then:
+		//  (where bitmapdata is a byte array)
+		//Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata , 0, bitmapdata .length);
+		
 		return null;
 	}
 	
