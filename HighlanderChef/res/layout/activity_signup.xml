@@ -8,9 +8,30 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.highlander.SignupActivity" >
 
-    <TextView
+    <EditText
+        android:id="@+id/enterusername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:hint="@string/enterusername_msg" />
+
+    <EditText
+        android:id="@+id/enterpassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/enterusername"
+        android:ems="10"
+        android:hint="@string/enterpassword_msg" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/enterpassword"
+        android:layout_below="@+id/enterpassword"
+        android:onClick="SubmitPressed"
+        android:text="@string/submit_button" />
 
 </RelativeLayout>
