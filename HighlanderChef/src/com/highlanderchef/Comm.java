@@ -41,7 +41,7 @@ public class Comm {
 	}
 	
 	public int newAccount(String email, String password) {
-		HashMap<String, String> req = new HashMap<>();
+		HashMap<String, String> req = new HashMap<String, String>();
 		req.put("email", email);
 		req.put("email",  email);
 		req.put("password", password);
@@ -49,14 +49,14 @@ public class Comm {
 	}
 	
 	public int login(String email, String password) {
-		HashMap<String, String> req = new HashMap<>();
+		HashMap<String, String> req = new HashMap<String, String>();
 		req.put("email",  email);
 		req.put("password", password);
 		return apiRequest("login", req);
 	}
 	
 	public ArrayList<Recipe> searchRecipes(String search) {
-		HashMap<String, String> req = new HashMap<>();
+		HashMap<String, String> req = new HashMap<String, String>();
 		req.put("keyword", search);
 		apiRequest("search", req);
 
@@ -67,7 +67,7 @@ public class Comm {
 	}
 	
 	public Recipe getRecipe(int recipeID) {
-		HashMap<String, String> req = new HashMap<>();
+		HashMap<String, String> req = new HashMap<String, String>();
 		req.put("rid", Integer.toString(recipeID));
 		apiRequest("get", req);
 		return null;
