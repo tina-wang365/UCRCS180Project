@@ -11,6 +11,7 @@
 # Generated files
 bin/
 HighlanderChef/bin/
+HighlanderChef/gen/android/support/v7/appcompat/R.java
 appcompat_v7/bin/
 gen/
 
