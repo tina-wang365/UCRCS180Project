@@ -60,11 +60,13 @@ public class LoginActivity extends ActionBarActivity {
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
 			int ret = c.login(params[0],  params[1]);
+            // Log: ret
 			return (ret == Comm.SUCCESS);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+            // Log: result
 			if (result == true) {
 				loginSuccess();
 			} else {

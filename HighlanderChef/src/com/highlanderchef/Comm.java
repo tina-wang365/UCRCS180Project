@@ -55,8 +55,8 @@ public class Comm {
 		c.apiRequest("", null);
 		c.login("test@test.net", "test1234");
 		c.newAccount("bob@test.net", "bobhasbadpasswords");
-		c.login("bob@test.net", "bobhasbadpasswords");
-		c.login("bob@test.net", "bobhasGOODpasswords");
+		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasbadpasswords"));
+		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasGOODpasswords"));
 
 		c.searchRecipes("cheese");
 		c.getRecipe(42);
