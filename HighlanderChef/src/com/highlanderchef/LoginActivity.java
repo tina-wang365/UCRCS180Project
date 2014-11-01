@@ -1,6 +1,7 @@
 package com.highlanderchef;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -39,20 +40,37 @@ public class LoginActivity extends ActionBarActivity {
 
 	public void ValidatesigninPressed(View view)
 	{
-		Intent intent = new Intent(this, MainMenu.class);
-
-		//GUIManager.doLogin(emailBox.getText(), passBox.getText());
-		/*
-		while(!Comm.getInstance().responseReady()) {
-			CommResponse cr = Comm.getInstance().getResponse();
-		}
-		 */
-
-		//startActivity(intent);
+		// TODO: only process one of these at once
+		new LoginTask().execute("email here", "pass here");
 	}
 
-	public void LoginFailed(String msg)
+	public void loginSuccess()
 	{
-		// find/create a warning box saying "login failed try again"
+		Intent intent = new Intent(this, MainMenu.class);
+		startActivity(intent);
+	}
+
+	public void loginFail(String msg)
+	{
+		// TODO: find/create a warning box saying "login failed try again"
+	}
+
+	private class LoginTask extends AsyncTask<String, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(String... params) {
+			Comm c = new Comm();
+			int ret = c.login(params[0],  params[1]);
+			return (ret == 0);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == false) {
+				loginSuccess();
+			} else {
+				loginFail("Something bad happened");
+			}
+		}
+
 	}
 }
