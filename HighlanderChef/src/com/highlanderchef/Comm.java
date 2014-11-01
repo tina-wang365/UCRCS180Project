@@ -23,6 +23,7 @@ public class Comm {
 	public static final int CONN_FAILED = -1;
 	public static final int CONN_TIMEOUT = -2;
 	public static final int JSON_ERROR = -3;
+	public static final int GENL_FAIL = -4;
 	public static final int NOT_IMPL = -42;
 
 	public Comm() {
@@ -79,14 +80,19 @@ public class Comm {
 			ObjectMapper mapper = new ObjectMapper();
 			try {
 				JsonNode rootNode = mapper.readTree(lastJSON);
-				String token = mapper.readValue(rootNode.path("authtoken"), String.class);
-				authToken = token;
-				this.email = email;
+				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
+				if (status == 1) {
+					String token = mapper.readValue(rootNode.path("authtoken"), String.class);
+					authToken = token;
+					this.email = email;
+				} else {
+					return GENL_FAIL;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				return JSON_ERROR;
 			}
-			return SUCCESS;
+			return GENL_FAIL;
 		} else {
 			return ret;
 		}
