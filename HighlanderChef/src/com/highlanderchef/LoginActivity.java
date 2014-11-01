@@ -40,8 +40,8 @@ public class LoginActivity extends ActionBarActivity {
 	public void ValidatesigninPressed(View view)
 	{
 		Intent intent = new Intent(this, MainMenu.class);
-		//Comm.getInstance().login(input.getText(), "password");
-		GUIManager.doLogin(emailBox.getText(), passBox.getText());
+
+		//GUIManager.doLogin(emailBox.getText(), passBox.getText());
 		/*
 		while(!Comm.getInstance().responseReady()) {
 			CommResponse cr = Comm.getInstance().getResponse();

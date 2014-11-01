@@ -15,36 +15,50 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
 public class Comm {
-	private static Comm instance;
-	private static String lastJSON;
-	private static String authToken;
+	private String lastJSON;
+	private String email;
+	private String authToken;
 
-	public int SUCCESS = 0;
-	public int CONN_FAILED = -1;
-	public int CONN_TIMEOUT = -2;
-	public int JSON_ERROR = -3;
-	public int NOT_IMPL = -42;
+	public static final int SUCCESS = 0;
+	public static final int CONN_FAILED = -1;
+	public static final int CONN_TIMEOUT = -2;
+	public static final int JSON_ERROR = -3;
+	public static final int NOT_IMPL = -42;
 
-	protected Comm() {
-		// Exists only to defeat instantiation.
+	public Comm() {
+		lastJSON = "";
+		email = "";
+		authToken = "";
+	}
+
+	public Comm(String email, String authToken) {
+		this.authToken = authToken;
+		this.email = email;
+		lastJSON = "";
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getAuthToken() {
+		return authToken;
+	}
+
+	public String getLastJSON() {
+		return lastJSON;
 	}
 
 	public static void main(String[] args) {
-		getInstance().apiRequest("", null);
-		getInstance().login("test@test.net", "test1234");
-		getInstance().newAccount("bob@test.net", "bobhasbadpasswords");
-		getInstance().login("bob@test.net", "bobhasbadpasswords");
-		getInstance().login("bob@test.net", "bobhasGOODpasswords");
+		Comm c = new Comm();
+		c.apiRequest("", null);
+		c.login("test@test.net", "test1234");
+		c.newAccount("bob@test.net", "bobhasbadpasswords");
+		c.login("bob@test.net", "bobhasbadpasswords");
+		c.login("bob@test.net", "bobhasGOODpasswords");
 
-		getInstance().searchRecipes("cheese");
-		getInstance().getRecipe(42);
-	}
-
-	public static Comm getInstance() {
-		if (instance == null) {
-			return new Comm();
-		}
-		return instance;
+		c.searchRecipes("cheese");
+		c.getRecipe(42);
 	}
 
 	public int newAccount(String email, String password) {
@@ -67,6 +81,7 @@ public class Comm {
 				JsonNode rootNode = mapper.readTree(lastJSON);
 				String token = mapper.readValue(rootNode.path("authtoken"), String.class);
 				authToken = token;
+				this.email = email;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return JSON_ERROR;
