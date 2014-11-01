@@ -65,7 +65,7 @@ public class LoginActivity extends ActionBarActivity {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			if (result == false) {
+			if (result == true) {
 				loginSuccess();
 			} else {
 				loginFail("Something bad happened");
