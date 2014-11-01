@@ -9,40 +9,56 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
 public class Comm {
-	private static Comm instance;
-	private static String lastJSON;
+	private String lastJSON;
+	private String email;
+	private String authToken;
 
-	public int CONN_FAILED = -1;
-	public int CONN_TIMEOUT = -2;
+	public static final int SUCCESS = 0;
+	public static final int CONN_FAILED = -1;
+	public static final int CONN_TIMEOUT = -2;
+	public static final int JSON_ERROR = -3;
+	public static final int NOT_IMPL = -42;
 
-	protected Comm() {
-		// Exists only to defeat instantiation.
+	public Comm() {
+		lastJSON = "";
+		email = "";
+		authToken = "";
+	}
+
+	public Comm(String email, String authToken) {
+		this.authToken = authToken;
+		this.email = email;
+		lastJSON = "";
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getAuthToken() {
+		return authToken;
+	}
+
+	public String getLastJSON() {
+		return lastJSON;
 	}
 
 	public static void main(String[] args) {
-		getInstance().apiRequest("", null);
-		getInstance().login("test@test.net", "test1234");
-		getInstance().newAccount("bob@test.net", "bobhasbadpasswords");
-		getInstance().login("bob@test.net", "bobhasbadpasswords");
-		getInstance().login("bob@test.net", "bobhasGOODpasswords");
+		Comm c = new Comm();
+		c.apiRequest("", null);
+		c.login("test@test.net", "test1234");
+		c.newAccount("bob@test.net", "bobhasbadpasswords");
+		c.login("bob@test.net", "bobhasbadpasswords");
+		c.login("bob@test.net", "bobhasGOODpasswords");
 
-		getInstance().searchRecipes("cheese");
-		getInstance().getRecipe(42);
-	}
-
-	public static Comm getInstance() {
-		if (instance == null) {
-			return new Comm();
-		}
-		return instance;
+		c.searchRecipes("cheese");
+		c.getRecipe(42);
 	}
 
 	public int newAccount(String email, String password) {
@@ -56,7 +72,24 @@ public class Comm {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("email", email);
 		req.put("password", password);
-		return apiRequest("login", req);
+
+		int ret = apiRequest("login", req);
+
+		if (ret == 0) {
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				JsonNode rootNode = mapper.readTree(lastJSON);
+				String token = mapper.readValue(rootNode.path("authtoken"), String.class);
+				authToken = token;
+				this.email = email;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return JSON_ERROR;
+			}
+			return SUCCESS;
+		} else {
+			return ret;
+		}
 	}
 
 	public ArrayList<Recipe> searchRecipes(String search) {
@@ -91,15 +124,27 @@ public class Comm {
 		req.put("rid", Integer.toString(recipeID));
 		apiRequest("get", req);
 
+		Recipe r = null;
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode rootNode;
+		try {
+			rootNode = mapper.readTree(lastJSON);
+			r = mapper.readValue(rootNode.path("recipe"), Recipe.class);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
 		// parse the request, pull any image URLs as a byte array, then:
 		//  (where bitmapdata is a byte array)
 		//Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata , 0, bitmapdata .length);
 
-		return null;
+		return r;
 	}
 
 	public int uploadRecipe(int stub) {
-		return -1;
+		return NOT_IMPL;
 	}
 
 	private int apiRequest(String relUrl, Object o) {
@@ -109,18 +154,9 @@ public class Comm {
 		ObjectWriter ow = new ObjectMapper().writer();
 		try {
 			return apiRequestPayload(relUrl, ow.writeValueAsString(o));
-		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
-			return -1;
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return -1;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return -1;
+			return JSON_ERROR;
 		}
 	}
 
@@ -148,10 +184,10 @@ public class Comm {
 			connection.disconnect();
 			System.out.println(jsonString);
 			lastJSON = jsonString.toString();
-			return 0;
+			return SUCCESS;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			return -1;
+			return CONN_FAILED;
 		}
 	}
 }
