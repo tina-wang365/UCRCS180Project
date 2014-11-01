@@ -60,7 +60,7 @@ public class LoginActivity extends ActionBarActivity {
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
 			int ret = c.login(params[0],  params[1]);
-			return (ret == 0);
+			return (ret == Comm.SUCCESS);
 		}
 
 		@Override
