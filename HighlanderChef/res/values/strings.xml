@@ -18,12 +18,14 @@
     <string name="enterpassword_msg">Enter Password</string>
     <string name="submit_button">Submit</string>
     <string name="title_activity_main_menu">MainMenu</string>
-    <string name="Welcome_Chef">Welcome Chef $user</string>
+    <string name="Welcome_Chef">Welcome Chef %1$s</string>
     <string name="Compose_Recipe">Compose Recipe</string>
     <string name="Browse_Recipes">Browse Recipes</string>
     <string name="View_My_Recipes">View My Recipes</string>
     <string name="Search_Recipes">Search Recipes</string>
     <string name="title_activity_make_arecipe1">MakeARecipe1</string>
     <string name="title_activity_view_my_recipes">ViewMyRecipes</string>
+    <string name="Remember_password">Remember Password</string>
+    <string name="Confirm_Password">Confirm Password</string>
 
 </resources>
