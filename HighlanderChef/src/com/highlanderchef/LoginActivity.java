@@ -12,9 +12,9 @@ public class LoginActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		getIntent();
-		
+
 		setContentView(R.layout.activity_login);
 	}
 
@@ -36,10 +36,23 @@ public class LoginActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-    public void ValidatesigninPressed(View view)
-    {
-    	Intent intent = new Intent(this, MainMenu.class);
-    	startActivity(intent);
-    }
+
+	public void ValidatesigninPressed(View view)
+	{
+		Intent intent = new Intent(this, MainMenu.class);
+		//Comm.getInstance().login(input.getText(), "password");
+		GUIManager.doLogin(emailBox.getText(), passBox.getText());
+		/*
+		while(!Comm.getInstance().responseReady()) {
+			CommResponse cr = Comm.getInstance().getResponse();
+		}
+		 */
+
+		//startActivity(intent);
+	}
+
+	public void LoginFailed(String msg)
+	{
+		// find/create a warning box saying "login failed try again"
+	}
 }
