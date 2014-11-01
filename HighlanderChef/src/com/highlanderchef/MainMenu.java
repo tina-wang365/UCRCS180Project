@@ -12,6 +12,9 @@ public class MainMenu extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		String username = "";
+		String strWelcomeFormat = getResources().getString(R.string.Welcome_Chef);
+		String strWelcomeMsg = String.format(strWelcomeFormat,username);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_menu);
 	}
@@ -34,22 +37,22 @@ public class MainMenu extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	public void BrowsePressed(View view)
 	{
 		Intent intent = new Intent(this, BrowseActivity.class);
 		startActivity(intent);
 	}
-	
-    public void ComposePressed(View view)
-    {
-    	Intent intent = new Intent(this, MakeARecipe1.class);
-    	startActivity(intent);
-    }
-    
-    public void ViewMyRecipesPressed(View view)
-    {
-    	Intent intent = new Intent(this, ViewMyRecipes.class);
-    	startActivity(intent);
-    }
+
+	public void ComposePressed(View view)
+	{
+		Intent intent = new Intent(this, MakeARecipe1.class);
+		startActivity(intent);
+	}
+
+	public void ViewMyRecipesPressed(View view)
+	{
+		Intent intent = new Intent(this, ViewMyRecipes.class);
+		startActivity(intent);
+	}
 }
