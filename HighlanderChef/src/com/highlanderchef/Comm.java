@@ -85,6 +85,7 @@ public class Comm {
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
 					this.email = email;
+					return SUCCESS;
 				} else {
 					return GENL_FAIL;
 				}
@@ -92,7 +93,6 @@ public class Comm {
 				e.printStackTrace();
 				return JSON_ERROR;
 			}
-			return GENL_FAIL;
 		} else {
 			return ret;
 		}
