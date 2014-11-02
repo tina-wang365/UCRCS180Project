@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -37,11 +39,21 @@ public class LoginActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
+	/*Intent intent = new Intent(this, DisplayMessageActivity.class);
+EditText editText = (EditText) findViewById(R.id.edit_message);
+String message = editText.getText().toString();
+intent.putExtra(EXTRA_MESSAGE, message);
+	 * */
 	public void ValidatesigninPressed(View view)
 	{
+		EditText editTextUsername = (EditText) findViewById(R.id.input_username);
+		String strUsername = editTextUsername.getText().toString();
+
+		EditText editTextPassword = (EditText) findViewById(R.id.input_password);
+		String strPassword = editTextPassword.getText().toString();
+
 		// TODO: only process one of these at once
-		new LoginTask().execute("email here", "pass here");
+		new LoginTask().execute(strUsername, strPassword);
 	}
 
 	public void loginSuccess()
@@ -65,9 +77,12 @@ public class LoginActivity extends ActionBarActivity {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+
 			if (result == true) {
+				Log.v("login_log","Login Success");
 				loginSuccess();
 			} else {
+				Log.v("login_fail","Login failed");
 				loginFail("Something bad happened");
 			}
 		}

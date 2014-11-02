@@ -82,7 +82,7 @@ public class Comm {
 				JsonNode rootNode = mapper.readTree(lastJSON);
 				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
 				if (status == 1) {
-					String token = mapper.readValue(rootNode.path("authtoken"), String.class);
+					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
 					this.email = email;
 				} else {

@@ -33,19 +33,21 @@ public class StartupScreen extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-    public void LoginPressed(View view)
-    {
-    	Intent intent = new Intent(this, LoginActivity.class);
-    	startActivity(intent);
-    }
-    
-    
-    public void SignupPressed(View view)
-    {
-    	Intent intent = new Intent(this, SignupActivity.class);
-    	startActivity(intent);
-    }
-    
+
+	public void LoginPressed(View view)
+	{
+		Intent intent = new Intent(this, LoginActivity.class);
+		startActivity(intent);
+	}
+
+
+	public void SignupPressed(View view)
+	{
+		Intent intent = new Intent(this, SignupActivity.class);
+		startActivity(intent);
+	}
+
+
+
 
 }
