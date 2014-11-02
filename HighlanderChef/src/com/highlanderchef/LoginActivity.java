@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -16,9 +17,12 @@ public class LoginActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+
 		getIntent();
 
 		setContentView(R.layout.activity_login);
+		TextView invalidlogin = (TextView) findViewById(R.id.invalidlogin);
+		invalidlogin.setVisibility(View.INVISIBLE);
 	}
 
 	@Override
@@ -64,7 +68,8 @@ intent.putExtra(EXTRA_MESSAGE, message);
 
 	public void loginFail(String msg)
 	{
-		// TODO: find/create a warning box saying "login failed try again"
+		TextView invalidlogin = (TextView) findViewById(R.id.invalidlogin);
+		invalidlogin.setVisibility(View.VISIBLE);
 	}
 
 	private class LoginTask extends AsyncTask<String, Void, Boolean> {

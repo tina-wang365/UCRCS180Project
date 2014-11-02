@@ -16,6 +16,7 @@
     <string name="title_activity_startup_screen">StartupScreen</string>
     <string name="enterusername_msg">Enter Username</string>
     <string name="enterpassword_msg">Enter Password</string>
+    <string name="Invalidlogin">ERROR: Invalid Login</string>
     <string name="submit_button">Submit</string>
     <string name="title_activity_main_menu">MainMenu</string>
     <string name="Welcome_Chef">Welcome Chef %1$s</string>
