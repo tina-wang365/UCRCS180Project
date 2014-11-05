@@ -59,7 +59,7 @@ public class Comm {
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasGOODpasswords"));
 
 		c.searchRecipes("cheese");
-		c.getRecipe(42);
+		c.getRecipe(1);
 	}
 
 	public int newAccount(String email, String password) {
@@ -141,10 +141,13 @@ public class Comm {
 			e.printStackTrace();
 		}
 
-
 		// parse the request, pull any image URLs as a byte array, then:
 		//  (where bitmapdata is a byte array)
 		//Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata , 0, bitmapdata .length);
+
+		//rooNode.path try to get list of keys and get info from there
+		//run with recipeID = 1 ==> simple soup
+
 
 		return r;
 	}
