@@ -256,7 +256,6 @@ public class Comm {
 
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -272,10 +271,28 @@ public class Comm {
 		req.put("uid", Integer.toString(id));
 		req.put("rid", Integer.toString(recipeId));
 		req.put("question", question);
-		apiRequest("postquestion", req);
-
-		// TODO: parse success
-		return NOT_IMPL;
+		int ret = apiRequest("postquestion", req);
+		if(ret == 0)
+		{
+			ObjectMapper mapper = new ObjectMapper();
+			try{
+				JsonNode rootNode = mapper.readTree(lastJSON);
+				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
+				if(status == 1){
+					return SUCCESS;
+				}
+				else {
+					return GENL_FAIL;
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				return JSON_ERROR;
+			}
+		}
+		else{
+			return ret;
+		}
 	}
 
 	private int apiRequest(String relUrl, Object o) {
