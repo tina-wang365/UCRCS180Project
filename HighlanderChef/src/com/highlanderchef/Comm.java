@@ -157,24 +157,14 @@ public class Comm {
 		// 		 process whatever JSON we are handed back and
 		//       spin up some Recipe objects, fill them in
 		//       and return those
-		ObjectMapper mapper = new ObjectMapper();
 		ArrayList<Recipe> ls = new ArrayList<>();
-		try {
-			JsonNode rootNode = mapper.readTree(lastJSON);
-			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
-			while(ite.hasNext())
-			{
-				JsonNode r = ite.next();
-				ls.add(parseRecipe(r));
-			}
-			return ls;
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return null;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+		Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+		while(ite.hasNext())
+		{
+			JsonNode r = ite.next();
+			ls.add(parseRecipe(r));
 		}
+		return ls;
 	}
 
 	private Bitmap getImage(String relUrl) {
