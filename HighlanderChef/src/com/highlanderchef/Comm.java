@@ -295,6 +295,35 @@ public class Comm {
 		}
 	}
 
+	public int postReply(int questionId, String reply) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(id));
+		req.put("qid", Integer.toString(questionId));
+		req.put("reply", reply);
+		int ret = apiRequest("postquestion", req);
+		if(ret == 0)
+		{
+			ObjectMapper mapper = new ObjectMapper();
+			try{
+				JsonNode rootNode = mapper.readTree(lastJSON);
+				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
+				if(status == 1){
+					return SUCCESS;
+				}
+				else {
+					return GENL_FAIL;
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				return JSON_ERROR;
+			}
+		}
+		else{
+			return ret;
+		}
+	}
+
 	private int apiRequest(String relUrl, Object o) {
 		if (o == null) {
 			return apiRequestPayload(relUrl, "");
