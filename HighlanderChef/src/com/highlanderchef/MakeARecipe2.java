@@ -44,18 +44,23 @@ public class MakeARecipe2 extends ActionBarActivity {
 		EditText edittext_new_ingred = (EditText) findViewById(R.id.addaningredient);
 		String new_ingred = edittext_new_ingred.getEditableText().toString();
 
+		if(edittext_new_ingred.length() == 0)
+		{
+			return;
+		}
+
 		TextView textview_ingred_list = (TextView) findViewById(R.id.listofaddedingredients);
 
 		String new_ingred_list = "";
 		for(int i = 0; i < ingreds_list.size(); ++i)
 		{
-			new_ingred_list += '\n' + ingreds_list.get(i);
+			new_ingred_list += ingreds_list.get(i) + '\n';
 		}
-		new_ingred_list += '\n' + new_ingred;
+		new_ingred_list += new_ingred;
 
 		ingreds_list.add(new_ingred);
 		textview_ingred_list.setText(new_ingred_list);
-		//edittext_new_ingred.clear
+		edittext_new_ingred.getText().clear();
 	}
 
 }
