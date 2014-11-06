@@ -1,7 +1,6 @@
 package com.highlanderchef;
 
-import java.util.ArrayList;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -12,7 +11,7 @@ import android.widget.TextView;
 
 public class MakeARecipe2 extends ActionBarActivity {
 
-	ArrayList<String> ingreds_list = new ArrayList<String>();
+	Recipe recipe = new Recipe();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,26 +40,37 @@ public class MakeARecipe2 extends ActionBarActivity {
 
 	public void addAnotherIngredientPressed(View view)
 	{
+		//gets text for newly added ingredient
 		EditText edittext_new_ingred = (EditText) findViewById(R.id.addaningredient);
-		String new_ingred = edittext_new_ingred.getEditableText().toString();
+		String new_ingred = edittext_new_ingred.getText().toString();
 
-		if(edittext_new_ingred.length() == 0)
-		{
-			return;
-		}
+		//gets text for newly added ingredient
+		EditText edittext_new_ingred_amount = (EditText) findViewById(R.id.ingredientmeasurement);
+		String new_ingred_amount = edittext_new_ingred_amount.getText().toString();
+
+		//checks if inputed text length is greater than zero
+		if(edittext_new_ingred.length() == 0 || new_ingred_amount.length() == 0)
+		{ return; }
 
 		TextView textview_ingred_list = (TextView) findViewById(R.id.listofaddedingredients);
 
+		//creates new text for ingredients list, includes newly added ingredient
 		String new_ingred_list = "";
-		for(int i = 0; i < ingreds_list.size(); ++i)
+		for(int i = 0; i < recipe.ingredientSize(); ++i)
 		{
-			new_ingred_list += ingreds_list.get(i) + '\n';
+			new_ingred_list += recipe.getAnIngredient(i).amount + '\t' + recipe.getAnIngredient(i).name + '\n';
 		}
-		new_ingred_list += new_ingred;
+		new_ingred_list += new_ingred_amount + '\t' + new_ingred;
 
-		ingreds_list.add(new_ingred);
+		recipe.addIngredient(new Ingredient(new_ingred, new_ingred_amount));
 		textview_ingred_list.setText(new_ingred_list);
 		edittext_new_ingred.getText().clear();
+		edittext_new_ingred_amount.getText().clear();
 	}
 
+	public void addDorectoionsPressed(View view)
+	{
+		Intent intent = new Intent(this, MakeARecipe3.class);
+		startActivity(intent);
+	}
 }

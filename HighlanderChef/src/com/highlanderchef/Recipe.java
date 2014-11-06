@@ -13,6 +13,12 @@ public class Recipe {
 	ArrayList<Ingredient> ingredients;
 	ArrayList<Direction> directions;
 
+	public Recipe()
+	{
+		ingredients = new ArrayList<Ingredient>();
+		directions = new ArrayList<Direction>();
+	}
+
 	public void setIngredients(ArrayList<Ingredient> i)
 	{
 		this.ingredients = i;
@@ -20,6 +26,10 @@ public class Recipe {
 	public ArrayList<Ingredient> getIngredients()
 	{
 		return this.ingredients;
+	}
+	public void addIngredient(Ingredient i)
+	{
+		ingredients.add(i);
 	}
 	public void setAnIngredient(int index, Ingredient i)
 	{
@@ -29,7 +39,14 @@ public class Recipe {
 	{
 		return this.ingredients.get(index);
 	}
-
+	public int ingredientSize()
+	{
+		return this.ingredients.size();
+	}
+	public int directionSize()
+	{
+		return this.directions.size();
+	}
 
 
 }

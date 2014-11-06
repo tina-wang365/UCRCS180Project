@@ -4,6 +4,11 @@ public class Ingredient {
 	String name;
 	String amount; //ex. 3, 1/2 cup, 5 ounces.
 
+	public Ingredient(String i, String a)
+	{
+		this.name = i;
+		this.amount = a;
+	}
 	public String getName(){ return this.name; }
 	public void setName(String n){this.name = n;}
 
