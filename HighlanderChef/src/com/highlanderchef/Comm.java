@@ -71,7 +71,6 @@ public class Comm {
 	public static void main(String[] args) {
 		runningAndroid = false;
 		Comm c = new Comm();
-		c.apiRequest("", null);
 		c.login("test@test.net", "test1234");
 		c.newAccount("bob@test.net", "bobhasbadpasswords");
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasbadpasswords"));
