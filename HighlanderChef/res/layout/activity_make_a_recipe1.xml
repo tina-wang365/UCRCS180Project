@@ -8,9 +8,43 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.highlanderchef.MakeARecipe1" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+    <EditText
+           android:id="@+id/recipe_title"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:hint="@string/Enter_recipe_name" />
+
+       <Button
+           android:id="@+id/add_ingrediant"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignLeft="@+id/recipe_description"
+           android:layout_below="@+id/recipe_title"
+           android:layout_marginTop="170dp"
+           android:onClick="AddIngrediantPressed"
+           android:text="@string/Add_ingredients" />
+
+       <EditText
+           android:id="@+id/recipe_description"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignLeft="@+id/recipe_title"
+           android:layout_below="@+id/recipe_title"
+           android:layout_marginTop="20dp"
+           android:ems="10"
+           android:hint="@string/Enter_despription" >
+
+           <requestFocus />
+       </EditText>
+
+       <EditText
+           android:id="@+id/recipe_est_time"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignLeft="@+id/add_ingrediant"
+           android:layout_below="@+id/recipe_description"
+           android:layout_marginTop="27dp"
+           android:ems="10"
+           android:hint="@string/Enter_est_time" />
 
 </RelativeLayout>

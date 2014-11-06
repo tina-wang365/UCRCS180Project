@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -14,9 +17,12 @@ public class LoginActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+
 		getIntent();
 
 		setContentView(R.layout.activity_login);
+		TextView invalidlogin = (TextView) findViewById(R.id.invalidlogin);
+		invalidlogin.setVisibility(View.INVISIBLE);
 	}
 
 	@Override
@@ -37,11 +43,21 @@ public class LoginActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
+	/*Intent intent = new Intent(this, DisplayMessageActivity.class);
+EditText editText = (EditText) findViewById(R.id.edit_message);
+String message = editText.getText().toString();
+intent.putExtra(EXTRA_MESSAGE, message);
+	 * */
 	public void ValidatesigninPressed(View view)
 	{
+		EditText editTextUsername = (EditText) findViewById(R.id.input_username);
+		String strUsername = editTextUsername.getText().toString();
+
+		EditText editTextPassword = (EditText) findViewById(R.id.input_password);
+		String strPassword = editTextPassword.getText().toString();
+
 		// TODO: only process one of these at once
-		new LoginTask().execute("email here", "pass here");
+		new LoginTask().execute(strUsername, strPassword);
 	}
 
 	public void loginSuccess()
@@ -52,7 +68,8 @@ public class LoginActivity extends ActionBarActivity {
 
 	public void loginFail(String msg)
 	{
-		// TODO: find/create a warning box saying "login failed try again"
+		TextView invalidlogin = (TextView) findViewById(R.id.invalidlogin);
+		invalidlogin.setVisibility(View.VISIBLE);
 	}
 
 	private class LoginTask extends AsyncTask<String, Void, Boolean> {
@@ -60,14 +77,17 @@ public class LoginActivity extends ActionBarActivity {
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
 			int ret = c.login(params[0],  params[1]);
-			return (ret == 0);
+            // Log: ret
+			return (ret == Comm.SUCCESS);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result == true) {
+				Log.v("login_log","Login Success");
 				loginSuccess();
 			} else {
+				Log.v("login_fail","Login failed");
 				loginFail("Something bad happened");
 			}
 		}
