@@ -1,5 +1,6 @@
 package com.highlanderchef;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -22,7 +23,8 @@ public class MakeARecipe1 extends ActionBarActivity {
 	}
 	public void AddIngrediantPressed(View view)
 	{
-		// TODO: only process one of these at once
+		Intent intent = new Intent(this, MakeARecipe2.class);
+		startActivity(intent);
 
 	}
 
@@ -37,6 +39,4 @@ public class MakeARecipe1 extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-
 }

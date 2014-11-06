@@ -41,7 +41,7 @@ public class Recipe {
 			while (ite.hasNext()) {
 				JsonNode ing = ite.next();
 				String name = mapper.readValue(ing.path("name"), String.class);
-				Double amount = mapper.readValue(ing.path("amount"), Double.class);
+				String amount = mapper.readValue(ing.path("amount"), String.class);
 				Ingredient ingr = new Ingredient(name, amount);
 				ingredients.add(ingr);
 			}
@@ -76,5 +76,24 @@ public class Recipe {
 			e.printStackTrace();
 		}
 	}
+
+	public void setIngredients(ArrayList<Ingredient> i)
+	{
+		this.ingredients = i;
+	}
+	public ArrayList<Ingredient> getIngredients()
+	{
+		return this.ingredients;
+	}
+	public void setAnIngredient(int index, Ingredient i)
+	{
+		this.ingredients.set(index, i);
+	}
+	public Ingredient getAnIngredient(int index)
+	{
+		return this.ingredients.get(index);
+	}
+
+
 
 }

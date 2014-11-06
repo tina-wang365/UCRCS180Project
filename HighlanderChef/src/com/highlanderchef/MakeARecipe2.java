@@ -1,16 +1,23 @@
 package com.highlanderchef;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class MakeARecipe2 extends ActionBarActivity {
+
+	ArrayList<String> ingreds_list = new ArrayList<String>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_make_arecipe2);
+		setContentView(R.layout.activity_make_a_recipe2);
 	}
 
 	@Override
@@ -31,4 +38,29 @@ public class MakeARecipe2 extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	public void addAnotherIngredientPressed(View view)
+	{
+		EditText edittext_new_ingred = (EditText) findViewById(R.id.addaningredient);
+		String new_ingred = edittext_new_ingred.getEditableText().toString();
+
+		if(edittext_new_ingred.length() == 0)
+		{
+			return;
+		}
+
+		TextView textview_ingred_list = (TextView) findViewById(R.id.listofaddedingredients);
+
+		String new_ingred_list = "";
+		for(int i = 0; i < ingreds_list.size(); ++i)
+		{
+			new_ingred_list += ingreds_list.get(i) + '\n';
+		}
+		new_ingred_list += new_ingred;
+
+		ingreds_list.add(new_ingred);
+		textview_ingred_list.setText(new_ingred_list);
+		edittext_new_ingred.getText().clear();
+	}
+
 }
