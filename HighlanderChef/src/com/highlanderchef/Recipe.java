@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 
 
 public class Recipe {
+	int id;
 	String name;
 	String description;
 
@@ -20,7 +21,8 @@ public class Recipe {
 	ArrayList<Direction> directions;
 	//add categories, description, img_url, name, rid
 
-	public Recipe(String name, String description, Bitmap mainImage) {
+	public Recipe(int id, String name, String description, Bitmap mainImage) {
+		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.mainImage = mainImage;

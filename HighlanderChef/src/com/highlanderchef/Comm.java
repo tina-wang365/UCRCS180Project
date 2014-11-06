@@ -26,6 +26,9 @@ public class Comm {
 
 
 	private String lastJSON;
+
+	// User account info
+	private int id;
 	private String email;
 	private String authToken;
 
@@ -111,6 +114,8 @@ public class Comm {
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
 					this.email = email;
+					Integer userId = mapper.readValue(rootNode.path("id"), Integer.class);
+					this.id = userId.intValue();
 					return SUCCESS;
 				} else {
 					return GENL_FAIL;
@@ -218,11 +223,10 @@ public class Comm {
 
 		try {
 			Integer id = mapper.readValue(node.path("rid"),Integer.class);
-			String categories = mapper.readValue(node.path("categories"), String.class);
 			String description = mapper.readValue(node.path("description"), String.class);
 			String image_url = mapper.readValue(node.path("img_url"), String.class);
 			String name = mapper.readValue(node.path("name"), String.class);
-			r = new Recipe(name, description, getImage(image_url));
+			r = new Recipe(id, name, description, getImage(image_url));
 
 			String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
 			r.parseIngredientsFromJson(ingredientsJson);
@@ -259,6 +263,17 @@ public class Comm {
 	}
 
 	public int uploadRecipe(int stub) {
+		return NOT_IMPL;
+	}
+
+	public int postQuestion(int recipeId, String question) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(id));
+		req.put("rid", Integer.toString(recipeId));
+		req.put("question", question);
+		apiRequest("postquestion", req);
+
+		// TODO: parse success
 		return NOT_IMPL;
 	}
 
