@@ -77,12 +77,12 @@ intent.putExtra(EXTRA_MESSAGE, message);
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
 			int ret = c.login(params[0],  params[1]);
+            // Log: ret
 			return (ret == Comm.SUCCESS);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-
 			if (result == true) {
 				Log.v("login_log","Login Success");
 				loginSuccess();
