@@ -58,7 +58,7 @@ public class Comm {
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasbadpasswords"));
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasGOODpasswords"));
 
-		c.searchRecipes("cheese");
+		c.searchRecipes("soup");
 		c.getRecipe(1);
 	}
 
@@ -135,7 +135,16 @@ public class Comm {
 		JsonNode rootNode;
 		try {
 			rootNode = mapper.readTree(lastJSON);
-			r = mapper.readValue(rootNode.path("recipe"), Recipe.class);
+			//r = mapper.readValue(rootNode.path("recipe"), Recipe.class); //returns Recipe.class (supposively)ignore this for now
+
+			JsonNode recipe = rootNode.path("recipe");
+			Integer id = mapper.readValue(recipe.path("rid"),Integer.class);
+			String categories = mapper.readValue(recipe.path("categories"), String.class);
+			String description = mapper.readValue(recipe.path("description"), String.class);
+			String image_url = mapper.readValue(recipe.path("img_url"), String.class);
+			String name = mapper.readValue(recipe.path("name"), String.class);
+			//r = new Recipe(name,description,null);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -147,6 +156,13 @@ public class Comm {
 
 		//rooNode.path try to get list of keys and get info from there
 		//run with recipeID = 1 ==> simple soup
+		//parse "recipe" and fill in r
+
+		//status = mapper.readValue(rootNode.path("status"), Integer.class);
+		//should be able to say
+		// x = rootNode.readValue(rootNode.path("categories"), String.class);
+		//.path finds children
+
 
 
 		return r;

@@ -10,5 +10,6 @@ public class Recipe {
 
 	ArrayList<Ingredient> ingredients;
 	ArrayList<Direction> directions;
+	//add  categories, description, img_url, name, rid
 
 }
