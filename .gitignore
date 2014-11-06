@@ -14,6 +14,7 @@ HighlanderChef/bin/
 HighlanderChef/gen/android/support/v7/appcompat/R.java
 HighlanderChef/.classpath
 appcompat_v7/bin/
+appcompat_v7/gen/android/support/v7/appcompat/R.java
 gen/
 
 # Gradle files
