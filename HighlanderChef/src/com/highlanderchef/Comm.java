@@ -69,7 +69,7 @@ public class Comm {
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasGOODpasswords"));
 
 		c.searchRecipes("soup");
-		Recipe simple = c.getRecipe(1);
+		Recipe simple = c.getRecipe(2);
 		ArrayList<Ingredient> list = simple.ingredients;
 		for (int i = 0; i < list.size(); i++) {
 			System.out.println(i + " " + list.get(i).amount + " " + list.get(i).name);
@@ -78,6 +78,13 @@ public class Comm {
 		for (int i = 0; i < dirs.size(); i++) {
 			System.out.println(i + " " + dirs.get(i).text);
 		}
+		System.out.println("now display the categories");
+		ArrayList<String> cats = simple.categories;
+		for(int i = 0; i < cats.size(); i++) {
+			System.out.println(i + " " + cats.get(i));
+		}
+		if(simple.categories.size() == 0)
+			System.out.println("there are no categories");
 	}
 
 	public int newAccount(String email, String password) {
@@ -195,6 +202,8 @@ public class Comm {
 			r.parseIngredientsFromJson(ingredientsJson);
 			String directionsJson = mapper.readValue(node.path("directions"), String.class);
 			r.parseDirectionsFromJson(directionsJson);
+			String categoriesJson = mapper.readValue(node.path("categories"), String.class);
+			r.parseCategoriesFromJson(categoriesJson);
 
 			return r;
 		} catch (Exception e) {
