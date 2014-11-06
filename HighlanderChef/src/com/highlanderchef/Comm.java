@@ -2,7 +2,6 @@ package com.highlanderchef;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
@@ -24,8 +22,11 @@ public class Comm {
 	private static String serverImgRoot = "http://96.126.122.162:9223/";
 	private static boolean runningAndroid = true;
 
+	private static ObjectMapper mapper;
 
+	private int lastStatus;
 	private String lastJSON;
+	private JsonNode rootNode;
 
 	// User account info
 	private int id;
@@ -43,12 +44,16 @@ public class Comm {
 		lastJSON = "";
 		email = "";
 		authToken = "";
+
+		mapper = new ObjectMapper();
 	}
 
 	public Comm(String email, String authToken) {
 		this.authToken = authToken;
 		this.email = email;
 		lastJSON = "";
+
+		mapper = new ObjectMapper();
 	}
 
 	public String getEmail() {
@@ -106,11 +111,8 @@ public class Comm {
 		int ret = apiRequest("login", req);
 
 		if (ret == 0) {
-			ObjectMapper mapper = new ObjectMapper();
 			try {
-				JsonNode rootNode = mapper.readTree(lastJSON);
-				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
-				if (status == 1) {
+				if (lastStatus == 1) {
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
 					this.email = email;
@@ -137,24 +139,14 @@ public class Comm {
 		// 		 process whatever JSON we are handed back and
 		//       spin up some Recipe objects, fill them in
 		//       and return those
-		ObjectMapper mapper = new ObjectMapper();
 		ArrayList<Recipe> ls = new ArrayList<>();
-		try {
-			JsonNode rootNode = mapper.readTree(lastJSON);
-			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
-			while(ite.hasNext())
-			{
-				JsonNode r = ite.next();
-				ls.add(parseRecipe(r));
-			}
-			return ls;
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return null;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+		Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+		while(ite.hasNext())
+		{
+			JsonNode r = ite.next();
+			ls.add(parseRecipe(r));
 		}
+		return ls;
 	}
 
 	private Bitmap getImage(String relUrl) {
@@ -248,18 +240,7 @@ public class Comm {
 		req.put("rid", Integer.toString(recipeID));
 		apiRequest("get", req);
 
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode rootNode;
-		try {
-			rootNode = mapper.readTree(lastJSON);
-			return parseRecipe(rootNode.path("recipe"));
-
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
+		return parseRecipe(rootNode.path("recipe"));
 	}
 
 	public int uploadRecipe(int stub) {
@@ -272,25 +253,13 @@ public class Comm {
 		req.put("rid", Integer.toString(recipeId));
 		req.put("question", question);
 		int ret = apiRequest("postquestion", req);
-		if(ret == 0)
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			try{
-				JsonNode rootNode = mapper.readTree(lastJSON);
-				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
-				if(status == 1){
-					return SUCCESS;
-				}
-				else {
-					return GENL_FAIL;
-				}
+		if (ret == 0) {
+			if (lastStatus == 1) {
+				return SUCCESS;
+			} else {
+				return GENL_FAIL;
 			}
-			catch(Exception e){
-				e.printStackTrace();
-				return JSON_ERROR;
-			}
-		}
-		else{
+		} else {
 			return ret;
 		}
 	}
@@ -301,27 +270,32 @@ public class Comm {
 		req.put("qid", Integer.toString(questionId));
 		req.put("reply", reply);
 		int ret = apiRequest("postquestion", req);
-		if(ret == 0)
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			try{
-				JsonNode rootNode = mapper.readTree(lastJSON);
-				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
-				if(status == 1){
-					return SUCCESS;
-				}
-				else {
-					return GENL_FAIL;
-				}
+		if (ret == 0) {
+			if (lastStatus == 1) {
+				return SUCCESS;
+			} else {
+				return GENL_FAIL;
 			}
-			catch(Exception e){
-				e.printStackTrace();
-				return JSON_ERROR;
-			}
-		}
-		else{
+		} else{
 			return ret;
 		}
+	}
+
+	public CategoryNode getCategories() {
+		CategoryNode root = new CategoryNode(-1, "");
+		int ret = apiRequest("getcategories", null);
+		if (ret == 0) {
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				JsonNode rootNode = mapper.readTree(lastJSON);
+				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		return root;
 	}
 
 	private int apiRequest(String relUrl, Object o) {
@@ -361,7 +335,17 @@ public class Comm {
 			connection.disconnect();
 			System.out.println(jsonString);
 			lastJSON = jsonString.toString();
-			return SUCCESS;
+			ObjectMapper mapper = new ObjectMapper();
+			rootNode = mapper.readTree(lastJSON);
+			lastStatus = GENL_FAIL;
+			try {
+				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
+				lastStatus = status;
+				return SUCCESS;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return GENL_FAIL;
+			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return CONN_FAILED;
