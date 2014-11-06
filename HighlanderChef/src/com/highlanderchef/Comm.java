@@ -1,5 +1,6 @@
 package com.highlanderchef;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,11 +16,19 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
-import android.media.Image;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class Comm {
 	private static String serverRoot = "http://96.126.122.162:9222/chef/";
+	private static String serverImgRoot = "http://96.126.122.162:9223/";
+	private static boolean runningAndroid = true;
+
+
 	private String lastJSON;
+
+	// User account info
+	private int id;
 	private String email;
 	private String authToken;
 
@@ -55,6 +64,7 @@ public class Comm {
 	}
 
 	public static void main(String[] args) {
+		runningAndroid = false;
 		Comm c = new Comm();
 		c.apiRequest("", null);
 		c.login("test@test.net", "test1234");
@@ -104,6 +114,8 @@ public class Comm {
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
 					this.email = email;
+					Integer userId = mapper.readValue(rootNode.path("id"), Integer.class);
+					this.id = userId.intValue();
 					return SUCCESS;
 				} else {
 					return GENL_FAIL;
@@ -145,16 +157,65 @@ public class Comm {
 		}
 	}
 
-	private Image getImage(String relUrl) {
-		// TODO: get from serverroot/img/{relUrl}
-		// serverRoot + "img/" + relUrl
+	private Bitmap getImage(String relUrl) {
+		System.out.println("getImage(" + serverImgRoot + relUrl);
+		if (relUrl == null) {
+			return null;
+		}
 
+		try {
+			URL url = new URL(serverImgRoot + relUrl);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setDoInput(true);
+			connection.setRequestMethod("GET");
 
-		// parse the request, pull any image URLs as a byte array, then:
-		//  (where bitmapdata is a byte array)
-		//Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata , 0, bitmapdata .length);
+			System.out.println("getImage sees code " + connection.getResponseCode());
+			if (connection.getResponseCode() != 200) {
+				connection.disconnect();
+				return null;
+			}
 
+			int len = connection.getContentLength();
+			System.out.println("getImage sees content-length " + connection.getContentLength());
+
+			if (!runningAndroid) {
+				return null;
+			}
+			byte[] imgData = new byte[len];
+			BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
+			bis.read(imgData);
+			Bitmap bitmap = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
+			connection.disconnect();
+			return bitmap;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
+	}
+
+	private void parseDirections(Recipe r, String json) {
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			JsonNode node = mapper.readTree(json);
+			Iterator<JsonNode> ite = node.getElements();
+			while (ite.hasNext()) {
+				JsonNode dir = ite.next();
+				String text = mapper.readValue(dir.path("text"), String.class);
+				Iterator<JsonNode> ite2 = node.getElements();
+				ArrayList<Bitmap> bmps = new ArrayList<Bitmap>();
+				while(ite2.hasNext()) {
+					JsonNode img = ite2.next();
+					String img_url = img.getTextValue();
+					Bitmap bmp = getImage(img_url);
+					bmps.add(bmp);
+				}
+
+				r.addDirection(text, bmps);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private Recipe parseRecipe(JsonNode node) {
@@ -163,16 +224,15 @@ public class Comm {
 
 		try {
 			Integer id = mapper.readValue(node.path("rid"),Integer.class);
-			String categories = mapper.readValue(node.path("categories"), String.class);
 			String description = mapper.readValue(node.path("description"), String.class);
 			String image_url = mapper.readValue(node.path("img_url"), String.class);
 			String name = mapper.readValue(node.path("name"), String.class);
-			r = new Recipe(name, description, getImage(image_url));
+			r = new Recipe(id, name, description, getImage(image_url));
 
 			String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
 			r.parseIngredientsFromJson(ingredientsJson);
 			String directionsJson = mapper.readValue(node.path("directions"), String.class);
-			r.parseDirectionsFromJson(directionsJson);
+			parseDirections(r, directionsJson);
 			String categoriesJson = mapper.readValue(node.path("categories"), String.class);
 			r.parseCategoriesFromJson(categoriesJson);
 
@@ -204,6 +264,17 @@ public class Comm {
 	}
 
 	public int uploadRecipe(int stub) {
+		return NOT_IMPL;
+	}
+
+	public int postQuestion(int recipeId, String question) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(id));
+		req.put("rid", Integer.toString(recipeId));
+		req.put("question", question);
+		apiRequest("postquestion", req);
+
+		// TODO: parse success
 		return NOT_IMPL;
 	}
 

@@ -6,21 +6,23 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import android.media.Image;
+import android.graphics.Bitmap;
 
 
 public class Recipe {
+	int id;
 	String name;
 	String description;
 
-	Image mainImage;
+	Bitmap mainImage;
 
 	ArrayList<String> categories;
 	ArrayList<Ingredient> ingredients;
 	ArrayList<Direction> directions;
 	//add categories, description, img_url, name, rid
 
-	public Recipe(String name, String description, Image mainImage) {
+	public Recipe(int id, String name, String description, Bitmap mainImage) {
+		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.mainImage = mainImage;
@@ -49,23 +51,12 @@ public class Recipe {
 		}
 	}
 
-	public void parseDirectionsFromJson(String json) {
-		ObjectMapper mapper = new ObjectMapper();
+	public void addDirection(String text, Bitmap bmp) {
+		directions.add(new Direction(text, bmp));
+	}
 
-		try {
-			JsonNode node = mapper.readTree(json);
-			Iterator<JsonNode> ite = node.getElements();
-			while (ite.hasNext()) {
-				JsonNode dir = ite.next();
-				String text = mapper.readValue(dir.path("text"), String.class);
-				//String text = dir.path("text").getTextValue();
-
-				Direction d = new Direction(text);
-				directions.add(d);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void addDirection(String text, ArrayList<Bitmap> bmps) {
+		directions.add(new Direction(text, bmps));
 	}
 
 	public void parseCategoriesFromJson(String json){
