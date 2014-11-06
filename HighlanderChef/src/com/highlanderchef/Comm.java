@@ -227,7 +227,6 @@ public class Comm {
 			String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
 			r.parseIngredientsFromJson(ingredientsJson);
 			String directionsJson = mapper.readValue(node.path("directions"), String.class);
-			//r.parseDirectionsFromJson(directionsJson);
 			parseDirections(r, directionsJson);
 			String categoriesJson = mapper.readValue(node.path("categories"), String.class);
 			r.parseCategoriesFromJson(categoriesJson);
