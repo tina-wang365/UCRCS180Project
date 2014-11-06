@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
@@ -186,6 +187,31 @@ public class Comm {
 		return null;
 	}
 
+	private void parseDirections(Recipe r, String json) {
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			JsonNode node = mapper.readTree(json);
+			Iterator<JsonNode> ite = node.getElements();
+			while (ite.hasNext()) {
+				JsonNode dir = ite.next();
+				String text = mapper.readValue(dir.path("text"), String.class);
+				Iterator<JsonNode> ite2 = node.getElements();
+				ArrayList<Bitmap> bmps = new ArrayList<Bitmap>();
+				while(ite2.hasNext()) {
+					JsonNode img = ite2.next();
+					String img_url = img.getTextValue();
+					Bitmap bmp = getImage(img_url);
+					bmps.add(bmp);
+				}
+
+				r.addDirection(text, bmps);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private Recipe parseRecipe(JsonNode node) {
 		ObjectMapper mapper = new ObjectMapper();
 		Recipe r = null;
@@ -201,7 +227,8 @@ public class Comm {
 			String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
 			r.parseIngredientsFromJson(ingredientsJson);
 			String directionsJson = mapper.readValue(node.path("directions"), String.class);
-			r.parseDirectionsFromJson(directionsJson);
+			//r.parseDirectionsFromJson(directionsJson);
+			parseDirections(r, directionsJson);
 			String categoriesJson = mapper.readValue(node.path("categories"), String.class);
 			r.parseCategoriesFromJson(categoriesJson);
 

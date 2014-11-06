@@ -57,25 +57,6 @@ public class Recipe {
 		directions.add(new Direction(text, bmps));
 	}
 
-	public void parseDirectionsFromJson(String json) {
-		ObjectMapper mapper = new ObjectMapper();
-
-		try {
-			JsonNode node = mapper.readTree(json);
-			Iterator<JsonNode> ite = node.getElements();
-			while (ite.hasNext()) {
-				JsonNode dir = ite.next();
-				String text = mapper.readValue(dir.path("text"), String.class);
-				//String text = dir.path("text").getTextValue();
-
-				Direction d = new Direction(text);
-				directions.add(d);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	public void parseCategoriesFromJson(String json){
 		ObjectMapper mapper = new ObjectMapper();
 
