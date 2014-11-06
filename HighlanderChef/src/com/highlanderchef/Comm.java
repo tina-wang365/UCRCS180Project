@@ -149,6 +149,34 @@ public class Comm {
 		return ls;
 	}
 
+	public ArrayList<Recipe> searchRecipesByCategory(String search) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("categoryID", search);
+		apiRequest("searchCat", req);
+
+		// 		 process whatever JSON we are handed back and
+		//       spin up some Recipe objects, fill them in
+		//       and return those
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayList<Recipe> ls = new ArrayList<>();
+		try {
+			JsonNode rootNode = mapper.readTree(lastJSON);
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while(ite.hasNext())
+			{
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r));
+			}
+			return ls;
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	private Bitmap getImage(String relUrl) {
 		System.out.println("getImage(" + serverImgRoot + relUrl);
 		if (relUrl == null) {
