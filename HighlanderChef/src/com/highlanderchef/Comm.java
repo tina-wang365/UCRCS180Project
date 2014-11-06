@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
@@ -125,13 +126,19 @@ public class Comm {
 		//       spin up some Recipe objects, fill them in
 		//       and return those
 		ObjectMapper mapper = new ObjectMapper();
+		ArrayList<Recipe> ls = new ArrayList<>();
 		try {
 			JsonNode rootNode = mapper.readTree(lastJSON);
-
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while(ite.hasNext())
+			{
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r));
+			}
 			//Recipe[] recipes = mapper.readValue(rootNode.path("recipes"),
 			//									  Recipe[]);
 			// TODO: walk the list and add elems to ls
-			ArrayList<Recipe> ls = new ArrayList<>();
+
 
 			return ls;
 		} catch (JsonProcessingException e) {
