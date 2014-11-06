@@ -49,4 +49,21 @@ public class Recipe {
 		}
 	}
 
+	public void parseDirectionsFromJson(String json) {
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			JsonNode node = mapper.readTree(json);
+			Iterator<JsonNode> ite = node.getElements();
+			while (ite.hasNext()) {
+				JsonNode dir = ite.next();
+				String name = dir.path("name").getTextValue();
+				Direction d = new Direction(name);
+				directions.add(d);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
