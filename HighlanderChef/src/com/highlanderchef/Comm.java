@@ -14,7 +14,10 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
+import android.media.Image;
+
 public class Comm {
+	private static String serverRoot = "http://96.126.122.162:9222/chef/";
 	private String lastJSON;
 	private String email;
 	private String authToken;
@@ -63,6 +66,10 @@ public class Comm {
 		ArrayList<Ingredient> list = simple.ingredients;
 		for (int i = 0; i < list.size(); i++) {
 			System.out.println(i + " " + list.get(i).amount + " " + list.get(i).name);
+		}
+		ArrayList<Direction> dirs = simple.directions;
+		for (int i = 0; i < dirs.size(); i++) {
+			System.out.println(i + " " + dirs.get(i).text);
 		}
 	}
 
@@ -129,6 +136,18 @@ public class Comm {
 		}
 	}
 
+	private Image getImage(String relUrl) {
+		// TODO: get from serverroot/img/{relUrl}
+		// serverRoot + "img/" + relUrl
+
+
+		// parse the request, pull any image URLs as a byte array, then:
+		//  (where bitmapdata is a byte array)
+		//Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata , 0, bitmapdata .length);
+
+		return null;
+	}
+
 	public Recipe getRecipe(int recipeID) {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("rid", Integer.toString(recipeID));
@@ -147,19 +166,17 @@ public class Comm {
 			String description = mapper.readValue(recipe.path("description"), String.class);
 			String image_url = mapper.readValue(recipe.path("img_url"), String.class);
 			String name = mapper.readValue(recipe.path("name"), String.class);
-			r = new Recipe(name,description,null);
+			r = new Recipe(name, description, getImage(image_url));
 
 			String ingredientsJson = mapper.readValue(recipe.path("ingredients"), String.class);
 			r.parseIngredientsFromJson(ingredientsJson);
+			String directionsJson = mapper.readValue(recipe.path("directions"), String.class);
+			r.parseDirectionsFromJson(directionsJson);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// parse the request, pull any image URLs as a byte array, then:
-		//  (where bitmapdata is a byte array)
-		//Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata , 0, bitmapdata .length);
 
 		//rooNode.path try to get list of keys and get info from there
 		//run with recipeID = 1 ==> simple soup
@@ -196,7 +213,7 @@ public class Comm {
 		String line;
 		StringBuffer jsonString = new StringBuffer();
 		try {
-			URL url = new URL("http://96.126.122.162:9222/chef/" + relUrl);
+			URL url = new URL(serverRoot + relUrl);
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 

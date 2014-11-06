@@ -57,8 +57,10 @@ public class Recipe {
 			Iterator<JsonNode> ite = node.getElements();
 			while (ite.hasNext()) {
 				JsonNode dir = ite.next();
-				String name = dir.path("name").getTextValue();
-				Direction d = new Direction(name);
+				String text = mapper.readValue(dir.path("text"), String.class);
+				//String text = dir.path("text").getTextValue();
+
+				Direction d = new Direction(text);
 				directions.add(d);
 			}
 		} catch (Exception e) {
