@@ -43,12 +43,8 @@ public class LoginActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	/*Intent intent = new Intent(this, DisplayMessageActivity.class);
-EditText editText = (EditText) findViewById(R.id.edit_message);
-String message = editText.getText().toString();
-intent.putExtra(EXTRA_MESSAGE, message);
-	 * */
-	public void ValidatesigninPressed(View view)
+    //changed function name to fit naming conventions. See '<button>' in activity_login.xml
+	public void validateSignInPressed(View view)
 	{
 		EditText editTextUsername = (EditText) findViewById(R.id.input_username);
 		String strUsername = editTextUsername.getText().toString();
@@ -69,6 +65,7 @@ intent.putExtra(EXTRA_MESSAGE, message);
 	public void loginFail(String msg)
 	{
 		TextView invalidlogin = (TextView) findViewById(R.id.invalidlogin);
+        invalidlogin.setText(msg); //Added this to make use of msg (the error message).
 		invalidlogin.setVisibility(View.VISIBLE);
 	}
 

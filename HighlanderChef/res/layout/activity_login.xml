@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login"
-	    android:onClick="ValidatesigninPressed"/>
+	    android:onClick="validateSignInPressed"/> <!-- Changed function name to conventions. See function in login_activity.java -->
     
 
 </LinearLayout>

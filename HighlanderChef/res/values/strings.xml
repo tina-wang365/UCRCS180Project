@@ -30,6 +30,7 @@
     <string name="title_activity_make_arecipe3">MakeARecipe3</string>
     <string name="Remember_password">Remember Password</string>
     <string name="Confirm_Password">Confirm Password</string>
+    <string name="invalidSignUp">Invalid Sign-up!</string> <!-- Added Text to GUI (TINA) Check TextView box in activity_signup.xml error-->
     <string name="Enter_recipe_name">Enter a recipe name</string>
     <string name="Enter_despription">Enter description of recipe</string>
     <string name="Enter_est_time">Enter estimate cook time</string>
