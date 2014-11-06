@@ -164,6 +164,8 @@ public class Comm {
 			r.parseIngredientsFromJson(ingredientsJson);
 			String directionsJson = mapper.readValue(node.path("directions"), String.class);
 			r.parseDirectionsFromJson(directionsJson);
+			String categoriesJson = mapper.readValue(node.path("categories"), String.class);
+			r.parseCategoriesFromJson(categoriesJson);
 
 			return r;
 		} catch (Exception e) {
