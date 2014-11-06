@@ -1,5 +1,6 @@
 package com.highlanderchef;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,10 +15,12 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
-import android.media.Image;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class Comm {
 	private static String serverRoot = "http://96.126.122.162:9222/chef/";
+	private static String serverImgRoot = "http://96.126.122.162:9223/";
 	private String lastJSON;
 	private String email;
 	private String authToken;
@@ -136,15 +139,35 @@ public class Comm {
 		}
 	}
 
-	private Image getImage(String relUrl) {
-		// TODO: get from serverroot/img/{relUrl}
-		// serverRoot + "img/" + relUrl
+	private Bitmap getImage(String relUrl) {
+		System.out.println("getImage(" + serverImgRoot + relUrl);
+		if (relUrl == null) {
+			return null;
+		}
 
+		try {
+			URL url = new URL(serverImgRoot + relUrl);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setDoInput(true);
+			connection.setRequestMethod("GET");
 
-		// parse the request, pull any image URLs as a byte array, then:
-		//  (where bitmapdata is a byte array)
-		//Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata , 0, bitmapdata .length);
+			System.out.println("getImage sees code " + connection.getResponseCode());
+			if (connection.getResponseCode() != 200) {
+				connection.disconnect();
+				return null;
+			}
 
+			int len = connection.getContentLength();
+			System.out.println("getImage sees content-length " + connection.getContentLength());
+			byte[] imgData = new byte[len];
+			BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
+			bis.read(imgData);
+			Bitmap bitmap = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
+			connection.disconnect();
+			return bitmap;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

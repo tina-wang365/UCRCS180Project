@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import android.graphics.Bitmap;
 import android.media.Image;
 
 
@@ -13,14 +14,14 @@ public class Recipe {
 	String name;
 	String description;
 
-	Image mainImage;
+	Bitmap mainImage;
 
 	ArrayList<String> categories;
 	ArrayList<Ingredient> ingredients;
 	ArrayList<Direction> directions;
 	//add categories, description, img_url, name, rid
 
-	public Recipe(String name, String description, Image mainImage) {
+	public Recipe(String name, String description, Bitmap mainImage) {
 		this.name = name;
 		this.description = description;
 		this.mainImage = mainImage;
