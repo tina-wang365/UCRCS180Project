@@ -122,7 +122,7 @@ public class Comm {
 		req.put("keyword", search);
 		apiRequest("search", req);
 
-		// TODO: process whatever JSON we are handed back and
+		// 		 process whatever JSON we are handed back and
 		//       spin up some Recipe objects, fill them in
 		//       and return those
 		ObjectMapper mapper = new ObjectMapper();
@@ -135,11 +135,6 @@ public class Comm {
 				JsonNode r = ite.next();
 				ls.add(parseRecipe(r));
 			}
-			//Recipe[] recipes = mapper.readValue(rootNode.path("recipes"),
-			//									  Recipe[]);
-			// TODO: walk the list and add elems to ls
-
-
 			return ls;
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
