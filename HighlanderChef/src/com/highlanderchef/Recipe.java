@@ -7,7 +7,6 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import android.graphics.Bitmap;
-import android.media.Image;
 
 
 public class Recipe {
@@ -48,6 +47,14 @@ public class Recipe {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void addDirection(String text, Bitmap bmp) {
+		directions.add(new Direction(text, bmp));
+	}
+
+	public void addDirection(String text, ArrayList<Bitmap> bmps) {
+		directions.add(new Direction(text, bmps));
 	}
 
 	public void parseDirectionsFromJson(String json) {

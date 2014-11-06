@@ -21,6 +21,9 @@ import android.graphics.BitmapFactory;
 public class Comm {
 	private static String serverRoot = "http://96.126.122.162:9222/chef/";
 	private static String serverImgRoot = "http://96.126.122.162:9223/";
+	private static boolean runningAndroid = true;
+
+
 	private String lastJSON;
 	private String email;
 	private String authToken;
@@ -57,6 +60,7 @@ public class Comm {
 	}
 
 	public static void main(String[] args) {
+		runningAndroid = false;
 		Comm c = new Comm();
 		c.apiRequest("", null);
 		c.login("test@test.net", "test1234");
@@ -159,6 +163,10 @@ public class Comm {
 
 			int len = connection.getContentLength();
 			System.out.println("getImage sees content-length " + connection.getContentLength());
+
+			if (!runningAndroid) {
+				return null;
+			}
 			byte[] imgData = new byte[len];
 			BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
 			bis.read(imgData);
