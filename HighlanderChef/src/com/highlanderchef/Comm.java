@@ -59,7 +59,11 @@ public class Comm {
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasGOODpasswords"));
 
 		c.searchRecipes("soup");
-		c.getRecipe(1);
+		Recipe simple = c.getRecipe(1);
+		ArrayList<Ingredient> list = simple.ingredients;
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(i + " " + list.get(i).amount + " " + list.get(i).name);
+		}
 	}
 
 	public int newAccount(String email, String password) {
@@ -143,7 +147,10 @@ public class Comm {
 			String description = mapper.readValue(recipe.path("description"), String.class);
 			String image_url = mapper.readValue(recipe.path("img_url"), String.class);
 			String name = mapper.readValue(recipe.path("name"), String.class);
-			//r = new Recipe(name,description,null);
+			r = new Recipe(name,description,null);
+
+			String ingredientsJson = mapper.readValue(recipe.path("ingredients"), String.class);
+			r.parseIngredientsFromJson(ingredientsJson);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

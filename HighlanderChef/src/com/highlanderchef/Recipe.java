@@ -1,6 +1,7 @@
 package com.highlanderchef;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -29,13 +30,18 @@ public class Recipe {
 		directions = new ArrayList<Direction>();
 	}
 
-	public void parseIngredientsFromJson(JsonNode node) {
+	public void parseIngredientsFromJson(String json) {
 		ObjectMapper mapper = new ObjectMapper();
 
 		try {
-			Ingredient[] list = mapper.readValue(node, Ingredient[].class);
-			for(int i = 0; i < list.length; i++) {
-				ingredients.add(list[i]);
+			JsonNode node = mapper.readTree(json);
+			Iterator<JsonNode> ite = node.getElements();
+			while (ite.hasNext()) {
+				JsonNode ing = ite.next();
+				String name = mapper.readValue(ing.path("name"), String.class);
+				Double amount = mapper.readValue(ing.path("amount"), Double.class);
+				Ingredient ingr = new Ingredient(name, amount);
+				ingredients.add(ingr);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
