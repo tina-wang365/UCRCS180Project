@@ -31,6 +31,12 @@
         android:layout_height="wrap_content"
         android:text="@string/Remember_password" />
     
+    <TextView
+        android:id="@+id/invalidlogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Invalidlogin" />
+    
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
