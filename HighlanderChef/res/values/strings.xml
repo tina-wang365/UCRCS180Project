@@ -35,7 +35,7 @@
     <string name="Enter_despription">Enter description of recipe</string>
     <string name="Enter_est_time">Enter estimate cook time</string>
     <string name="Add_ingredients">Add Ingredients</string>
-    <string name="dummylistofingredietns">ingred 1 \ningred 2 \ningred 3 \ningred 4</string>
+    <string name="no_ingredients_added">(No Ingredients added yet)</string>
     <string name="Add_an_Ingredient">Add Ingredient</string>
     <string name="Ingredient_Amount">Amount</string>
     <string name="Add_another_ingredient_button">Add another Ingredient</string>
