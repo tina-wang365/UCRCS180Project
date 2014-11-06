@@ -18,7 +18,7 @@ public class Recipe {
 	ArrayList<String> categories;
 	ArrayList<Ingredient> ingredients;
 	ArrayList<Direction> directions;
-	//add  categories, description, img_url, name, rid
+	//add categories, description, img_url, name, rid
 
 	public Recipe(String name, String description, Image mainImage) {
 		this.name = name;

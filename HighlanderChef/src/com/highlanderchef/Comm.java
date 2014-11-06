@@ -148,48 +148,48 @@ public class Comm {
 		return null;
 	}
 
+	private Recipe parseRecipe(JsonNode node) {
+		ObjectMapper mapper = new ObjectMapper();
+		Recipe r = null;
+
+		try {
+			Integer id = mapper.readValue(node.path("rid"),Integer.class);
+			String categories = mapper.readValue(node.path("categories"), String.class);
+			String description = mapper.readValue(node.path("description"), String.class);
+			String image_url = mapper.readValue(node.path("img_url"), String.class);
+			String name = mapper.readValue(node.path("name"), String.class);
+			r = new Recipe(name, description, getImage(image_url));
+
+			String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
+			r.parseIngredientsFromJson(ingredientsJson);
+			String directionsJson = mapper.readValue(node.path("directions"), String.class);
+			r.parseDirectionsFromJson(directionsJson);
+
+			return r;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public Recipe getRecipe(int recipeID) {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("rid", Integer.toString(recipeID));
 		apiRequest("get", req);
 
-		Recipe r = null;
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode rootNode;
 		try {
 			rootNode = mapper.readTree(lastJSON);
-			//r = mapper.readValue(rootNode.path("recipe"), Recipe.class); //returns Recipe.class (supposively)ignore this for now
+			return parseRecipe(rootNode.path("recipe"));
 
-			JsonNode recipe = rootNode.path("recipe");
-			Integer id = mapper.readValue(recipe.path("rid"),Integer.class);
-			String categories = mapper.readValue(recipe.path("categories"), String.class);
-			String description = mapper.readValue(recipe.path("description"), String.class);
-			String image_url = mapper.readValue(recipe.path("img_url"), String.class);
-			String name = mapper.readValue(recipe.path("name"), String.class);
-			r = new Recipe(name, description, getImage(image_url));
-
-			String ingredientsJson = mapper.readValue(recipe.path("ingredients"), String.class);
-			r.parseIngredientsFromJson(ingredientsJson);
-			String directionsJson = mapper.readValue(recipe.path("directions"), String.class);
-			r.parseDirectionsFromJson(directionsJson);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		//rooNode.path try to get list of keys and get info from there
-		//run with recipeID = 1 ==> simple soup
-		//parse "recipe" and fill in r
-
-		//status = mapper.readValue(rootNode.path("status"), Integer.class);
-		//should be able to say
-		// x = rootNode.readValue(rootNode.path("categories"), String.class);
-		//.path finds children
-
-
-
-		return r;
+		return null;
 	}
 
 	public int uploadRecipe(int stub) {
