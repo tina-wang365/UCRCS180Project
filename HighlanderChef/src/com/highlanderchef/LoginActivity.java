@@ -65,8 +65,7 @@ public class LoginActivity extends ActionBarActivity {
 	public void loginFail(String msg)
 	{
 		TextView invalidlogin = (TextView) findViewById(R.id.invalidlogin);
-        invalidlogin.setText(msg); //Added this to make use of msg (the error message).
-		invalidlogin.setVisibility(View.VISIBLE);
+        invalidlogin.setVisibility(View.VISIBLE);
 	}
 
 	private class LoginTask extends AsyncTask<String, Void, Boolean> {
