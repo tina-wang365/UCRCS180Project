@@ -1,9 +1,10 @@
 package com.highlanderchef;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MakeARecipe1 extends ActionBarActivity {
 
@@ -19,6 +20,11 @@ public class MakeARecipe1 extends ActionBarActivity {
 		getMenuInflater().inflate(R.menu.make_arecipe1, menu);
 		return true;
 	}
+	public void AddIngrediantPressed(View view)
+	{
+		// TODO: only process one of these at once
+
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -31,6 +37,6 @@ public class MakeARecipe1 extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	
+
+
 }
