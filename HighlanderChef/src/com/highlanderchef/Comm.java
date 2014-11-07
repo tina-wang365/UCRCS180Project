@@ -2,6 +2,7 @@ package com.highlanderchef;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -16,6 +17,7 @@ import org.codehaus.jackson.map.ObjectWriter;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 public class Comm {
 	private static String serverRoot = "http://96.126.122.162:9222/chef/";
@@ -202,6 +204,30 @@ public class Comm {
 		return null;
 	}
 
+	// returns a new URL for the uploaded image, or "" on failure
+	public String imageUpload(Bitmap bmp) {
+		System.out.println("imageUpload");
+		try {
+			HashMap<String, Object> o = new HashMap<>();
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			if (bmp.compress(Bitmap.CompressFormat.PNG, 90, stream)) {
+				o.put("bmp", Base64.encode(stream.toByteArray(), Base64.DEFAULT));
+				int ret = apiRequest("imageupload", o);
+				if (lastStatus == 1) {
+					String url = mapper.readValue(rootNode.path("image_url"), String.class);
+					return url;
+				} else {
+					return "";
+				}
+			} else {
+				return "";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
 	private void parseDirections(Recipe r, String json) {
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -260,7 +286,22 @@ public class Comm {
 		return parseRecipe(rootNode.path("recipe"));
 	}
 
-	public int uploadRecipe(int stub) {
+
+
+	public int uploadRecipe(Recipe r) {
+		HashMap<String, Object> req = new HashMap<>();
+		req.put("uid", Integer.toString(id));
+		HashMap<String, Object> recipe = new HashMap<>();
+		recipe.put("rid", r.id);
+		recipe.put("name", r.name);
+		recipe.put("description", r.description);
+		recipe.put("cookTime", r.cookTime);
+		recipe.put("image_url", imageUpload(r.mainImage));
+		recipe.put("categories", "STUB");
+		recipe.put("ingredients", r.ingredients);
+		recipe.put("directions", r.directions);
+
+		req.put("recipe", recipe);
 		return NOT_IMPL;
 	}
 
