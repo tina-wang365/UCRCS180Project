@@ -16,6 +16,11 @@ public class MakeARecipe3 extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_make_a_recipe3);
+		Intent intent = getIntent();
+		recipe = (Recipe)intent.getSerializableExtra("recipe");
+		TextView tv_header = (TextView) findViewById(R.id.makearecipe3header);
+		String header = tv_header.getText().toString();
+		tv_header.setText(header + "for " + recipe.getName());
 	}
 
 	@Override
@@ -39,8 +44,6 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 	public void addAnIngredientPressed(View view)
 	{
-		Intent intent = getIntent();
-		recipe = (Recipe)intent.getSerializableExtra("recipe");
 		//gets text for newly added direction
 		EditText edittext_new_dir = (EditText) findViewById(R.id.addadirection);
 		String new_dir = edittext_new_dir.getText().toString();

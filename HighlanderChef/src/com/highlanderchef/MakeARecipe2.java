@@ -21,6 +21,8 @@ public class MakeARecipe2 extends ActionBarActivity {
 		TextView tv_header = (TextView) findViewById(R.id.makearecipe2header);
 		String header = tv_header.getText().toString();
 
+		Intent intent = getIntent();
+		recipe = (Recipe)intent.getSerializableExtra("recipe");
 		tv_header.setText(header + " for " + recipe.getName());
 	}
 
@@ -45,8 +47,7 @@ public class MakeARecipe2 extends ActionBarActivity {
 
 	public void addAnotherIngredientPressed(View view)
 	{
-		Intent intent = getIntent();
-		recipe = (Recipe)intent.getSerializableExtra("recipe");
+
 		//gets text for newly added ingredient
 		EditText edittext_new_ingred = (EditText) findViewById(R.id.addaningredient);
 		String new_ingred = edittext_new_ingred.getText().toString();
