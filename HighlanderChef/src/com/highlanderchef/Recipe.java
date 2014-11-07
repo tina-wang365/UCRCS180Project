@@ -1,5 +1,6 @@
 package com.highlanderchef;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -9,11 +10,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import android.graphics.Bitmap;
 
 
-public class Recipe {
+public class Recipe implements Serializable{
 	int id;
 	String name;
 	String description;
-
+	String cookTime;
 	Bitmap mainImage;
 
 	ArrayList<String> categories;
@@ -103,6 +104,18 @@ public class Recipe {
 	{
 		return this.ingredients.get(index);
 	}
+	public Direction getADirection(int index)
+	{
+		return this.directions.get(index);
+	}
+	public void AddADirection(String dir, Bitmap bmp)
+	{
+		this.directions.add(new Direction(dir, bmp));
+	}
+	public void AddADirection(String dir)
+	{
+		this.directions.add(new Direction(dir));
+	}
 	public int ingredientSize()
 	{
 		return this.ingredients.size();
@@ -111,6 +124,29 @@ public class Recipe {
 	{
 		return this.directions.size();
 	}
-
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+	public String getName()
+	{
+		return this.name;
+	}
+	public void setDescription(String d)
+	{
+		this.description = d;
+	}
+	public String getDescription()
+	{
+		return this.description;
+	}
+	public void setCookTime(String ct)
+	{
+		this.cookTime = ct;
+	}
+	public String getCookTime()
+	{
+		return this.cookTime;
+	}
 
 }

@@ -34,11 +34,15 @@
     <string name="Enter_recipe_name">Enter a recipe name</string>
     <string name="Enter_despription">Enter description of recipe</string>
     <string name="Enter_est_time">Enter estimate cook time</string>
+    <string name="MakeARecipe2Header">Add Ingredients</string>
     <string name="Add_ingredients">Add Ingredients</string>
     <string name="no_ingredients_added">(No Ingredients added yet)</string>
     <string name="Add_an_Ingredient">Add Ingredient</string>
     <string name="Ingredient_Amount">Amount</string>
     <string name="Add_another_ingredient_button">Add another Ingredient</string>
     <string name="Add_directions_button">Add directions</string>
+    <string name="MakeARecipe3Header">Add Directions</string>
+    <string name="no_directions_added">(No directions added yet)</string>
+    <string name="Enter_a_direction">Enter a step</string>
 
 </resources>

@@ -6,8 +6,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 public class MakeARecipe1 extends ActionBarActivity {
+	Recipe recipe = new Recipe();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +25,27 @@ public class MakeARecipe1 extends ActionBarActivity {
 	}
 	public void AddIngrediantPressed(View view)
 	{
-		Intent intent = new Intent(this, MakeARecipe2.class);
-		startActivity(intent);
 
+		EditText edittext_name = (EditText) findViewById(R.id.recipe_title);
+		String new_name = edittext_name.getText().toString();
+
+		//make sure the length of recipe name is not 0
+		if(new_name.length() == 0)
+			return;
+
+		EditText edittext_descr = (EditText) findViewById(R.id.recipe_description);
+		String new_descr = edittext_descr.getText().toString();
+
+		EditText edittext_time = (EditText) findViewById(R.id.recipe_est_time);
+		String new_time = edittext_time.getText().toString();
+
+		recipe.setName(new_name);
+		recipe.setDescription(new_descr);
+		recipe.setCookTime(new_time);
+
+		Intent intent = new Intent(this, MakeARecipe2.class);
+		intent.putExtra("recipe", recipe);
+		startActivity(intent);
 	}
 
 	@Override

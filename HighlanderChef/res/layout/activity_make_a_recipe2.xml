@@ -8,6 +8,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.highlanderchef.MakeARecipe2" >
 
+   <TextView
+       	android:id="@+id/makearecipe2header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/MakeARecipe2Header" />
+   
     <TextView
         android:id="@+id/listofaddedingredients"
         android:layout_width="wrap_content"
@@ -51,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/button1"
         android:layout_below="@+id/button1"
-        android:onClick="addDorectoionsPressed"
+        android:onClick="addDirectionsPressed"
         android:text="@string/Add_directions_button" />
 
 </RelativeLayout>

@@ -23,4 +23,12 @@ public class Direction {
 		this.text = text;
 		this.images = bmps;
 	}
+
+	public String getDirectionText()
+	{
+		return this.text;
+	}
+
+
+
 }

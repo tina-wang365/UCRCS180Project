@@ -52,6 +52,10 @@
             android:name=".MakeARecipe2"
             android:label="@string/title_activity_make_arecipe2" >
         </activity>
+        <activity
+            android:name=".MakeARecipe3"
+            android:label="@string/title_activity_make_arecipe3" >
+        </activity>
     </application>
 
 </manifest>
