@@ -2,6 +2,7 @@ package com.highlanderchef;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -10,7 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
@@ -67,6 +70,14 @@ public class Comm {
 	public String getLastJSON() {
 		return lastJSON;
 	}
+	public static void prettyPrint(String s) throws JsonGenerationException, JsonMappingException, IOException {
+		Object json = mapper.readValue(s, Object.class);
+		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+	}
+	public static void prettyPrint(JsonNode s) throws JsonGenerationException, JsonMappingException, IOException {
+		Object json = mapper.readValue(s, Object.class);
+		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+	}
 
 	public static void main(String[] args) {
 		runningAndroid = false;
@@ -77,7 +88,7 @@ public class Comm {
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasGOODpasswords"));
 
 		c.searchRecipes("soup");
-		Recipe simple = c.getRecipe(2);
+		Recipe simple = c.getRecipe(1);
 		ArrayList<Ingredient> list = simple.ingredients;
 		for (int i = 0; i < list.size(); i++) {
 			System.out.println(i + " " + list.get(i).amount + " " + list.get(i).name);
@@ -93,6 +104,7 @@ public class Comm {
 		}
 		if(simple.categories.size() == 0)
 			System.out.println("there are no categories");
+
 	}
 
 	public int newAccount(String email, String password) {
@@ -143,6 +155,18 @@ public class Comm {
 		while(ite.hasNext())
 		{
 			JsonNode r = ite.next();
+			try {
+				prettyPrint(r);
+			} catch (JsonGenerationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			ls.add(parseRecipe(r));
 		}
 		return ls;
