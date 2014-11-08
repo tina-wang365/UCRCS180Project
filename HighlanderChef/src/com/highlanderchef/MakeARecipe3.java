@@ -75,7 +75,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 	public void submitRecipePressed(View view)
 	{
 		Comm c = new Comm();
-		int ret = c.uploadRecipe(1);
+		int ret = c.uploadRecipe(recipe);
 		if(ret == Comm.SUCCESS)
 		{
 			Intent intent = new Intent(this, MainMenu.class);
