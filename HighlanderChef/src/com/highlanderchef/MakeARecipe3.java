@@ -1,6 +1,7 @@
 package com.highlanderchef;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -72,23 +73,51 @@ public class MakeARecipe3 extends ActionBarActivity {
 		edittext_new_dir.getText().clear();
 	}
 
-	public void submitRecipePressed(View view)
-	{
-		Comm c = new Comm();
-		int ret = c.uploadRecipe(recipe);
-		if(ret == Comm.SUCCESS)
-		{
-			Intent intent = new Intent(this, MainMenu.class);
-			intent.putExtra("Recipe Confirmation", "Recipe added successfully");
-			startActivity(intent);
-		}
-		else
-		{
-			//TODO implement case for failure.
-		}
-	}
+	private static int RESULT_LOAD_IMAGE = 1;
 	public void addImageToDirection(View view)
 	{
+		Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(i, RESULT_LOAD_IMAGE);
+	}
+
+
+	public void submitRecipePressed(View view)
+	{
+		new UploadRecipeTask().execute(recipe);
+
+	}
+	public void onSuccess()
+	{
+		Intent intent = new Intent(this, MainMenu.class);
+		intent.putExtra("Recipe Confirmation", "Recipe added successfully");
+		startActivity(intent);
+	}
+	public void onFailure()
+	{
+		Intent intent = new Intent(this, MainMenu.class);
+		intent.putExtra("Recipe Confirmation", "Recipe not added");
+		startActivity(intent);
+		//TODO implement better case for failure.
+	}
+	private class UploadRecipeTask extends AsyncTask<Recipe, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(Recipe... params) {
+			Comm c = new Comm();
+			int ret = c.uploadRecipe(params[0]);
+
+			return (ret == Comm.SUCCESS);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				onSuccess();
+			} else {
+				onFailure();
+
+			}
+		}
 
 	}
 }
