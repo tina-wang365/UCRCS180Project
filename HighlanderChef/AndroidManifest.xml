@@ -56,6 +56,10 @@
             android:name=".MakeARecipe3"
             android:label="@string/title_activity_make_arecipe3" >
         </activity>
+        <activity
+            android:name=".RecipeForumActivity"
+            android:label="@string/title_activity_recipe_forum" >
+        </activity>
     </application>
 
 </manifest>
