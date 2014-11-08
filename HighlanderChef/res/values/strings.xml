@@ -48,6 +48,6 @@
     <string name="Submit_Recipe">Submit Recipe</string>
     <string name="ConfirmationMessage">Recipe successfully added</string>
     <string name="title_activity_recipe_forum">RecipeForumActivity</string>
-    <string name="AddImagetoDirection">Add Image</string>"
+    <string name="AddImagetoDirection">Add Image</string>
 
 </resources>
