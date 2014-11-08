@@ -1,10 +1,12 @@
 package com.highlanderchef;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import android.graphics.Bitmap;
 
-public class Direction {
+public class Direction implements Serializable
+{
 	String text;
 
 	ArrayList<Bitmap> images;

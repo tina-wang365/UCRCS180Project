@@ -57,6 +57,9 @@
         android:layout_below="@+id/listofaddedingredients"
         android:layout_marginTop="14dp"
         android:ems="10"
-        android:hint="@string/Add_an_Ingredient" />
+        android:hint="@string/Add_an_Ingredient" >
+    
+   		 <requestFocus />
+    </EditText>
 
 </RelativeLayout>

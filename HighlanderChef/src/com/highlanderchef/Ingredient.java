@@ -1,6 +1,9 @@
 package com.highlanderchef;
 
-public class Ingredient {
+import java.io.Serializable;
+
+public class Ingredient implements Serializable
+{
 	String name;
 
 	String amount; //ex. 3, 1/2 cup, 5 ounces.

@@ -13,34 +13,49 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/MakeARecipe3Header" />
-    
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/addadirection"
+        android:layout_below="@+id/addadirection"
+        android:onClick="addADirectionPressed"
+        android:text="@string/Add_directions_button" />
+
     <TextView
         android:id="@+id/listofingredientsadded"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
+        android:layout_alignLeft="@+id/makearecipe3header"
+        android:layout_below="@+id/makearecipe3header"
         android:layout_marginTop="15dp"
         android:text="@string/no_directions_added" />
-    
+
     <EditText
         android:id="@+id/addadirection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
+        android:layout_alignLeft="@+id/listofingredientsadded"
         android:layout_below="@+id/listofingredientsadded"
         android:ems="10"
         android:hint="@string/Enter_a_direction" >
 
         <requestFocus />
     </EditText>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/addadirection"
-        android:layout_below="@+id/addadirection"
-        android:layout_marginTop="25dp"
-        android:onClick="addAnIngredientPressed"
-        android:text="@string/Add_another_ingredient_button" />
+	
+	<Button
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:onClick="addImageToDirection"
+         android:text="@string/AddImagetoDirection" />
+    
+     <Button
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignLeft="@+id/button1"
+         android:layout_below="@+id/button1"
+         android:onClick="submitRecipePressed"
+         android:text="@string/Submit_Recipe" />
 
 </RelativeLayout>

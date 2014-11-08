@@ -16,8 +16,10 @@ public class MakeARecipe3 extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_make_a_recipe3);
+
 		Intent intent = getIntent();
 		recipe = (Recipe)intent.getSerializableExtra("recipe");
+
 		TextView tv_header = (TextView) findViewById(R.id.makearecipe3header);
 		String header = tv_header.getText().toString();
 		tv_header.setText(header + "for " + recipe.getName());
@@ -42,7 +44,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void addAnIngredientPressed(View view)
+	public void addADirectionPressed(View view)
 	{
 		//gets text for newly added direction
 		EditText edittext_new_dir = (EditText) findViewById(R.id.addadirection);
@@ -68,5 +70,25 @@ public class MakeARecipe3 extends ActionBarActivity {
 		recipe.AddADirection(new_dir);
 		textview_dir_list.setText(new_dir_list);
 		edittext_new_dir.getText().clear();
+	}
+
+	public void submitRecipePressed(View view)
+	{
+		Comm c = new Comm();
+		int ret = c.uploadRecipe(1);
+		if(ret == Comm.SUCCESS)
+		{
+			Intent intent = new Intent(this, MainMenu.class);
+			intent.putExtra("Recipe Confirmation", "Recipe added successfully");
+			startActivity(intent);
+		}
+		else
+		{
+			//TODO implement case for failure.
+		}
+	}
+	public void addImageToDirection(View view)
+	{
+
 	}
 }
