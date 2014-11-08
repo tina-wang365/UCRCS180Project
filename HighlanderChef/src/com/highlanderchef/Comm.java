@@ -329,6 +329,8 @@ public class Comm {
 		recipe.put("directions", r.directions);
 
 		req.put("recipe", recipe);
+
+		apiRequest("uploadrecipe", req);
 		return NOT_IMPL;
 	}
 
