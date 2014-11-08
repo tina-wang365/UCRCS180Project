@@ -78,6 +78,13 @@ public class Comm {
 		Object json = mapper.readValue(s, Object.class);
 		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
 	}
+	//	public static void recipeToJson(Recipe r) {
+	//		int id = r.id;
+	//		String name = r.name;
+	//		String description = r.description;
+	//		String cookTime = r.cookTime;
+	//		//========
+	//	}
 
 	public static void main(String[] args) {
 		runningAndroid = false;
