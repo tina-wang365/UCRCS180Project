@@ -6,17 +6,34 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 
 public class MainMenu extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main_menu);
+
+		Intent intent = getIntent();
+		String con_msg = (String)intent.getSerializableExtra("Recipe Confirmation");
+		TextView tv_con_msg = (TextView) findViewById(R.id.confirmationMessage);
+		if(con_msg == null)
+		{
+
+			tv_con_msg.setVisibility(View.INVISIBLE);
+		}
+		else
+		{
+			//TODO test this
+			tv_con_msg.setText(con_msg);
+		}
+
 		String username = "";
 		String strWelcomeFormat = getResources().getString(R.string.Welcome_Chef);
 		String strWelcomeMsg = String.format(strWelcomeFormat,username);
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main_menu);
+
 	}
 
 	@Override
