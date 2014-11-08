@@ -2,6 +2,8 @@ package com.highlanderchef;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -10,12 +12,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 public class Comm {
 	private static String serverRoot = "http://96.126.122.162:9222/chef/";
@@ -67,6 +72,14 @@ public class Comm {
 	public String getLastJSON() {
 		return lastJSON;
 	}
+	public static void prettyPrint(String s) throws JsonGenerationException, JsonMappingException, IOException {
+		Object json = mapper.readValue(s, Object.class);
+		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+	}
+	public static void prettyPrint(JsonNode s) throws JsonGenerationException, JsonMappingException, IOException {
+		Object json = mapper.readValue(s, Object.class);
+		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+	}
 
 	public static void main(String[] args) {
 		runningAndroid = false;
@@ -77,7 +90,7 @@ public class Comm {
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasGOODpasswords"));
 
 		c.searchRecipes("soup");
-		Recipe simple = c.getRecipe(2);
+		Recipe simple = c.getRecipe(1);
 		ArrayList<Ingredient> list = simple.ingredients;
 		for (int i = 0; i < list.size(); i++) {
 			System.out.println(i + " " + list.get(i).amount + " " + list.get(i).name);
@@ -93,6 +106,7 @@ public class Comm {
 		}
 		if(simple.categories.size() == 0)
 			System.out.println("there are no categories");
+
 	}
 
 	public int newAccount(String email, String password) {
@@ -143,6 +157,18 @@ public class Comm {
 		while(ite.hasNext())
 		{
 			JsonNode r = ite.next();
+			try {
+				prettyPrint(r);
+			} catch (JsonGenerationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			ls.add(parseRecipe(r));
 		}
 		return ls;
@@ -200,6 +226,30 @@ public class Comm {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	// returns a new URL for the uploaded image, or "" on failure
+	public String imageUpload(Bitmap bmp) {
+		System.out.println("imageUpload");
+		try {
+			HashMap<String, Object> o = new HashMap<>();
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			if (bmp.compress(Bitmap.CompressFormat.PNG, 90, stream)) {
+				o.put("bmp", Base64.encode(stream.toByteArray(), Base64.DEFAULT));
+				int ret = apiRequest("imageupload", o);
+				if (lastStatus == 1) {
+					String url = mapper.readValue(rootNode.path("image_url"), String.class);
+					return url;
+				} else {
+					return "";
+				}
+			} else {
+				return "";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	private void parseDirections(Recipe r, String json) {
@@ -260,7 +310,24 @@ public class Comm {
 		return parseRecipe(rootNode.path("recipe"));
 	}
 
-	public int uploadRecipe(int stub) {
+
+
+	public int uploadRecipe(Recipe r) {
+		HashMap<String, Object> req = new HashMap<>();
+		req.put("uid", Integer.toString(id));
+		HashMap<String, Object> recipe = new HashMap<>();
+		recipe.put("rid", r.id);
+		recipe.put("name", r.name);
+		recipe.put("description", r.description);
+		recipe.put("cookTime", r.cookTime);
+		recipe.put("image_url", imageUpload(r.mainImage));
+		recipe.put("categories", "STUB");
+		recipe.put("ingredients", r.ingredients);
+		recipe.put("directions", r.directions);
+
+		req.put("recipe", recipe);
+
+		apiRequest("uploadrecipe", req);
 		return NOT_IMPL;
 	}
 

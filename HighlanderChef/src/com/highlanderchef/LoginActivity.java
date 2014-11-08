@@ -43,7 +43,7 @@ public class LoginActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-    //changed function name to fit naming conventions. See '<button>' in activity_login.xml
+	//changed function name to fit naming conventions. See '<button>' in activity_login.xml
 	public void validateSignInPressed(View view)
 	{
 		EditText editTextUsername = (EditText) findViewById(R.id.input_username);
@@ -65,7 +65,7 @@ public class LoginActivity extends ActionBarActivity {
 	public void loginFail(String msg)
 	{
 		TextView invalidlogin = (TextView) findViewById(R.id.invalidlogin);
-        invalidlogin.setVisibility(View.VISIBLE);
+		invalidlogin.setVisibility(View.VISIBLE);
 	}
 
 	private class LoginTask extends AsyncTask<String, Void, Boolean> {
@@ -73,7 +73,7 @@ public class LoginActivity extends ActionBarActivity {
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
 			int ret = c.login(params[0],  params[1]);
-            // Log: ret
+			// Log: ret
 			return (ret == Comm.SUCCESS);
 		}
 

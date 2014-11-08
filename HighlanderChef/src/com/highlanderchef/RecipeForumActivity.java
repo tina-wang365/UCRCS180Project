@@ -58,5 +58,4 @@ public class RecipeForumActivity extends ActionBarActivity {
     //TODO: public createRating
     //TODO: public createWholeComment
 
-
 }

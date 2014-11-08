@@ -17,6 +17,13 @@ public class MakeARecipe2 extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_make_a_recipe2);
+
+		TextView tv_header = (TextView) findViewById(R.id.makearecipe2header);
+		String header = tv_header.getText().toString();
+
+		Intent intent = getIntent();
+		recipe = (Recipe)intent.getSerializableExtra("recipe");
+		tv_header.setText(header + " for " + recipe.getName());
 	}
 
 	@Override
@@ -40,6 +47,7 @@ public class MakeARecipe2 extends ActionBarActivity {
 
 	public void addAnotherIngredientPressed(View view)
 	{
+
 		//gets text for newly added ingredient
 		EditText edittext_new_ingred = (EditText) findViewById(R.id.addaningredient);
 		String new_ingred = edittext_new_ingred.getText().toString();
@@ -58,7 +66,7 @@ public class MakeARecipe2 extends ActionBarActivity {
 		String new_ingred_list = "";
 		for(int i = 0; i < recipe.ingredientSize(); ++i)
 		{
-			new_ingred_list += recipe.getAnIngredient(i).amount + '\t' + recipe.getAnIngredient(i).name + '\n';
+			new_ingred_list += recipe.getAnIngredient(i).getAmount()+ '\t' + recipe.getAnIngredient(i).getName() + '\n';
 		}
 		new_ingred_list += new_ingred_amount + '\t' + new_ingred;
 
@@ -68,9 +76,10 @@ public class MakeARecipe2 extends ActionBarActivity {
 		edittext_new_ingred_amount.getText().clear();
 	}
 
-	public void addDorectoionsPressed(View view)
+	public void addDirectionsPressed(View view)
 	{
 		Intent intent = new Intent(this, MakeARecipe3.class);
+		intent.putExtra("recipe", recipe);
 		startActivity(intent);
 	}
 }

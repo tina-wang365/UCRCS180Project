@@ -9,31 +9,17 @@
     tools:context="com.highlanderchef.MakeARecipe2" >
 
     <TextView
-        android:id="@+id/listofaddedingredients"
+        android:id="@+id/makearecipe2header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/no_ingredients_added" />
-
-    <EditText
-        android:id="@+id/addaningredient"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/listofaddedingredients"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="@string/Add_an_Ingredient" >
-
-        <requestFocus />
-    </EditText>
+        android:text="@string/MakeARecipe2Header" />
 
     <EditText
         android:id="@+id/ingredientmeasurement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/addaningredient"
-        android:layout_alignBottom="@+id/addaningredient"
-        android:layout_alignLeft="@+id/listofaddedingredients"
+        android:layout_alignLeft="@+id/makearecipe2header"
+        android:layout_below="@+id/addaningredient"
         android:ems="10"
         android:hint="@string/Ingredient_Amount" />
 
@@ -41,17 +27,39 @@
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/ingredientmeasurement"
-        android:layout_below="@+id/addaningredient"
+        android:layout_alignLeft="@+id/makearecipe2header"
+        android:layout_below="@+id/ingredientmeasurement"
         android:onClick="addAnotherIngredientPressed"
         android:text="@string/Add_another_ingredient_button" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button1"
+        android:layout_alignLeft="@+id/makearecipe2header"
         android:layout_below="@+id/button1"
-        android:onClick="addDorectoionsPressed"
+        android:onClick="addDirectionsPressed"
         android:text="@string/Add_directions_button" />
+
+    <TextView
+        android:id="@+id/listofaddedingredients"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/makearecipe2header"
+        android:layout_below="@+id/makearecipe2header"
+        android:layout_marginTop="20dp"
+        android:text="@string/no_ingredients_added" />
+
+    <EditText
+        android:id="@+id/addaningredient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ingredientmeasurement"
+        android:layout_below="@+id/listofaddedingredients"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="@string/Add_an_Ingredient" >
+    
+   		 <requestFocus />
+    </EditText>
 
 </RelativeLayout>
