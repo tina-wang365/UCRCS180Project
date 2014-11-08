@@ -2,11 +2,8 @@ package com.highlanderchef;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-<<<<<<< HEAD
 import java.io.ByteArrayOutputStream;
-=======
 import java.io.IOException;
->>>>>>> 750dc91487d99fe65cf869f67b2a53b17606e451
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
