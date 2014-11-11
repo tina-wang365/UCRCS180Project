@@ -45,8 +45,9 @@
     <string name="recipeTitle">DEFAULT RECIPE TITLE</string>
     <string name="nameOfRecipe"> Name of the recipe</string>
     <string name="defaultIngredientList"> DEFAULT INGREDIENT LIST</string>
-    <string name="degaultDirectionsList"> DEFAULT DIRECTIONS LIST</string>
+    <string name="defaultDirectionsList"> DEFAULT DIRECTIONS LIST</string>
     <string name="tapToComment">Tap here to make a comment!</string>
+    <string name="Comment">Comment</string>
     <!-- Refer to layout/activity_MakeARecipe3.xml -->
     <string name="MakeARecipe3Header">Add Directions</string>
     <string name="no_directions_added">(No directions added yet)</string>
@@ -55,5 +56,6 @@
     <string name="ConfirmationMessage">Recipe successfully added</string>
     <string name="title_activity_recipe_forum">RecipeForumActivity</string>
     <string name="AddImagetoDirection">Add Image</string>
+    <string name="title_activity_recipe__forum">Recipe_Forum</string>
 
 </resources>
