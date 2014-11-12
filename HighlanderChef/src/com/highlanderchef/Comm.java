@@ -346,7 +346,7 @@ public class Comm {
 
 		apiRequest("uploadrecipe", req);
 
-		return NOT_IMPL;
+		return SUCCESS;
 	}
 
 	public int postQuestion(int recipeId, String question) {
