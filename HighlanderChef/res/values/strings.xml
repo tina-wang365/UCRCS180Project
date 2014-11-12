@@ -59,5 +59,6 @@
     <string name="title_activity_recipe_forum">RecipeForumActivity</string>
     <string name="AddImagetoDirection">Add Image</string>
     <string name="title_activity_recipe__forum">Recipe_Forum</string>
+    <string name="submit_error">ERROR submitting recipe. Try Again</string>
 
 </resources>
