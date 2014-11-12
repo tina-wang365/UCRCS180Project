@@ -240,6 +240,7 @@ public class Comm {
 		try {
 			HashMap<String, Object> o = new HashMap<>();
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			bmp.reconfigure(1024, 768, Bitmap.Config.ARGB_8888);
 			if (bmp.compress(Bitmap.CompressFormat.PNG, 90, stream)) {
 				o.put("bmp", Base64.encode(stream.toByteArray(), Base64.DEFAULT));
 				int ret = apiRequest("imageupload", o);
