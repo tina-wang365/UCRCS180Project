@@ -28,7 +28,7 @@
 	    android:layout_alignBottom="@+id/submitComment"
 	    android:layout_alignLeft="@+id/submitComment"
 	    android:layout_marginBottom="60dp"
-	    android:max="100"
+	    android:max="5"
 	    android:numStars="5"
 	    android:onClick="addRatingPressed"
 	    android:rating="0.0"
