@@ -245,7 +245,7 @@ public class Comm {
 			bmp = Bitmap.createScaledBitmap(bmp, 1024, 768, false);
 			if (bmp.compress(Bitmap.CompressFormat.PNG, 90, stream)) {
 				o.put("bmp", Base64.encode(stream.toByteArray(), Base64.DEFAULT));
-				int ret = apiRequest("imageupload", o);
+				apiRequest("imageupload", o);
 				if (lastStatus == 1) {
 					String url = mapper.readValue(rootNode.path("image_url"), String.class);
 					return url;
@@ -326,6 +326,7 @@ public class Comm {
 		recipe.put("name", r.name);
 		recipe.put("description", r.description);
 		recipe.put("cookTime", r.cookTime);
+		System.out.println("uploadRecipe uploading main image");
 		recipe.put("image_url", imageUpload(r.mainImage));
 		recipe.put("categories", "STUB");
 		recipe.put("ingredients", r.ingredients);
@@ -337,19 +338,16 @@ public class Comm {
 			System.out.println("parseddirs serialization failed");
 			e.printStackTrace();
 		}
-		/*
-		 * ArrayList<>
-		for (int i = 0; i < r.directions.size(); i++) {
-			parsedDirections.append()
-		}
-		recipe.put("directions", parsedDirections);
-		 */
 
 		req.put("recipe", recipe);
 
 		apiRequest("uploadrecipe", req);
 
-		return SUCCESS;
+		if (lastStatus == 1) {
+			return SUCCESS;
+		} else {
+			return GENL_FAIL;
+		}
 	}
 
 	public int postQuestion(int recipeId, String question) {

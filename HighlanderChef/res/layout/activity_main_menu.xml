@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
@@ -17,10 +17,30 @@
         android:text="@string/Welcome_Chef"
         android:textSize="36sp" />
 
+    <TextView
+        android:id="@+id/confirmationMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button2"
+        android:layout_below="@+id/button1"
+        android:text="@string/ConfirmationMessage" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button2"
+        android:layout_alignRight="@+id/textView1"
+        android:layout_toRightOf="@+id/editText1"
+        android:onClick="SearchPressed"
+        android:text="@string/Search" />
+
     <EditText
         android:id="@+id/editText1"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button3"
+        android:layout_below="@+id/textView1"
         android:ems="10"
         android:hint="@string/Search_Recipes" >
 
@@ -28,30 +48,30 @@
     </EditText>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="BrowsePressed"
-        android:text="@string/Browse_Recipes" />
+        android:layout_alignLeft="@+id/button3"
+        android:layout_below="@+id/button3"
+        android:onClick="ViewMyRecipesPressed"
+        android:text="@string/View_My_Recipes" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button2"
+        android:layout_below="@+id/button2"
         android:onClick="ComposePressed"
         android:text="@string/Compose_Recipe" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="ViewMyRecipesPressed"
-        android:text="@string/View_My_Recipes" />
-    
-    <TextView 
-        android:id="@+id/confirmationMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ConfirmationMessage" />
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/editText1"
+        android:onClick="BrowsePressed"
+        android:text="@string/Browse_Recipes" />
 
-</LinearLayout>
+</RelativeLayout>

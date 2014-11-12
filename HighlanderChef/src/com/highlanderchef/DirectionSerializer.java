@@ -16,6 +16,7 @@ public class DirectionSerializer extends JsonSerializer<Direction> {
 		jgen.writeArrayFieldStart("img");
 		Comm c = new Comm();
 		for (int i = 0; i < value.images.size(); i++) {
+			System.out.println("DirectionSerializer adding image " + i);
 			jgen.writeString(c.imageUpload(value.images.get(i)));
 		}
 		jgen.writeEndArray();
