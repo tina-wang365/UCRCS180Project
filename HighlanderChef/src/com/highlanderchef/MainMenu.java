@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -81,6 +82,11 @@ public class MainMenu extends ActionBarActivity {
 
 	public void SearchPressed(View view)
 	{
-		//Intent intent = new Intent(this, )
+		EditText et_search_query = (EditText) findViewById(R.id.editText1);
+		String search_query = et_search_query.getText().toString();
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra("search_query", search_query);
+		startActivity(intent);
+
 	}
 }
