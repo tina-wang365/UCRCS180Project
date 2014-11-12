@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -19,12 +20,16 @@ public class BrowseActivity extends Activity {
 	public static final int LEFTPADDING = 14;
 	private ArrayList<LeveledCheckBox> CheckBoxList;
 	private Button cButton;
+	private Comm iComm;
+	private ArrayList<Category> CategoriesData;
 
 	//functions
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		iComm = new Comm();
 		CheckBoxList = new ArrayList<LeveledCheckBox>();
+		CategoriesData = new ArrayList<Category>();
 		ScrollView iScrollView = new ScrollView(this);
 		LinearLayout iLinearLayout = new LinearLayout(this);
 		iLinearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -40,11 +45,38 @@ public class BrowseActivity extends Activity {
 			@Override
 			public void onClick(View iView) {
 				//send category search to server
+				//get search results and pass them to result page
+				Intent intent = new Intent(BrowseActivity.this, BrowseResults.class);
+				Bundle bundle = new Bundle();
+
+				ArrayList<ArrayList<String> > SelectedCategories = new ArrayList<ArrayList<String> >();
+				int deepestLevel = 0;
+				for (int i = 0; i < CheckBoxList.size(); i++)
+				{
+					if (CheckBoxList.get(i).getLevel() != 0)
+						break;
+					if (CheckBoxList.get(i).getDeepestLevel() > deepestLevel)
+						deepestLevel = CheckBoxList.get(i).getDeepestLevel();
+				}
+				for (int i = 0; i <= deepestLevel; i++)
+					SelectedCategories.add(new ArrayList<String>());
+				for (int i = 0; i < CheckBoxList.size(); i++)
+				{
+					SelectedCategories.get(CheckBoxList.get(i).getLevel()).add(CheckBoxList.get(i).getText().toString());
+				}
+				for (int i = 0; i < deepestLevel; i++)
+					bundle.putStringArrayList(Integer.toString(i), SelectedCategories.get(i));
+				intent.putExtras(bundle);
+				startActivity(intent);
 			}
 		});
 
 		//Get categories' names
 		ArrayList<String> iCategoryNames = new ArrayList<String>();
+		CategoriesData = iComm.getCategories();
+		for (int i = 0; i < CategoriesData.size(); i++)
+			if (CategoriesData.get(i).level == 0)
+				iCategoryNames.add(CategoriesData.get(i).name);
 
 		//testing cases
 		iCategoryNames.add("foo");
@@ -82,7 +114,7 @@ public class BrowseActivity extends Activity {
 				{
 					LinearLayout iLinearLayout = ((LinearLayout) iCheckBox.getParent());
 					//get categories' names
-					ArrayList<String> LowerCategoryList = new ArrayList<String>();
+					ArrayList<String> LowerCategoryList = getCategoryChildren(iCheckBox.getText().toString(),iCheckBox.getLevel());
 
 					//testing cases
 					LowerCategoryList.add("Childfoo");
@@ -101,6 +133,7 @@ public class BrowseActivity extends Activity {
 						newCheckBox.setOnClickListener(CheckboxGetsChecked(newCheckBox));
 						iCheckBox.addChild(newCheckBox);
 						iLinearLayout.addView(newCheckBox,iLinearLayout.indexOfChild(iCheckBox) + 1);
+						CheckBoxList.add(newCheckBox);
 					}
 					//Reorder the stack so the children are displayed underneath the parent
 					reorderItems();
@@ -119,8 +152,28 @@ public class BrowseActivity extends Activity {
 		cButton.bringToFront();
 		for (int i = 0; i < CheckBoxList.size() ; i++)
 		{
-			CheckBoxList.get(i).bringToFront();
+			if (CheckBoxList.get(i).getLevel() == 0)
+				CheckBoxList.get(i).bringToFront();
+			else
+				break;
 		}
+	}
+
+	private ArrayList<String> getCategoryChildren(String iName, int iLevel)
+	{
+		ArrayList<String> Children = new ArrayList<String>();
+		boolean foundParent = false;
+		int searchLevel = iLevel + 1;
+		for (int i = 0; i < CategoriesData.size() ; i++)
+		{
+			if (CategoriesData.get(i).name == iName)
+				foundParent = true;
+			if (foundParent && CategoriesData.get(i).level == searchLevel)
+				Children.add(CategoriesData.get(i).name);
+			if (foundParent && CategoriesData.get(i).level == iLevel)
+				return Children;
+		}
+		return Children;
 	}
 }
 
@@ -148,11 +201,11 @@ class ID_Maker
 class LeveledCheckBox extends CheckBox
 {
 	private final int cLevel;
-	private final ArrayList<CheckBox> cChildren;
+	private final ArrayList<LeveledCheckBox> cChildren;
 	public LeveledCheckBox(Context iContext, int iLevel)
 	{
 		super(iContext);
-		cChildren = new ArrayList<CheckBox>();
+		cChildren = new ArrayList<LeveledCheckBox>();
 		cLevel = iLevel;
 	}
 	public int getLevel()
@@ -170,6 +223,19 @@ class LeveledCheckBox extends CheckBox
 	public ArrayList<LeveledCheckBox> getCheck()
 	{
 		return null;
+	}
+	public int getDeepestLevel()
+	{
+		if (cChildren.isEmpty())
+			return cLevel;
+		else
+		{
+			int biggest = 0;
+			for (int i = 0; i < cChildren.size() ; i++)
+				if (cChildren.get(i).getDeepestLevel() > biggest)
+					biggest = cChildren.get(i).getDeepestLevel();
+			return biggest;
+		}
 	}
 	@Override
 	public void bringToFront()
