@@ -12,8 +12,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.module.SimpleModule;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,12 +43,19 @@ public class Comm {
 	public static final int GENL_FAIL = -4;
 	public static final int NOT_IMPL = -42;
 
+	private void registerMapperSerializers() {
+		SimpleModule module = new SimpleModule("DirectionModule", new Version(1,0,0,null));
+		module.addSerializer(Direction.class, new DirectionSerializer());
+		mapper.registerModule(module);
+	}
+
 	public Comm() {
 		lastJSON = "";
 		email = "";
 		authToken = "";
 
 		mapper = new ObjectMapper();
+		registerMapperSerializers();
 	}
 
 	public Comm(String email, String authToken) {
@@ -56,6 +64,7 @@ public class Comm {
 		lastJSON = "";
 
 		mapper = new ObjectMapper();
+		registerMapperSerializers();
 	}
 
 	public String getEmail() {
@@ -90,6 +99,9 @@ public class Comm {
 		runningAndroid = false;
 		Comm c = new Comm();
 		c.login("test@test.net", "test1234");
+
+		c.getCategories();
+
 		c.newAccount("bob@test.net", "bobhasbadpasswords");
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasbadpasswords"));
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasGOODpasswords"));
@@ -247,8 +259,6 @@ public class Comm {
 	}
 
 	private void parseDirections(Recipe r, String json) {
-		ObjectMapper mapper = new ObjectMapper();
-
 		try {
 			JsonNode node = mapper.readTree(json);
 			Iterator<JsonNode> ite = node.getElements();
@@ -272,7 +282,6 @@ public class Comm {
 	}
 
 	private Recipe parseRecipe(JsonNode node) {
-		ObjectMapper mapper = new ObjectMapper();
 		Recipe r = null;
 
 		try {
@@ -317,7 +326,20 @@ public class Comm {
 		recipe.put("image_url", imageUpload(r.mainImage));
 		recipe.put("categories", "STUB");
 		recipe.put("ingredients", r.ingredients);
+
 		recipe.put("directions", r.directions);
+		try {
+			recipe.put("parseddirs", mapper.writeValueAsString(r.directions));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		/*
+		 * ArrayList<>
+		for (int i = 0; i < r.directions.size(); i++) {
+			parsedDirections.append()
+		}
+		recipe.put("directions", parsedDirections);
+		 */
 
 		req.put("recipe", recipe);
 
@@ -359,9 +381,9 @@ public class Comm {
 		}
 	}
 
-	public CategoryNode getCategories() {
-		CategoryNode root = new CategoryNode(-1, "");
-		int ret = apiRequest("getcategories", null);
+	public ArrayList<Category> getCategories() {
+		ArrayList<Category> cats = new ArrayList<>();
+		int ret = apiRequest("categories", null);
 		if (ret == 0) {
 			prettyPrint(rootNode);
 			if (lastStatus == 1) {
@@ -372,28 +394,27 @@ public class Comm {
 					try {
 						Integer id = mapper.readValue(r.path("id"),Integer.class);
 						String name = mapper.readValue(r.path("name"), String.class);
-						root.addChild(id, name);
+						Integer level = mapper.readValue(r.path("level"), Integer.class);
+						cats.add(new Category(id.intValue(), level.intValue(), name));
 					} catch (Exception e) {
 						e.printStackTrace();
 						return null;
 					}
 				}
-				return root;
+				return cats;
 			} else {
 				return null;
 			}
 		}
-
-		return root;
+		return null;
 	}
 
 	private int apiRequest(String relUrl, Object o) {
 		if (o == null) {
 			return apiRequestPayload(relUrl, "");
 		}
-		ObjectWriter ow = new ObjectMapper().writer();
 		try {
-			return apiRequestPayload(relUrl, ow.writeValueAsString(o));
+			return apiRequestPayload(relUrl, mapper.writeValueAsString(o));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return JSON_ERROR;
@@ -424,7 +445,6 @@ public class Comm {
 			connection.disconnect();
 			System.out.println(jsonString);
 			lastJSON = jsonString.toString();
-			ObjectMapper mapper = new ObjectMapper();
 			rootNode = mapper.readTree(lastJSON);
 			lastStatus = GENL_FAIL;
 			try {
