@@ -30,6 +30,8 @@
     <string name="title_activity_make_arecipe3">MakeARecipe3</string>
     <string name="Remember_password">Remember Password</string>
     <string name="Confirm_Password">Confirm Password</string>
+    <string name="Search_Categories">Search Categories</string>
+    <string name="title_activity_browse_results">BrowseResults</string>
     <string name="invalidSignUp">Invalid Sign-up!</string>
     <string name="Enter_recipe_name">Enter a recipe name</string>
     <string name="Enter_despription">Enter description of recipe</string>
