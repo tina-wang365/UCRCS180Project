@@ -46,6 +46,10 @@
             android:name=".ViewMyRecipes"
             android:label="@string/title_activity_view_my_recipes" >
         </activity>
+        <activity
+            android:name=".BrowseResults"
+            android:label="@string/title_activity_browse_results" >
+        </activity>
     </application>
 
 </manifest>
