@@ -10,6 +10,9 @@ public class BrowseResults extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		int ArrayListSize = savedInstanceState.getInt(Integer.toString(0));
+		for (int i = 0; i < ArrayListSize ; i++)
+			savedInstanceState.getStringArrayList(Integer.toString(i));
 
 		setContentView(R.layout.activity_browse_results);
 	}
