@@ -80,13 +80,6 @@ public class Comm {
 		Object json = mapper.readValue(s, Object.class);
 		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
 	}
-	//	public static void recipeToJson(Recipe r) {
-	//		int id = r.id;
-	//		String name = r.name;
-	//		String description = r.description;
-	//		String cookTime = r.cookTime;
-	//		//========
-	//	}
 
 	public static void main(String[] args) {
 		runningAndroid = false;
@@ -167,13 +160,10 @@ public class Comm {
 			try {
 				prettyPrint(r);
 			} catch (JsonGenerationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			ls.add(parseRecipe(r));
