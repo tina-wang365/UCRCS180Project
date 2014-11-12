@@ -14,16 +14,6 @@
            android:layout_height="wrap_content"
            android:hint="@string/Enter_recipe_name" />
 
-       <Button
-           android:id="@+id/add_ingrediant"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_alignLeft="@+id/recipe_description"
-           android:layout_below="@+id/recipe_title"
-           android:layout_marginTop="170dp"
-           android:onClick="AddIngrediantPressed"
-           android:text="@string/Add_ingredients" />
-
        <EditText
            android:id="@+id/recipe_description"
            android:layout_width="wrap_content"
@@ -41,10 +31,39 @@
            android:id="@+id/recipe_est_time"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:layout_alignLeft="@+id/add_ingrediant"
+           android:layout_alignLeft="@+id/recipe_description"
            android:layout_below="@+id/recipe_description"
-           android:layout_marginTop="27dp"
+           android:layout_marginTop="20dp"
            android:ems="10"
            android:hint="@string/Enter_est_time" />
+
+       <Button
+           android:id="@+id/add_ingrediant"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentBottom="true"
+           android:layout_alignRight="@+id/recipe_est_time"
+           android:layout_marginBottom="15dp"
+           android:onClick="AddIngrediantPressed"
+           android:text="@string/Add_ingredients" />
+       
+       <Button
+           android:id="@+id/add_image"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignRight="@+id/recipe_title"
+           android:layout_centerVertical="true"
+           android:onClick="AddImagePressed"
+           android:text="@string/Add_Image" />
+
+       <ImageView
+           android:id="@+id/added_image"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_above="@+id/add_ingrediant"
+           android:layout_alignLeft="@+id/recipe_est_time"
+           android:layout_alignRight="@+id/add_image"
+           android:layout_below="@+id/add_image"
+           android:src="@drawable/uploadimage" />
 
 </RelativeLayout>

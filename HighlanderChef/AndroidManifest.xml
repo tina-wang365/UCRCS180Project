@@ -7,6 +7,10 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
+    
+    <instrumentation android:name="android.test.InstrumentationTestRunner"
+    android:targetPackage="com.highlanderchef"
+    android:label="tests for HighlanderChef" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -17,9 +21,12 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <uses-library android:name="android.test.runner" />
         <activity
             android:name=".StartupScreen"
-            android:label="@string/title_activity_startup_screen" >
+            android:label="@string/title_activity_startup_screen" 
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,42 +35,52 @@
         </activity>
         <activity
             android:name=".LoginActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_login" >
         </activity>
         <activity
             android:name=".SignupActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_signup" >
         </activity>
         <activity
             android:name=".BrowseActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_browse" >
         </activity>
         <activity
             android:name=".MainMenu"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_main_menu" >
         </activity>
         <activity
             android:name=".MakeARecipe1"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_make_arecipe1" >
         </activity>
         <activity
             android:name=".ViewMyRecipes"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_view_my_recipes" >
         </activity>
         <activity
             android:name=".BrowseResults"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_browse_results" >
 	</activity>
 	<activity
             android:name=".MakeARecipe2"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_make_arecipe2" >
         </activity>
         <activity
             android:name=".MakeARecipe3"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_make_arecipe3" >
         </activity>
         <activity
             android:name=".RecipeForum"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_recipe_forum" >
         </activity>
     </application>

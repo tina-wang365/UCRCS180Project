@@ -37,6 +37,7 @@
     <string name="Enter_despription">Enter description of recipe</string>
     <string name="Enter_est_time">Enter estimate cook time</string>
     <string name="MakeARecipe2Header">Add Ingredients</string>
+    <string name="Add_Image">Add Image</string>
     <string name="Add_ingredients">Add Ingredients</string>
     <string name="no_ingredients_added">(No Ingredients added yet)</string>
     <string name="Add_an_Ingredient">Add Ingredient</string>
