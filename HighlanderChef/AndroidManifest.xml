@@ -8,6 +8,8 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -49,6 +51,18 @@
         <activity
             android:name=".BrowseResults"
             android:label="@string/title_activity_browse_results" >
+	</activity>
+	<activity
+            android:name=".MakeARecipe2"
+            android:label="@string/title_activity_make_arecipe2" >
+        </activity>
+        <activity
+            android:name=".MakeARecipe3"
+            android:label="@string/title_activity_make_arecipe3" >
+        </activity>
+        <activity
+            android:name=".RecipeForum"
+            android:label="@string/title_activity_recipe_forum" >
         </activity>
     </application>
 

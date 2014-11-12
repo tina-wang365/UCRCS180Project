@@ -1,24 +1,24 @@
 package com.highlanderchef;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RatingBar;
 
-public class StartupScreen extends ActionBarActivity {
+public class RecipeForum extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_startup_screen);
+		setContentView(R.layout.activity_recipe_forum);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.startup_screen, menu);
+		getMenuInflater().inflate(R.menu.recipe_forum, menu);
 		return true;
 	}
 
@@ -34,20 +34,22 @@ public class StartupScreen extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void LoginPressed(View view)
+	public void addCommentPressed(View view)
 	{
-		Intent intent = new Intent(this, LoginActivity.class);
-		startActivity(intent);
+		//EditText editTextUserComment = (EditText) findViewById(R.id);
+		//String strUserComment = editTextUserComment.getText().toString();
 	}
-
-
-	public void SignupPressed(View view)
+	public void addRatingPressed(View view)
 	{
-		Intent intent = new Intent(this, SignupActivity.class);
-		startActivity(intent);
+		RatingBar bar = (RatingBar) view;
+		int rating = (int) bar.getRating();
 	}
+	//confirming whether the user tapped "Comment button" to add a comment
+	//TODO: public EditText validateCommentPressed(View view)
+	// public EditText validateCommentPressed(View view) {
 
-
-
-
+	//}
+	//TODO: public createCommentText
+	//TODO: public createRating
+	//TODO: public createWholeComment
 }
