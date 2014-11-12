@@ -13,6 +13,8 @@
     android:label="tests for HighlanderChef" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    
 
     <application
         android:allowBackup="true"
@@ -54,6 +56,10 @@
             android:label="@string/title_activity_view_my_recipes" >
         </activity>
         <activity
+            android:name=".BrowseResults"
+            android:label="@string/title_activity_browse_results" >
+	</activity>
+	<activity
             android:name=".MakeARecipe2"
             android:label="@string/title_activity_make_arecipe2" >
         </activity>
@@ -62,7 +68,7 @@
             android:label="@string/title_activity_make_arecipe3" >
         </activity>
         <activity
-            android:name=".RecipeForumActivity"
+            android:name=".RecipeForum"
             android:label="@string/title_activity_recipe_forum" >
         </activity>
     </application>
