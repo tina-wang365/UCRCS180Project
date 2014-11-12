@@ -3,7 +3,6 @@ package com.highlanderchef;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -12,11 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.module.SimpleModule;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,12 +43,19 @@ public class Comm {
 	public static final int GENL_FAIL = -4;
 	public static final int NOT_IMPL = -42;
 
+	private void registerMapperSerializers() {
+		SimpleModule module = new SimpleModule("DirectionModule", new Version(1,0,0,null));
+		module.addSerializer(Direction.class, new DirectionSerializer());
+		mapper.registerModule(module);
+	}
+
 	public Comm() {
 		lastJSON = "";
 		email = "";
 		authToken = "";
 
 		mapper = new ObjectMapper();
+		registerMapperSerializers();
 	}
 
 	public Comm(String email, String authToken) {
@@ -59,6 +64,7 @@ public class Comm {
 		lastJSON = "";
 
 		mapper = new ObjectMapper();
+		registerMapperSerializers();
 	}
 
 	public String getEmail() {
@@ -72,19 +78,30 @@ public class Comm {
 	public String getLastJSON() {
 		return lastJSON;
 	}
-	public static void prettyPrint(String s) throws JsonGenerationException, JsonMappingException, IOException {
-		Object json = mapper.readValue(s, Object.class);
-		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+	public static void prettyPrint(String s) {
+		try {
+			Object json = mapper.readValue(s, Object.class);
+			System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+		} catch (Exception e) {
+			System.out.println("EXCEPTION in prettyPrint");
+		}
 	}
-	public static void prettyPrint(JsonNode s) throws JsonGenerationException, JsonMappingException, IOException {
-		Object json = mapper.readValue(s, Object.class);
-		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+	public static void prettyPrint(JsonNode s) {
+		try {
+			Object json = mapper.readValue(s, Object.class);
+			System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+		} catch (Exception e) {
+			System.out.println("EXCEPTION in prettyPrint");
+		}
 	}
 
 	public static void main(String[] args) {
 		runningAndroid = false;
 		Comm c = new Comm();
 		c.login("test@test.net", "test1234");
+
+		c.getCategories();
+
 		c.newAccount("bob@test.net", "bobhasbadpasswords");
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasbadpasswords"));
 		System.out.println("c.login returns " + c.login("bob@test.net", "bobhasGOODpasswords"));
@@ -157,18 +174,7 @@ public class Comm {
 		while(ite.hasNext())
 		{
 			JsonNode r = ite.next();
-			try {
-				prettyPrint(r);
-			} catch (JsonGenerationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			prettyPrint(r);
 			ls.add(parseRecipe(r));
 		}
 		return ls;
@@ -234,6 +240,7 @@ public class Comm {
 		try {
 			HashMap<String, Object> o = new HashMap<>();
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			bmp = Bitmap.createScaledBitmap(bmp, 1024, 768, false);
 			if (bmp.compress(Bitmap.CompressFormat.PNG, 90, stream)) {
 				o.put("bmp", Base64.encode(stream.toByteArray(), Base64.DEFAULT));
 				int ret = apiRequest("imageupload", o);
@@ -253,8 +260,6 @@ public class Comm {
 	}
 
 	private void parseDirections(Recipe r, String json) {
-		ObjectMapper mapper = new ObjectMapper();
-
 		try {
 			JsonNode node = mapper.readTree(json);
 			Iterator<JsonNode> ite = node.getElements();
@@ -278,7 +283,6 @@ public class Comm {
 	}
 
 	private Recipe parseRecipe(JsonNode node) {
-		ObjectMapper mapper = new ObjectMapper();
 		Recipe r = null;
 
 		try {
@@ -323,12 +327,26 @@ public class Comm {
 		recipe.put("image_url", imageUpload(r.mainImage));
 		recipe.put("categories", "STUB");
 		recipe.put("ingredients", r.ingredients);
+
 		recipe.put("directions", r.directions);
+		try {
+			recipe.put("parseddirs", mapper.writeValueAsString(r.directions));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		/*
+		 * ArrayList<>
+		for (int i = 0; i < r.directions.size(); i++) {
+			parsedDirections.append()
+		}
+		recipe.put("directions", parsedDirections);
+		 */
 
 		req.put("recipe", recipe);
 
 		apiRequest("uploadrecipe", req);
-		return NOT_IMPL;
+
+		return SUCCESS;
 	}
 
 	public int postQuestion(int recipeId, String question) {
@@ -365,30 +383,40 @@ public class Comm {
 		}
 	}
 
-	public CategoryNode getCategories() {
-		CategoryNode root = new CategoryNode(-1, "");
-		int ret = apiRequest("getcategories", null);
+	public ArrayList<Category> getCategories() {
+		ArrayList<Category> cats = new ArrayList<>();
+		int ret = apiRequest("categories", null);
 		if (ret == 0) {
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				JsonNode rootNode = mapper.readTree(lastJSON);
-				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
-			} catch (Exception e) {
-				e.printStackTrace();
+			prettyPrint(rootNode);
+			if (lastStatus == 1) {
+				Iterator<JsonNode> ite = rootNode.path("categories").getElements();
+				while(ite.hasNext())
+				{
+					JsonNode r = ite.next();
+					try {
+						Integer id = mapper.readValue(r.path("id"),Integer.class);
+						String name = mapper.readValue(r.path("name"), String.class);
+						Integer level = mapper.readValue(r.path("level"), Integer.class);
+						cats.add(new Category(id.intValue(), level.intValue(), name));
+					} catch (Exception e) {
+						e.printStackTrace();
+						return null;
+					}
+				}
+				return cats;
+			} else {
 				return null;
 			}
 		}
-
-		return root;
+		return null;
 	}
 
 	private int apiRequest(String relUrl, Object o) {
 		if (o == null) {
 			return apiRequestPayload(relUrl, "");
 		}
-		ObjectWriter ow = new ObjectMapper().writer();
 		try {
-			return apiRequestPayload(relUrl, ow.writeValueAsString(o));
+			return apiRequestPayload(relUrl, mapper.writeValueAsString(o));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return JSON_ERROR;
@@ -419,7 +447,6 @@ public class Comm {
 			connection.disconnect();
 			System.out.println(jsonString);
 			lastJSON = jsonString.toString();
-			ObjectMapper mapper = new ObjectMapper();
 			rootNode = mapper.readTree(lastJSON);
 			lastStatus = GENL_FAIL;
 			try {
