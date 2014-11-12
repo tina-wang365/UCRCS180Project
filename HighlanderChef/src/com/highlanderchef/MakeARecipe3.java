@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MakeARecipe3 extends ActionBarActivity {
@@ -24,6 +25,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 	String picturePath;
 
 	int dir_added_count = 0;
+	int prevTextViewId;
 	ArrayList<Bitmap> added_images = new ArrayList<Bitmap>();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 		TextView tv_error = (TextView) findViewById(R.id.submit_error);
 		tv_error.setVisibility(View.INVISIBLE);
+		prevTextViewId = R.id.added_image;
 	}
 
 	@Override
@@ -72,33 +75,29 @@ public class MakeARecipe3 extends ActionBarActivity {
 		if(new_dir.length() == 0 )
 		{ return; }
 
-		TextView textview_dir_list = (TextView) findViewById(R.id.listofingredientsadded);
-
 		//creates new text for ingredients list, includes newly added ingredient
-		String new_dir_list = "";
-		int i;
-		//LinearLayout linear_layout = (LinearLayout) findViewById(R.id.linearLayoutImages);
-		for(i = 0; i < recipe.directionSize(); ++i)
-		{
-			int tmp = i + 1;
-			new_dir_list += tmp + ") " + recipe.getADirection(i).getDirectionText() + '\n';
-			/*Bitmap tmp_image = recipe.getAnImage(i);
-			if(tmp_image != null)
-			{
-				ImageView image = new ImageView(MakeARecipe3.this);
-				image.setImageBitmap(tmp_image);
-				linear_layout.addView(image);
-			}*/
-		}
-		++i;
-		new_dir_list += i + ") " + new_dir;
+		RelativeLayout linear_layout = (RelativeLayout) findViewById(R.id.linearLayoutImages);
+
+		++dir_added_count;
+		TextView tv = new TextView(MakeARecipe3.this);
+		tv.setText(dir_added_count + ") " + new_dir);
+
+		tv.setId(dir_added_count);
+		final RelativeLayout.LayoutParams params =
+				new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+		params.addRule(RelativeLayout.BELOW, prevTextViewId);
+		tv.setLayoutParams(params);
+
+		prevTextViewId = dir_added_count;
+		linear_layout.addView(tv, params);
+		//EditText et = (EditText) findViewById(R.id.addadirection);
+		//linear_layout.addView(et, params);
 
 		recipe.AddADirection(new_dir, added_images);
-		textview_dir_list.setText(new_dir_list);
 		edittext_new_dir.getText().clear();
 		ImageView imageview = (ImageView) findViewById(R.id.added_image);
 		imageview.setImageResource(R.drawable.uploadimage);
-		++dir_added_count;
 	}
 
 	private static int RESULT_LOAD_IMAGE = 1;
@@ -107,7 +106,6 @@ public class MakeARecipe3 extends ActionBarActivity {
 		Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(i, RESULT_LOAD_IMAGE);
 	}
-
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)

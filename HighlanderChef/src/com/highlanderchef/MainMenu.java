@@ -78,4 +78,9 @@ public class MainMenu extends ActionBarActivity {
 		intent.putExtra("recipeID", 1);
 		startActivity(intent);
 	}
+
+	public void SearchPressed(View view)
+	{
+		//Intent intent = new Intent(this, )
+	}
 }
