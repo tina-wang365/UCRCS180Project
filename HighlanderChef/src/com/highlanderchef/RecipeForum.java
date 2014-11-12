@@ -123,12 +123,4 @@ public class RecipeForum extends ActionBarActivity {
 		}
 
 	}
-	//confirming whether the user tapped "Comment button" to add a comment
-	//TODO: public EditText validateCommentPressed(View view)
-	// public EditText validateCommentPressed(View view) {
-
-	//}
-	//TODO: public createCommentText
-	//TODO: public createRating
-	//TODO: public createWholeComment
 }
