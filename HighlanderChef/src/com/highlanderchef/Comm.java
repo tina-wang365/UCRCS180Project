@@ -338,13 +338,6 @@ public class Comm {
 			System.out.println("parseddirs serialization failed");
 			e.printStackTrace();
 		}
-		/*
-		 * ArrayList<>
-		for (int i = 0; i < r.directions.size(); i++) {
-			parsedDirections.append()
-		}
-		recipe.put("directions", parsedDirections);
-		 */
 
 		req.put("recipe", recipe);
 
