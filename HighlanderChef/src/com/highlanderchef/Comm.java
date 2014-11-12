@@ -245,7 +245,7 @@ public class Comm {
 			bmp = Bitmap.createScaledBitmap(bmp, 1024, 768, false);
 			if (bmp.compress(Bitmap.CompressFormat.PNG, 90, stream)) {
 				o.put("bmp", Base64.encode(stream.toByteArray(), Base64.DEFAULT));
-				int ret = apiRequest("imageupload", o);
+				apiRequest("imageupload", o);
 				if (lastStatus == 1) {
 					String url = mapper.readValue(rootNode.path("image_url"), String.class);
 					return url;
@@ -343,7 +343,11 @@ public class Comm {
 
 		apiRequest("uploadrecipe", req);
 
-		return SUCCESS;
+		if (lastStatus == 1) {
+			return SUCCESS;
+		} else {
+			return GENL_FAIL;
+		}
 	}
 
 	public int postQuestion(int recipeId, String question) {
