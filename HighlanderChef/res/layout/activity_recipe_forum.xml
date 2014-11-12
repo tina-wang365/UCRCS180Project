@@ -10,13 +10,13 @@
 
     <TextView
 	    android:id="@+id/titleOfRecipe"
-	    android:layout_width="wrap_content"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:text="@string/recipeTitle" />
     
 	<TextView
 	    android:id="@+id/errorCannotDisplayRecipe"
-	    android:layout_width="wrap_content"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_above="@+id/userCommentText"
 	    android:layout_centerHorizontal="true"
@@ -24,8 +24,8 @@
 	    android:text="@string/msgCannotDisplayRecipe" />
 	
 	<TextView
-	    android:id="@+id/selectedRecipeDirectionsList"
-	    android:layout_width="wrap_content"
+	    android:id="@+id/selectedRecipeDirectionList"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_alignRight="@+id/selectedRecipeIngredientList"
 	    android:layout_below="@+id/selectedRecipeIngredientList"
@@ -34,12 +34,13 @@
 
 	<TextView
 	    android:id="@+id/selectedRecipeIngredientList"
-	    android:layout_width="wrap_content"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_alignLeft="@+id/titleOfRecipe"
 	    android:layout_below="@+id/titleOfRecipe"
 	    android:layout_marginTop="15dp"
 	    android:text="@string/defaultIngredientList" />
+	
 
 	<!-- Users can select the rating out of 5 starts --> 
 	<RatingBar

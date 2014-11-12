@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -67,15 +68,42 @@ public class RecipeForum extends ActionBarActivity {
 		Bitmap mainPhoto = recipe.mainImage;
 
 		//Set objects for display on activity
-		TextView textViewHoldingTitle = (TextView) findViewById(R.id.titleOfRecipe);
-		textViewHoldingTitle.setText(title);
+		TextView textViewTitle = (TextView) findViewById(R.id.titleOfRecipe);
+		textViewTitle.setText(title);
+
+		//Display main Image
+		ImageView imageViewMainImage;
+
+		//Parse ingredients into neat format
+		//NOTE: This only handles one kind of input for proper formatting. This assumes that
+		//the string "* 1/2 ingredientName" does not exceed the width of the mobile screen.
+		String formatOfIngredient = "";
+		for(int i = 0; i < ingredientList.size(); ++i) {
+			formatOfIngredient = "* " + ingredientList.get(i).amount + " " + ingredientList.get(i).name;
+			if(i + 1 < ingredientList.size()) {
+				formatOfIngredient += "\n";
+			}
+		}
+		TextView textViewDirectionList = (TextView) findViewById(R.id.selectedRecipeIngredientList);
+		textViewDirectionList.setText(formatOfIngredient);
 
 		//Parse directions into neat format
-		String formatOfDirections = "";
-		for(int i = 0; i < directionList.size(); ++i) {
-			//formatOfDirections = i + ". " + directionList[i].text + "\n";
-			//TODO: Load images onto the screen with a scroll effect
+		//NOTE: This only handles one kind of input for proper formatting. This assumes that
+		//that the length of directions is not larger than the width of the screen.\
+		String formatOfDirection = "";
+		for(int i = 0; i < ingredientList.size(); ++i) {
+			formatOfDirection = i + ". " + directionList.get(i).text;
+			if(i + 1 < ingredientList.size()) {
+				formatOfDirection += "\n";
+			}
+			//TODO: upload images. If user doesn't submit image, then do not generate an image.
+			//if more than 1 image is found, then display photos scrollable from left to right.
+			//images less than the size of the width of the screen should be displayed statically.
+			//Otherwise, pictures should be scrolled from left to right to get the last image,
+			//and right to left to get to the first image.
 		}
+		TextView textViewDirections = (TextView) findViewById(R.id.selectedRecipeDirectionList);
+		textViewDirections.setText(formatOfDirection);
 
 
 		TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
