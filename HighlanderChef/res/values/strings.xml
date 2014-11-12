@@ -50,6 +50,7 @@
     <string name="defaultDirectionsList"> DEFAULT DIRECTIONS LIST</string>
     <string name="tapToComment">Tap here to make a comment!</string>
     <string name="Comment">Comment</string>
+    <string name="msgCannotDisplayRecipe"> Sorry! We cannot display the recipe! </string>
     <!-- Refer to layout/activity_MakeARecipe3.xml -->
     <string name="MakeARecipe3Header">Add Directions</string>
     <string name="no_directions_added">(No directions added yet)</string>
