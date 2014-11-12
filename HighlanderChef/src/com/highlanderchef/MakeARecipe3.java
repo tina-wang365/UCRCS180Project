@@ -108,6 +108,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 		startActivityForResult(i, RESULT_LOAD_IMAGE);
 	}
 
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -191,15 +192,12 @@ public class MakeARecipe3 extends ActionBarActivity {
 				onSuccess();
 			} else {
 				onFailure();
-
 			}
 		}
-
 	}
 
 	public void setMainImage()
 	{
-
 		String picturePath = recipe.mainImagepath;
 
 		//load bitmap
