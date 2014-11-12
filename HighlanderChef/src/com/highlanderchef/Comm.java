@@ -3,7 +3,6 @@ package com.highlanderchef;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -12,9 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
@@ -72,13 +69,21 @@ public class Comm {
 	public String getLastJSON() {
 		return lastJSON;
 	}
-	public static void prettyPrint(String s) throws JsonGenerationException, JsonMappingException, IOException {
-		Object json = mapper.readValue(s, Object.class);
-		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+	public static void prettyPrint(String s) {
+		try {
+			Object json = mapper.readValue(s, Object.class);
+			System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+		} catch (Exception e) {
+			System.out.println("EXCEPTION in prettyPrint");
+		}
 	}
-	public static void prettyPrint(JsonNode s) throws JsonGenerationException, JsonMappingException, IOException {
-		Object json = mapper.readValue(s, Object.class);
-		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+	public static void prettyPrint(JsonNode s) {
+		try {
+			Object json = mapper.readValue(s, Object.class);
+			System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+		} catch (Exception e) {
+			System.out.println("EXCEPTION in prettyPrint");
+		}
 	}
 
 	public static void main(String[] args) {
@@ -157,18 +162,7 @@ public class Comm {
 		while(ite.hasNext())
 		{
 			JsonNode r = ite.next();
-			try {
-				prettyPrint(r);
-			} catch (JsonGenerationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			prettyPrint(r);
 			ls.add(parseRecipe(r));
 		}
 		return ls;
@@ -369,13 +363,22 @@ public class Comm {
 		CategoryNode root = new CategoryNode(-1, "");
 		int ret = apiRequest("getcategories", null);
 		if (ret == 0) {
+			prettyPrint(rootNode);
 			if (lastStatus == 1) {
 				Iterator<JsonNode> ite = rootNode.path("categories").getElements();
 				while(ite.hasNext())
 				{
 					JsonNode r = ite.next();
-					//root.addChild(id, name);
+					try {
+						Integer id = mapper.readValue(r.path("id"),Integer.class);
+						String name = mapper.readValue(r.path("name"), String.class);
+						root.addChild(id, name);
+					} catch (Exception e) {
+						e.printStackTrace();
+						return null;
+					}
 				}
+				return root;
 			} else {
 				return null;
 			}
