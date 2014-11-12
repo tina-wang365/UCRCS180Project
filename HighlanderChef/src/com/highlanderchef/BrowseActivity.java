@@ -4,13 +4,11 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -19,10 +17,8 @@ import android.widget.ScrollView;
 public class BrowseActivity extends Activity {
 
 	//variables
-	public static final int LEFTPADDING = 14;
+	public static final int LEFTPADDING = 32;
 	private ArrayList<LeveledCheckBox> CheckBoxList;
-	private Button cButton;
-	private ArrayList<Category> CategoriesData;
 	private LinearLayout iLinearLayout;
 
 	//functions
@@ -30,48 +26,10 @@ public class BrowseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		CheckBoxList = new ArrayList<LeveledCheckBox>();
-		CategoriesData = new ArrayList<Category>();
 		ScrollView iScrollView = new ScrollView(this);
 		iLinearLayout = new LinearLayout(this);
 		iLinearLayout.setOrientation(LinearLayout.VERTICAL);
 		iScrollView.addView(iLinearLayout);
-		ID_Maker currID = ID_Maker.getInstance();
-
-		//add search button
-		cButton = new Button(this);
-		cButton.setText(getResources().getString(R.string.Search_Categories));
-		cButton.setId(currID.useCurrID());
-		iLinearLayout.addView(cButton);
-		cButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View iView) {
-				//send category search to server
-				//get search results and pass them to result page
-				Intent intent = new Intent(BrowseActivity.this, BrowseResults.class);
-				Bundle bundle = new Bundle();
-
-				ArrayList<ArrayList<String> > SelectedCategories = new ArrayList<ArrayList<String> >();
-				int deepestLevel = 0;
-				for (int i = 0; i < CheckBoxList.size(); i++)
-				{
-					if (CheckBoxList.get(i).getLevel() != 0)
-						break;
-					if (CheckBoxList.get(i).getDeepestLevel() > deepestLevel)
-						deepestLevel = CheckBoxList.get(i).getDeepestLevel();
-				}
-				for (int i = 0; i <= deepestLevel; i++)
-					SelectedCategories.add(new ArrayList<String>());
-				for (int i = 0; i < CheckBoxList.size(); i++)
-				{
-					SelectedCategories.get(CheckBoxList.get(i).getLevel()).add(CheckBoxList.get(i).getText().toString());
-				}
-				for (int i = 0; i < deepestLevel; i++)
-					bundle.putStringArrayList(Integer.toString(i), SelectedCategories.get(i));
-				bundle.putInt(Integer.toString(0), SelectedCategories.size());
-				intent.putExtras(bundle);
-				startActivity(intent);
-			}
-		});
 
 		//Get categories' names
 		new CategoryTask().execute();
@@ -79,28 +37,18 @@ public class BrowseActivity extends Activity {
 	}
 
 	public void CreateCategories(ArrayList<Category> iCategoryList) {
-		ArrayList<String> iCategoryNames = new ArrayList<String>();
-		CategoriesData = iCategoryList;
-		for (int i = 0; i < CategoriesData.size(); i++)
-			if (CategoriesData.get(i).level == 0)
-				iCategoryNames.add(CategoriesData.get(i).name);
-
-		//testing cases
-		iCategoryNames.add("foo");
-		iCategoryNames.add("bar");
-		iCategoryNames.add("baz");
-
 		ID_Maker currID = ID_Maker.getInstance();
-		int currentLevel = 0;
-		for (int i = 0; i < iCategoryNames.size() ; i++)
+		for (int i = 0; i < iCategoryList.size() ; i++)
 		{
-			LeveledCheckBox iCheckBox = new LeveledCheckBox(this,currentLevel);
-			iCheckBox.setText(iCategoryNames.get(i).toCharArray(),
-					0, iCategoryNames.get(i).length());
+			LeveledCheckBox iCheckBox = new LeveledCheckBox(this,iCategoryList.get(i).level,iCategoryList.get(i));
+			iCheckBox.setText(iCheckBox.cData.name.toCharArray(),
+					0, iCheckBox.cData.name.length());
+			iCheckBox.setPadding(iCheckBox.getLevel()*LEFTPADDING, 0, 0, 0);
 			iCheckBox.setId(currID.useCurrID());
 			iCheckBox.setOnClickListener(CheckboxGetsChecked(iCheckBox));
-			iLinearLayout.addView(iCheckBox);
 			CheckBoxList.add(iCheckBox);
+			if (iCheckBox.cData.level == 0)
+				iLinearLayout.addView(iCheckBox);
 		}
 
 	}
@@ -118,67 +66,59 @@ public class BrowseActivity extends Activity {
 		return new View.OnClickListener() {
 			@Override
 			public void onClick(View iView) {
+				LinearLayout iLinearLayout = (LinearLayout) (iCheckBox.getParent());
+				//find children
+				ArrayList<LeveledCheckBox> iChildren = getCategoryChildren(CheckBoxList.indexOf(iCheckBox));
+
+				if (iChildren.isEmpty())
+				{
+					//Checkbox is a left so open new activity
+				}
+
 				if (((CheckBox) iView).isChecked())
 				{
-					LinearLayout iLinearLayout = ((LinearLayout) iCheckBox.getParent());
-					//get categories' names
-					ArrayList<String> LowerCategoryList = getCategoryChildren(iCheckBox.getText().toString(),iCheckBox.getLevel());
-
-					//testing cases
-					LowerCategoryList.add("Childfoo");
-					LowerCategoryList.add("Childbar");
-					LowerCategoryList.add("Childbaz");
-
-					int currentLevel = ((LeveledCheckBox) iView).getLevel() + 1;
-					ID_Maker currID = ID_Maker.getInstance();
-					for (int i = 0 ; i < LowerCategoryList.size() ; i++)
+					//make children visible
+					for (int i = 0 ; i < iChildren.size() ; i++)
 					{
-						LeveledCheckBox newCheckBox = new LeveledCheckBox(iCheckBox.getContext(),currentLevel);
-						newCheckBox.setText(LowerCategoryList.get(i).toCharArray(),
-								0, LowerCategoryList.get(i).length());
-						newCheckBox.setPadding(LEFTPADDING*currentLevel,0,0,0);
-						newCheckBox.setId(currID.useCurrID());
-						newCheckBox.setOnClickListener(CheckboxGetsChecked(newCheckBox));
-						iCheckBox.addChild(newCheckBox);
-						iLinearLayout.addView(newCheckBox,iLinearLayout.indexOfChild(iCheckBox) + 1);
-						CheckBoxList.add(newCheckBox);
+						iLinearLayout.addView(iChildren.get(i));
+						iCheckBox.addChild(iChildren.get(i));
+						iChildren.get(i).setVisibility(View.VISIBLE);
 					}
-					//Reorder the stack so the children are displayed underneath the parent
-					reorderItems();
 				}
 				else
 				{
-					//stuff
-					;//iCheckBox.removeChildren();
+					//make children invisible
+					for (int i = 0 ; i < iChildren.size() ; i++)
+					{
+						iLinearLayout.removeView(iChildren.get(i));
+						iChildren.get(i).setVisibility(View.GONE);
+						iChildren.get(i).setChecked(false);
+					}
+					iCheckBox.removeChildren();
 				}
+				//Reorder the stack so the children are displayed underneath the parent
+				reorderItems();
 			}
 		};
 	}
 
 	private void reorderItems()
 	{
-		cButton.bringToFront();
 		for (int i = 0; i < CheckBoxList.size() ; i++)
 		{
-			if (CheckBoxList.get(i).getLevel() == 0)
-				CheckBoxList.get(i).bringToFront();
-			else
-				break;
+			CheckBoxList.get(i).bringToFront();
 		}
 	}
 
-	private ArrayList<String> getCategoryChildren(String iName, int iLevel)
+	private ArrayList<LeveledCheckBox> getCategoryChildren(int index)
 	{
-		ArrayList<String> Children = new ArrayList<String>();
-		boolean foundParent = false;
-		int searchLevel = iLevel + 1;
-		for (int i = 0; i < CategoriesData.size() ; i++)
+		ArrayList<LeveledCheckBox> Children = new ArrayList<LeveledCheckBox>();
+		int init_level = CheckBoxList.get(index).cData.level;
+		for (int i = index + 1; i < CheckBoxList.size() ; i++)
 		{
-			if (CategoriesData.get(i).name == iName)
-				foundParent = true;
-			if (foundParent && CategoriesData.get(i).level == searchLevel)
-				Children.add(CategoriesData.get(i).name);
-			if (foundParent && CategoriesData.get(i).level == iLevel)
+			if(CheckBoxList.get(i).cData.level == init_level + 1)
+				Children.add(CheckBoxList.get(i));
+			else if(CheckBoxList.get(i).cData.level == init_level)
 				return Children;
 		}
 		return Children;
@@ -234,11 +174,13 @@ class LeveledCheckBox extends CheckBox
 {
 	private final int cLevel;
 	private final ArrayList<LeveledCheckBox> cChildren;
-	public LeveledCheckBox(Context iContext, int iLevel)
+	Category cData;
+	public LeveledCheckBox(Context iContext, int iLevel, Category iData)
 	{
 		super(iContext);
 		cChildren = new ArrayList<LeveledCheckBox>();
 		cLevel = iLevel;
+		cData = iData;
 	}
 	public int getLevel()
 	{
