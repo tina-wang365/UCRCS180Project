@@ -33,9 +33,13 @@ public class MakeARecipe3 extends ActionBarActivity {
 		Intent intent = getIntent();
 		recipe = (Recipe)intent.getSerializableExtra("recipe");
 
+
 		TextView tv_header = (TextView) findViewById(R.id.makearecipe3header);
 		String header = tv_header.getText().toString();
 		tv_header.setText(header + "for " + recipe.getName());
+
+		TextView tv_error = (TextView) findViewById(R.id.submit_error);
+		tv_error.setVisibility(View.INVISIBLE);
 	}
 
 	@Override
@@ -95,8 +99,6 @@ public class MakeARecipe3 extends ActionBarActivity {
 		ImageView imageview = (ImageView) findViewById(R.id.added_image);
 		imageview.setImageResource(R.drawable.uploadimage);
 		++dir_added_count;
-
-
 	}
 
 	private static int RESULT_LOAD_IMAGE = 1;
@@ -169,9 +171,8 @@ public class MakeARecipe3 extends ActionBarActivity {
 	}
 	public void onFailure()
 	{
-		Intent intent = new Intent(this, MainMenu.class);
-		intent.putExtra("Recipe Confirmation", "Recipe not added");
-		startActivity(intent);
+		TextView tv_error = (TextView) findViewById(R.id.submit_error);
+		tv_error.setVisibility(View.VISIBLE);
 		//TODO implement better case for failure.
 	}
 	private class UploadRecipeTask extends AsyncTask<Recipe, Void, Boolean> {
