@@ -56,6 +56,7 @@ public class Comm {
 
 		mapper = new ObjectMapper();
 		registerMapperSerializers();
+		System.out.println("Creating new Comm");
 	}
 
 	public Comm(String email, String authToken) {
@@ -65,6 +66,7 @@ public class Comm {
 
 		mapper = new ObjectMapper();
 		registerMapperSerializers();
+		System.out.println("Creating new Comm");
 	}
 
 	public String getEmail() {
@@ -332,6 +334,7 @@ public class Comm {
 		try {
 			recipe.put("parseddirs", mapper.writeValueAsString(r.directions));
 		} catch (Exception e) {
+			System.out.println("parseddirs serialization failed");
 			e.printStackTrace();
 		}
 		/*
