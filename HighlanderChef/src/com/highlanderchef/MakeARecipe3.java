@@ -196,4 +196,31 @@ public class MakeARecipe3 extends ActionBarActivity {
 		}
 
 	}
+
+	public void setMainImage()
+	{
+
+		String picturePath = recipe.mainImagepath;
+
+		//load bitmap
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(picturePath, bmOptions);
+
+		// Decode the image file into a Bitmap sized to fill the View
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inPurgeable = true;
+
+		Bitmap bitmap = BitmapFactory.decodeFile(picturePath, bmOptions);
+
+		if(bitmap != null)
+		{
+			recipe.setMainImage(bitmap);
+		}
+		else
+		{
+			//TODO added error response
+		}
+	}
+
 }
