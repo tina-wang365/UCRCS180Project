@@ -27,5 +27,7 @@
     <string name="title_activity_view_my_recipes">ViewMyRecipes</string>
     <string name="Remember_password">Remember Password</string>
     <string name="Confirm_Password">Confirm Password</string>
+    <string name="Search_Categories">Search Categories</string>
+    <string name="title_activity_browse_results">BrowseResults</string>
 
 </resources>
