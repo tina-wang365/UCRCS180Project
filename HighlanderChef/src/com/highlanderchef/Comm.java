@@ -369,12 +369,14 @@ public class Comm {
 		CategoryNode root = new CategoryNode(-1, "");
 		int ret = apiRequest("getcategories", null);
 		if (ret == 0) {
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				JsonNode rootNode = mapper.readTree(lastJSON);
-				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (lastStatus == 1) {
+				Iterator<JsonNode> ite = rootNode.path("categories").getElements();
+				while(ite.hasNext())
+				{
+					JsonNode r = ite.next();
+					//root.addChild(id, name);
+				}
+			} else {
 				return null;
 			}
 		}
