@@ -30,8 +30,6 @@
     <string name="title_activity_make_arecipe3">MakeARecipe3</string>
     <string name="Remember_password">Remember Password</string>
     <string name="Confirm_Password">Confirm Password</string>
-    <string name="Search_Categories">Search Categories</string>
-    <string name="title_activity_browse_results">BrowseResults</string>
     <string name="invalidSignUp">Invalid Sign-up!</string>
     <string name="Enter_recipe_name">Enter a recipe name</string>
     <string name="Enter_despription">Enter description of recipe</string>
@@ -43,13 +41,16 @@
     <string name="Ingredient_Amount">Amount</string>
     <string name="Add_another_ingredient_button">Add Ingredient</string>
     <string name="Add_directions_button">Add directions</string>
-    <!-- Refer to layout/activity_recipeForum.xml -->
-    <string name="recipeTitle">DEFAULT RECIPE TITLE</string>
+    
+    <!-- Refer to layout/activity_recipe_forum.xml -->
+    <string name="recipeTitle">""</string>
     <string name="nameOfRecipe"> Name of the recipe</string>
     <string name="defaultIngredientList"> DEFAULT INGREDIENT LIST</string>
     <string name="defaultDirectionsList"> DEFAULT DIRECTIONS LIST</string>
     <string name="tapToComment">Tap here to make a comment!</string>
     <string name="Comment">Comment</string>
+    <string name="msgCannotDisplayRecipe"> Sorry! We cannot display the recipe! </string>
+    
     <!-- Refer to layout/activity_MakeARecipe3.xml -->
     <string name="MakeARecipe3Header">Add Directions</string>
     <string name="no_directions_added">(No directions added yet)</string>
@@ -59,6 +60,5 @@
     <string name="title_activity_recipe_forum">RecipeForumActivity</string>
     <string name="AddImagetoDirection">Add Image</string>
     <string name="title_activity_recipe__forum">Recipe_Forum</string>
-    <string name="submit_error">ERROR submitting recipe. Try Again</string>
 
 </resources>

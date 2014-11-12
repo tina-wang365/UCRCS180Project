@@ -24,14 +24,12 @@ public class Direction implements Serializable
 	public Direction(String text, ArrayList<Bitmap> bmps) {
 		this.text = text;
 		this.images = bmps;
-
 	}
 
 	public String getDirectionText()
 	{
 		return this.text;
 	}
-
 
 
 

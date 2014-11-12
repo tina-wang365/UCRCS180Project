@@ -20,7 +20,6 @@ public class Recipe implements Serializable{
 	ArrayList<String> categories;
 	ArrayList<Ingredient> ingredients;
 	ArrayList<Direction> directions;
-
 	//add categories, description, img_url, name, rid
 
 	public Recipe(int id, String name, String description, Bitmap mainImage) {
@@ -32,13 +31,6 @@ public class Recipe implements Serializable{
 		categories = new ArrayList<String>();
 		ingredients = new ArrayList<Ingredient>();
 		directions = new ArrayList<Direction>();
-	}
-	public Recipe()
-	{
-		categories = new ArrayList<String>();
-		ingredients = new ArrayList<Ingredient>();
-		directions = new ArrayList<Direction>();
-		this.mainImage = null;
 	}
 
 	public void parseIngredientsFromJson(String json) {
@@ -86,6 +78,12 @@ public class Recipe implements Serializable{
 		}
 	}
 
+	public Recipe()
+	{
+		ingredients = new ArrayList<Ingredient>();
+		directions = new ArrayList<Direction>();
+	}
+
 	public void setIngredients(ArrayList<Ingredient> i)
 	{
 		this.ingredients = i;
@@ -110,9 +108,9 @@ public class Recipe implements Serializable{
 	{
 		return this.directions.get(index);
 	}
-	public void AddADirection(String dir, ArrayList<Bitmap> bmp)
+	public void AddADirection(String dir, Bitmap bmp)
 	{
-		this.directions.add(new Direction(dir, bmp ));
+		this.directions.add(new Direction(dir, bmp));
 	}
 	public void AddADirection(String dir)
 	{

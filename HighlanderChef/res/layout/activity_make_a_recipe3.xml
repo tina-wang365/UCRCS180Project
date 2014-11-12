@@ -14,6 +14,15 @@
         android:layout_height="wrap_content"
         android:text="@string/MakeARecipe3Header" />
 
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/addadirection"
+        android:layout_below="@+id/addadirection"
+        android:onClick="addADirectionPressed"
+        android:text="@string/Add_directions_button" />
+
     <TextView
         android:id="@+id/listofingredientsadded"
         android:layout_width="wrap_content"
@@ -23,12 +32,6 @@
         android:layout_marginTop="15dp"
         android:text="@string/no_directions_added" />
 
-	<RelativeLayout        
-		android:id="@+id/linearLayoutImages"
-     	android:layout_width="wrap_content"
-      	android:layout_height="wrap_content" >    
-    </RelativeLayout>
-    
     <EditText
         android:id="@+id/addadirection"
         android:layout_width="wrap_content"
@@ -40,53 +43,22 @@
 
         <requestFocus />
     </EditText>
+    
+     <Button
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignLeft="@+id/button1"
+         android:layout_below="@+id/button1"
+         android:onClick="submitRecipePressed"
+         android:text="@string/Submit_Recipe" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button1"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_alignLeft="@+id/addadirection"
-        android:layout_marginLeft="15dp"
-        android:onClick="addImageToDirectionPressed"
-        android:text="@string/AddImagetoDirection" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/addadirection"
-        android:layout_below="@+id/button1"
-        android:layout_marginRight="18dp"
-        android:onClick="submitRecipePressed"
-        android:text="@string/Submit_Recipe" />
-
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/addadirection"
-        android:layout_marginTop="24dp"
-        android:layout_toRightOf="@+id/button2"
-        android:onClick="addADirectionPressed"
-        android:text="@string/Add_directions_button" />
-
-    <ImageView
-        android:id="@+id/added_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button3"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp"
-        android:src="@drawable/uploadimage" />
-
-   <TextView
-       android:id="@+id/submit_error"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_alignLeft="@+id/button2"
-       android:layout_below="@+id/button3"
-       android:text="@string/submit_error" />
+     <Button
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignLeft="@+id/addadirection"
+         android:layout_centerVertical="true"
+         android:layout_marginLeft="15dp"
+         android:onClick="addImageToDirection"
+         android:text="@string/AddImagetoDirection" />
 
 </RelativeLayout>
