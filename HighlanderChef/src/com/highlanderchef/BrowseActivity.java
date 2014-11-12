@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -20,18 +22,17 @@ public class BrowseActivity extends Activity {
 	public static final int LEFTPADDING = 14;
 	private ArrayList<LeveledCheckBox> CheckBoxList;
 	private Button cButton;
-	private Comm iComm;
 	private ArrayList<Category> CategoriesData;
+	private LinearLayout iLinearLayout;
 
 	//functions
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		iComm = new Comm();
 		CheckBoxList = new ArrayList<LeveledCheckBox>();
 		CategoriesData = new ArrayList<Category>();
 		ScrollView iScrollView = new ScrollView(this);
-		LinearLayout iLinearLayout = new LinearLayout(this);
+		iLinearLayout = new LinearLayout(this);
 		iLinearLayout.setOrientation(LinearLayout.VERTICAL);
 		iScrollView.addView(iLinearLayout);
 		ID_Maker currID = ID_Maker.getInstance();
@@ -66,14 +67,20 @@ public class BrowseActivity extends Activity {
 				}
 				for (int i = 0; i < deepestLevel; i++)
 					bundle.putStringArrayList(Integer.toString(i), SelectedCategories.get(i));
+				bundle.putInt(Integer.toString(0), SelectedCategories.size());
 				intent.putExtras(bundle);
 				startActivity(intent);
 			}
 		});
 
 		//Get categories' names
+		new CategoryTask().execute();
+		this.setContentView(iScrollView);
+	}
+
+	public void CreateCategories(ArrayList<Category> iCategoryList) {
 		ArrayList<String> iCategoryNames = new ArrayList<String>();
-		CategoriesData = iComm.getCategories();
+		CategoriesData = iCategoryList;
 		for (int i = 0; i < CategoriesData.size(); i++)
 			if (CategoriesData.get(i).level == 0)
 				iCategoryNames.add(CategoriesData.get(i).name);
@@ -83,6 +90,7 @@ public class BrowseActivity extends Activity {
 		iCategoryNames.add("bar");
 		iCategoryNames.add("baz");
 
+		ID_Maker currID = ID_Maker.getInstance();
 		int currentLevel = 0;
 		for (int i = 0; i < iCategoryNames.size() ; i++)
 		{
@@ -94,7 +102,7 @@ public class BrowseActivity extends Activity {
 			iLinearLayout.addView(iCheckBox);
 			CheckBoxList.add(iCheckBox);
 		}
-		this.setContentView(iScrollView);
+
 	}
 
 	@Override
@@ -174,6 +182,30 @@ public class BrowseActivity extends Activity {
 				return Children;
 		}
 		return Children;
+	}
+
+	private class CategoryTask extends AsyncTask<String, Void, Boolean> {
+		ArrayList<Category> CategoryList;
+		@Override
+		protected Boolean doInBackground(String... params) {
+			Comm iComm = new Comm();
+			CategoryList = iComm.getCategories();
+			boolean ret = false;
+			if (CategoryList != null)
+				ret = (!CategoryList.isEmpty());
+			return ret;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				Log.v("Got_Categories","Successfully recieved categories from server");
+				CreateCategories(CategoryList);
+			} else {
+				Log.e("NO_CATEGORIES", "Did not get any categories from the server");
+			}
+		}
+
 	}
 }
 
