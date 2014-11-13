@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -48,23 +49,25 @@ public class Comm {
 		mapper.registerModule(module);
 	}
 
+	private void initMapper() {
+		mapper = new ObjectMapper();
+		registerMapperSerializers();
+		mapper.getJsonFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+		mapper.getJsonFactory().configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, true);
+	}
+
 	public Comm() {
+		System.out.println("Creating new Comm");
 		lastJSON = "";
 		email = "";
 		authToken = "";
-
-		mapper = new ObjectMapper();
-		registerMapperSerializers();
-		System.out.println("Creating new Comm");
+		initMapper();
 	}
 
 	public Comm(String email, String authToken) {
 		this.authToken = authToken;
 		this.email = email;
 		lastJSON = "";
-
-		mapper = new ObjectMapper();
-		registerMapperSerializers();
 		System.out.println("Creating new Comm");
 	}
 
@@ -270,7 +273,7 @@ public class Comm {
 			while (ite.hasNext()) {
 				JsonNode dir = ite.next();
 				String text = mapper.readValue(dir.path("text"), String.class);
-				Iterator<JsonNode> ite2 = node.getElements();
+				Iterator<JsonNode> ite2 = dir.path("img").getElements();
 				ArrayList<Bitmap> bmps = new ArrayList<Bitmap>();
 				while(ite2.hasNext()) {
 					JsonNode img = ite2.next();
