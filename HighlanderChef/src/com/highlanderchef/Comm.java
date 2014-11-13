@@ -125,7 +125,6 @@ public class Comm {
 		}
 		if(simple.categories.size() == 0)
 			System.out.println("there are no categories");
-
 	}
 
 	public int newAccount(String email, String password) {

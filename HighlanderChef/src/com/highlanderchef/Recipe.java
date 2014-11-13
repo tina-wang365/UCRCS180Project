@@ -159,4 +159,9 @@ public class Recipe implements Serializable{
 		return this.mainImage;
 	}
 
+	public boolean isMainImage()
+	{
+		return (this.mainImage != null);
+	}
+
 }
