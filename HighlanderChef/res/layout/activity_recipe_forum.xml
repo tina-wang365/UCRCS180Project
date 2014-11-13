@@ -48,9 +48,8 @@
         android:text=""
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-<<<<<<< HEAD
-	<!-- Users can select the rating out of 5 starts -->
-=======
+	<!-- Users can select the rating out of 5 stars -->
+
 	<!-- Users can select the rating out of 5 starts --> 
 	<RatingBar
 	    android:id="@+id/recipeRatingBar"
@@ -64,8 +63,8 @@
 	    android:numStars="5"
 	    android:rating="2.0"
 	    android:stepSize="1.0" />
->>>>>>> cba5dcd03394fd19fb7fb2ede8d37fac401aa8ea
-	
+
+
 	<!-- Let users make a Comment -->
 	<EditText
 	    android:id="@+id/userCommentText"
@@ -79,7 +78,7 @@
 	    android:hint="@string/tapToComment" />
 
 	<!-- User can add a comment by pressing this button -->
-	
+
 	<Button
 	    android:id="@+id/submitComment"
 	    android:layout_width="wrap_content"
@@ -99,5 +98,5 @@
 	    android:numStars="5"
 	    android:rating="1"
 	    android:stepSize="1" />
-	  
+
 </RelativeLayout>
