@@ -37,11 +37,10 @@ public class Comm {
 	private String authToken;
 
 	public static final int SUCCESS = 0;
-	public static final int CONN_FAILED = -1;
-	public static final int CONN_TIMEOUT = -2;
 	public static final int JSON_ERROR = -3;
-	public static final int GENL_FAIL = -4;
-	public static final int NOT_IMPL = -42;
+	public static final int API_FAIL = -50;
+	public static final int NETWORK_FAIL = -60;
+
 
 	private void registerMapperSerializers() {
 		SimpleModule module = new SimpleModule("DirectionModule", new Version(1,0,0,null));
@@ -152,7 +151,7 @@ public class Comm {
 					this.id = userId.intValue();
 					return SUCCESS;
 				} else {
-					return GENL_FAIL;
+					return API_FAIL;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -231,6 +230,7 @@ public class Comm {
 			connection.disconnect();
 			return bitmap;
 		} catch (Exception e) {
+			System.out.println("Error in getImage");
 			e.printStackTrace();
 		}
 		return null;
@@ -256,6 +256,7 @@ public class Comm {
 				return "";
 			}
 		} catch (Exception e) {
+			System.out.println("Error in imageUpload");
 			e.printStackTrace();
 		}
 		return "";
@@ -280,6 +281,7 @@ public class Comm {
 				r.addDirection(text, bmps);
 			}
 		} catch (Exception e) {
+			System.out.println("Error in parseDirections - mapper.readTree or mapper.readValue");
 			e.printStackTrace();
 		}
 	}
@@ -303,6 +305,7 @@ public class Comm {
 
 			return r;
 		} catch (Exception e) {
+			System.out.println("Error in parseRecipe - mapper.readValue");
 			e.printStackTrace();
 		}
 		return null;
@@ -346,7 +349,7 @@ public class Comm {
 		if (lastStatus == 1) {
 			return SUCCESS;
 		} else {
-			return GENL_FAIL;
+			return API_FAIL;
 		}
 	}
 
@@ -360,7 +363,7 @@ public class Comm {
 			if (lastStatus == 1) {
 				return SUCCESS;
 			} else {
-				return GENL_FAIL;
+				return API_FAIL;
 			}
 		} else {
 			return ret;
@@ -377,7 +380,7 @@ public class Comm {
 			if (lastStatus == 1) {
 				return SUCCESS;
 			} else {
-				return GENL_FAIL;
+				return API_FAIL;
 			}
 		} else{
 			return ret;
@@ -400,6 +403,7 @@ public class Comm {
 						Integer level = mapper.readValue(r.path("level"), Integer.class);
 						cats.add(new Category(id.intValue(), level.intValue(), name));
 					} catch (Exception e) {
+						System.out.println("failed in getCategories - mapper.readValue");
 						e.printStackTrace();
 						return null;
 					}
@@ -420,6 +424,7 @@ public class Comm {
 			return apiRequestPayload(relUrl, mapper.writeValueAsString(o));
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("died writing value string " + o);
 			return JSON_ERROR;
 		}
 	}
@@ -449,18 +454,20 @@ public class Comm {
 			System.out.println(jsonString);
 			lastJSON = jsonString.toString();
 			rootNode = mapper.readTree(lastJSON);
-			lastStatus = GENL_FAIL;
+			lastStatus = API_FAIL;
 			try {
 				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
 				lastStatus = status;
 				return SUCCESS;
 			} catch (Exception e) {
 				e.printStackTrace();
-				return GENL_FAIL;
+				System.out.println("failed in apiRequest : fail to readValue from \"status\" ");
+				return API_FAIL;
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			return CONN_FAILED;
+			System.out.println("failed in apiRequest: failed URL");
+			return NETWORK_FAIL;
 		}
 	}
 }

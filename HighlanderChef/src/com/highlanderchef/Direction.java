@@ -32,7 +32,4 @@ public class Direction implements Serializable
 		return this.text;
 	}
 
-
-
-
 }
