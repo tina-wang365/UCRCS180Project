@@ -23,9 +23,9 @@ public class RecipeForum extends ActionBarActivity {
 	Recipe currentRecipe = null;
 	int recipeID = 0;
 	private RatingBar ratingBar;
-	private TextView txtRatingValue;
+	//private TextView txtRatingValue;
 	private Button btnComment;
-	private float currentRating;
+	float userRating = 0;
 
 
 	@Override
@@ -62,7 +62,7 @@ public class RecipeForum extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 
 	public void downloadRecipe() {
 		new getRecipeTask().execute(recipeID);
@@ -82,10 +82,6 @@ public class RecipeForum extends ActionBarActivity {
 		//ImageView imageViewMainImage;
 
 		//Parse ingredients into neat format
-		//NOTE: This only handles one kind of input for proper formatting. This assumes that
-		//the string "* 1/2 ingredientName" does not exceed the width of the mobile screen.
-		/*This can be made into a function in Recipe Class*/
-
 		String formatOfIngredient = "";
 
 		if(ingredientList.size() > 0) {
@@ -106,9 +102,6 @@ public class RecipeForum extends ActionBarActivity {
 
 
 		//Parse directions into neat format
-		//NOTE: This only handles one kind of input for proper formatting. This assumes that
-		//that the length of directions is not larger than the width of the screen.\
-		/*This can be made into a function in Recipe Class*/
 		String formatOfDirection = "";
 		if(directionList.size() > 0) {
 			for(int i = 0; i < directionList.size(); ++i) {
@@ -145,14 +138,15 @@ public class RecipeForum extends ActionBarActivity {
 	public void addListenerOnRatingBar() {
 
 		ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
-		txtRatingValue = (TextView) findViewById(R.id.txtRatingValue);
 
 		ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
 			@Override
 			public void onRatingChanged(RatingBar ratingBar, float rating,
 					boolean fromUser) {
 
-				txtRatingValue.setText(String.valueOf(rating));
+				//txtRatingValue.setText(String.valueOf(rating));
+				userRating = rating;
+
 
 			}
 		});
