@@ -120,7 +120,7 @@ public class Comm {
 			System.out.println(i + " " + dirs.get(i).text);
 		}
 		System.out.println("now display the categories");
-		ArrayList<String> cats = simple.categories;
+		ArrayList<Integer> cats = simple.categories;
 		for(int i = 0; i < cats.size(); i++) {
 			System.out.println(i + " " + cats.get(i));
 		}
@@ -347,7 +347,7 @@ public class Comm {
 		recipe.put("cookTime", r.cookTime);
 		System.out.println("uploadRecipe uploading main image");
 		recipe.put("image_url", imageUpload(r.mainImage));
-		recipe.put("categories", "STUB");
+		recipe.put("categories", r.categories);
 		recipe.put("ingredients", r.ingredients);
 
 		recipe.put("directions", r.directions);
