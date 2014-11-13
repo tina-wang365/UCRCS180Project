@@ -30,7 +30,8 @@
 	    android:layout_alignRight="@+id/selectedRecipeIngredientList"
 	    android:layout_below="@+id/selectedRecipeIngredientList"
 	    android:layout_marginTop="20dp"
-	    android:text="@string/defaultDirectionsList" />
+	    android:text="@string/defaultDirectionsList" 
+	    android:visibility="gone"/>
 
 	<TextView
 	    android:id="@+id/selectedRecipeIngredientList"
@@ -39,7 +40,8 @@
 	    android:layout_alignLeft="@+id/titleOfRecipe"
 	    android:layout_below="@+id/titleOfRecipe"
 	    android:layout_marginTop="15dp"
-	    android:text="@string/defaultIngredientList" />
+	    android:text="@string/defaultIngredientList" 
+	    android:visibility="gone"/>
 	<TextView
  		android:id="@+id/txtRatingValue"
         android:layout_width="wrap_content"
