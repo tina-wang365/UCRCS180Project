@@ -67,6 +67,7 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_above="@+id/submitComment"
+	    android:layout_below="@+id/selectedRecipeDirectionList"
 	    android:layout_alignParentLeft="true"
 	    android:layout_marginBottom="57dp"
 	    android:ems="10"
