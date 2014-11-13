@@ -1,6 +1,5 @@
 package com.highlanderchef;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
@@ -221,28 +220,33 @@ public class Comm {
 			}
 
 			int len = connection.getContentLength();
-			System.out.println("getImage sees content-length " + connection.getContentLength());
-
-			if (!runningAndroid) {
+			System.out.println("getImage sees content-length " + len);
+			String type = connection.getContentType();
+			System.out.println("getImage sees content-type " + type);
+			Bitmap bitmap = BitmapFactory.decodeStream(connection.getInputStream());
+			if (bitmap == null) {
+				System.out.println("BitmapFactory failed to decode PNG from stream");
+				connection.disconnect();
 				return null;
+			} else {
+				connection.disconnect();
+				return bitmap;
 			}
-			imgData = new byte[len];
-			BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
-			bis.read(imgData);
-			connection.disconnect();
 		} catch (Exception e) {
 			System.out.println("Error in getImage");
 			e.printStackTrace();
 			System.out.println("getImage failed network");
 			return null;
 		}
-		Bitmap bitmap = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
-		return bitmap;
 	}
 
 	// returns a new URL for the uploaded image, or "" on failure
 	public String imageUpload(Bitmap bmp) {
 		System.out.println("imageUpload");
+		if (bmp == null) {
+			System.out.println("tried to upload a null image -- bailing");
+			return "";
+		}
 		try {
 			HashMap<String, Object> o = new HashMap<>();
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
