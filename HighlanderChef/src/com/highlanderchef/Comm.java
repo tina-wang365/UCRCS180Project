@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -19,7 +20,6 @@ import org.codehaus.jackson.map.module.SimpleModule;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Base64;
 
 public class Comm {
 	private static String serverRoot = "http://96.126.122.162:9222/chef/";
@@ -248,8 +248,7 @@ public class Comm {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			bmp = Bitmap.createScaledBitmap(bmp, 1024, 768, false);
 			if (bmp.compress(Bitmap.CompressFormat.PNG, 90, stream)) {
-				o.put("bmp", Base64.encode(stream.toByteArray(), Base64.DEFAULT));
-				apiRequest("imageupload", o);
+				apiRequestBytePayload("imageupload", stream.toByteArray());
 				if (lastStatus == 1) {
 					String url = mapper.readValue(rootNode.path("image_url"), String.class);
 					return url;
@@ -431,6 +430,48 @@ public class Comm {
 			e.printStackTrace();
 			System.out.println("died writing value string " + o);
 			return JSON_ERROR;
+		}
+	}
+
+	private int apiRequestBytePayload(String relUrl, byte[] payload) {
+		String line;
+		StringBuffer jsonString = new StringBuffer();
+		try {
+			URL url = new URL(serverRoot + relUrl);
+
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			OutputStream os = connection.getOutputStream();
+			os.write(payload);
+			os.close();
+			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			while ((line = br.readLine()) != null) {
+				jsonString.append(line);
+			}
+			br.close();
+			connection.disconnect();
+			System.out.println(jsonString);
+			lastJSON = jsonString.toString();
+			rootNode = mapper.readTree(lastJSON);
+			lastStatus = API_FAIL;
+			try {
+				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
+				lastStatus = status;
+				return SUCCESS;
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("failed in apiRequest : fail to readValue from \"status\" ");
+				return API_FAIL;
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			System.out.println("failed in apiRequest: failed URL");
+			return NETWORK_FAIL;
 		}
 	}
 
