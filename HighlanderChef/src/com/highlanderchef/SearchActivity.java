@@ -27,6 +27,9 @@ public class SearchActivity extends ActionBarActivity {
 		String query = intent.getStringExtra("search_query");
 
 		new SearchTask().execute(query);
+
+
+		// TODO: now loading...
 	}
 
 	@Override
@@ -58,6 +61,8 @@ public class SearchActivity extends ActionBarActivity {
 		}
 		for(int i = 0; i < recipies.size(); ++i)
 		{
+			if(recipies.get(i) == null )
+				continue;
 			if(i >= 1)
 			{
 				ImageView iv_divider = new ImageView(this);
@@ -84,18 +89,17 @@ public class SearchActivity extends ActionBarActivity {
 
 				iv_divider.setImageBitmap(div);
 				rl.addView(iv_divider);
-
 			}
 			TextView tv = new TextView(this);
 			tv.setText(recipies.get(i).getName());
 			//tv.setPadding(0, (i * 30), 0, 0);
 			rl.addView(tv);
-			/*if(recipies.get(i).isMainImage())
+			if(recipies.get(i).isMainImage())
 			{
 				ImageView iv = new ImageView(this);
 				iv.setImageBitmap(recipies.get(i).getMainImage());
 				rl.addView(iv);
-			}*/
+			}
 			TextView tv_descr = new TextView(this);
 			tv_descr.setText(recipies.get(i).getDescription());
 			rl.addView(tv_descr);

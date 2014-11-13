@@ -282,6 +282,7 @@ public class Comm {
 				while(ite2.hasNext()) {
 					JsonNode img = ite2.next();
 					String img_url = img.getTextValue();
+					System.out.println("parseDirections found img_url " + img_url);
 					Bitmap bmp = getImage(img_url);
 					bmps.add(bmp);
 				}
@@ -306,6 +307,7 @@ public class Comm {
 			String description = mapper.readValue(node.path("description"), String.class);
 			String image_url = mapper.readValue(node.path("img_url"), String.class);
 			String name = mapper.readValue(node.path("name"), String.class);
+			System.out.println("parseRecipe for image_url " + image_url);
 			r = new Recipe(id, name, description, getImage(image_url));
 
 			if (!brief) {
