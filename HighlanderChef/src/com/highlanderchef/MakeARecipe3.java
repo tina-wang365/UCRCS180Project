@@ -162,6 +162,8 @@ public class MakeARecipe3 extends ActionBarActivity {
 	public void submitRecipePressed(View view)
 	{
 		new UploadRecipeTask().execute(recipe);
+		TextView tv_error = (TextView) findViewById(R.id.submit_error);
+		tv_error.setVisibility(View.INVISIBLE);//resume_here
 	}
 	public void onSuccess()
 	{
