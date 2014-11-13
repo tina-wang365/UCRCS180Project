@@ -33,7 +33,6 @@ public class MainMenu extends ActionBarActivity {
 		String username = "";
 		String strWelcomeFormat = getResources().getString(R.string.Welcome_Chef);
 		String strWelcomeMsg = String.format(strWelcomeFormat,username);
-
 	}
 
 	@Override
