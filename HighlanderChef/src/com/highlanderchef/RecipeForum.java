@@ -153,16 +153,15 @@ public class RecipeForum extends ActionBarActivity {
 		ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
 		txtRatingValue = (TextView) findViewById(R.id.txtRatingValue);
 
-		//if rating value is changed,
-		//display the current rating value in the result (textview) automatically
-		OnRatingBarChangeListener barChangeListener = new OnRatingBarChangeListener() {
+		ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
 			@Override
 			public void onRatingChanged(RatingBar ratingBar, float rating,
 					boolean fromUser) {
+
 				txtRatingValue.setText(String.valueOf(rating));
+
 			}
-		};
-		ratingBar.setOnRatingBarChangeListener(barChangeListener);
+		});
 		//final RatingBar sBar = (RatingBar) findViewById(R.id.serviceBar);
 		//sBar.setOnRatingBarChangeListener(barChangeListener);
 	}
@@ -181,7 +180,6 @@ public class RecipeForum extends ActionBarActivity {
 				Toast.makeText(RecipeForum.this,
 						String.valueOf(ratingBar.getRating()),
 						Toast.LENGTH_SHORT).show();
-
 			}
 
 		});

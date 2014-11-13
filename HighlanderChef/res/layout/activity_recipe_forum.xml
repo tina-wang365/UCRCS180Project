@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -47,18 +48,7 @@
         android:text=""
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-	<!-- Users can select the rating out of 5 starts --> 
-	<RatingBar
-	    android:id="@+id/recipeRatingBar"
-	    style="?android:attr/ratingBarStyleSmall"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_above="@+id/submitComment"
-	    android:layout_marginBottom="72dp"
-	    android:layout_toRightOf="@+id/userCommentText"
-	    android:numStars="5"
-	    android:rating="2.0"
-	    android:stepSize="1.0" />
+	<!-- Users can select the rating out of 5 starts -->
 	
 	<!-- Let users make a Comment -->
 	<EditText
@@ -83,6 +73,14 @@
 	    android:onClick="addCommentPressed"
 	    android:text="@string/Comment" />
 
-	
+	<RatingBar
+	    android:id="@+id/recipeRatingBar"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/submitComment"
+	    android:layout_alignRight="@+id/errorCannotDisplayRecipe"
+	    android:numStars="5"
+	    android:rating="1"
+	    android:stepSize="1" />
 	  
 </RelativeLayout>
