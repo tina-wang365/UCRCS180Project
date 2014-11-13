@@ -16,6 +16,7 @@ public class Recipe implements Serializable{
 	String description;
 	String cookTime;
 	Bitmap mainImage;
+	String mainImagepath;
 
 	ArrayList<String> categories;
 	ArrayList<Ingredient> ingredients;
@@ -148,6 +149,19 @@ public class Recipe implements Serializable{
 	public String getCookTime()
 	{
 		return this.cookTime;
+	}
+	public void setMainImage(Bitmap bm)
+	{
+		this.mainImage = bm;
+	}
+	public Bitmap getMainImage()
+	{
+		return this.mainImage;
+	}
+
+	public boolean isMainImage()
+	{
+		return (this.mainImage != null);
 	}
 
 }

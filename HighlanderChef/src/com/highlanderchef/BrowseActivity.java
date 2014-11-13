@@ -4,10 +4,11 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -16,9 +17,9 @@ import android.widget.ScrollView;
 public class BrowseActivity extends Activity {
 
 	//variables
-	public static final int LEFTPADDING = 14;
+	public static final int LEFTPADDING = 32;
 	private ArrayList<LeveledCheckBox> CheckBoxList;
-	private Button cButton;
+	private LinearLayout iLinearLayout;
 
 	//functions
 	@Override
@@ -26,43 +27,30 @@ public class BrowseActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		CheckBoxList = new ArrayList<LeveledCheckBox>();
 		ScrollView iScrollView = new ScrollView(this);
-		LinearLayout iLinearLayout = new LinearLayout(this);
+		iLinearLayout = new LinearLayout(this);
 		iLinearLayout.setOrientation(LinearLayout.VERTICAL);
 		iScrollView.addView(iLinearLayout);
-		ID_Maker currID = ID_Maker.getInstance();
-
-		//add search button
-		cButton = new Button(this);
-		cButton.setText(getResources().getString(R.string.Search_Categories));
-		cButton.setId(currID.useCurrID());
-		iLinearLayout.addView(cButton);
-		cButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View iView) {
-				//send category search to server
-			}
-		});
 
 		//Get categories' names
-		ArrayList<String> iCategoryNames = new ArrayList<String>();
+		new CategoryTask().execute();
+		this.setContentView(iScrollView);
+	}
 
-		//testing cases
-		iCategoryNames.add("foo");
-		iCategoryNames.add("bar");
-		iCategoryNames.add("baz");
-
-		int currentLevel = 0;
-		for (int i = 0; i < iCategoryNames.size() ; i++)
+	public void CreateCategories(ArrayList<Category> iCategoryList) {
+		ID_Maker currID = ID_Maker.getInstance();
+		for (int i = 0; i < iCategoryList.size() ; i++)
 		{
-			LeveledCheckBox iCheckBox = new LeveledCheckBox(this,currentLevel);
-			iCheckBox.setText(iCategoryNames.get(i).toCharArray(),
-					0, iCategoryNames.get(i).length());
+			LeveledCheckBox iCheckBox = new LeveledCheckBox(this,iCategoryList.get(i).level,iCategoryList.get(i));
+			iCheckBox.setText(iCheckBox.cData.name.toCharArray(),
+					0, iCheckBox.cData.name.length());
+			iCheckBox.setPadding(iCheckBox.getLevel()*LEFTPADDING, 0, 0, 0);
 			iCheckBox.setId(currID.useCurrID());
 			iCheckBox.setOnClickListener(CheckboxGetsChecked(iCheckBox));
-			iLinearLayout.addView(iCheckBox);
 			CheckBoxList.add(iCheckBox);
+			if (iCheckBox.cData.level == 0)
+				iLinearLayout.addView(iCheckBox);
 		}
-		this.setContentView(iScrollView);
+
 	}
 
 	@Override
@@ -78,49 +66,86 @@ public class BrowseActivity extends Activity {
 		return new View.OnClickListener() {
 			@Override
 			public void onClick(View iView) {
+				LinearLayout iLinearLayout = (LinearLayout) (iCheckBox.getParent());
+				//find children
+				ArrayList<LeveledCheckBox> iChildren = getCategoryChildren(CheckBoxList.indexOf(iCheckBox));
+
+				if (iChildren.isEmpty())
+				{
+					//Checkbox is a left so open new activity
+				}
+
 				if (((CheckBox) iView).isChecked())
 				{
-					LinearLayout iLinearLayout = ((LinearLayout) iCheckBox.getParent());
-					//get categories' names
-					ArrayList<String> LowerCategoryList = new ArrayList<String>();
-
-					//testing cases
-					LowerCategoryList.add("Childfoo");
-					LowerCategoryList.add("Childbar");
-					LowerCategoryList.add("Childbaz");
-
-					int currentLevel = ((LeveledCheckBox) iView).getLevel() + 1;
-					ID_Maker currID = ID_Maker.getInstance();
-					for (int i = 0 ; i < LowerCategoryList.size() ; i++)
+					//make children visible
+					for (int i = 0 ; i < iChildren.size() ; i++)
 					{
-						LeveledCheckBox newCheckBox = new LeveledCheckBox(iCheckBox.getContext(),currentLevel);
-						newCheckBox.setText(LowerCategoryList.get(i).toCharArray(),
-								0, LowerCategoryList.get(i).length());
-						newCheckBox.setPadding(LEFTPADDING*currentLevel,0,0,0);
-						newCheckBox.setId(currID.useCurrID());
-						newCheckBox.setOnClickListener(CheckboxGetsChecked(newCheckBox));
-						iCheckBox.addChild(newCheckBox);
-						iLinearLayout.addView(newCheckBox,iLinearLayout.indexOfChild(iCheckBox) + 1);
+						iLinearLayout.addView(iChildren.get(i));
+						iCheckBox.addChild(iChildren.get(i));
+						iChildren.get(i).setVisibility(View.VISIBLE);
 					}
-					//Reorder the stack so the children are displayed underneath the parent
-					reorderItems();
 				}
 				else
 				{
-					//stuff
-					;//iCheckBox.removeChildren();
+					//make children invisible
+					for (int i = 0 ; i < iChildren.size() ; i++)
+					{
+						iLinearLayout.removeView(iChildren.get(i));
+						iChildren.get(i).setVisibility(View.GONE);
+						iChildren.get(i).setChecked(false);
+					}
+					iCheckBox.removeChildren();
 				}
+				//Reorder the stack so the children are displayed underneath the parent
+				reorderItems();
 			}
 		};
 	}
 
 	private void reorderItems()
 	{
-		cButton.bringToFront();
 		for (int i = 0; i < CheckBoxList.size() ; i++)
 		{
 			CheckBoxList.get(i).bringToFront();
 		}
+	}
+
+	private ArrayList<LeveledCheckBox> getCategoryChildren(int index)
+	{
+		ArrayList<LeveledCheckBox> Children = new ArrayList<LeveledCheckBox>();
+		int init_level = CheckBoxList.get(index).cData.level;
+		for (int i = index + 1; i < CheckBoxList.size() ; i++)
+		{
+			if(CheckBoxList.get(i).cData.level == init_level + 1)
+				Children.add(CheckBoxList.get(i));
+			else if(CheckBoxList.get(i).cData.level == init_level)
+				return Children;
+		}
+		return Children;
+	}
+
+	private class CategoryTask extends AsyncTask<String, Void, Boolean> {
+		ArrayList<Category> CategoryList;
+		@Override
+		protected Boolean doInBackground(String... params) {
+			Comm iComm = new Comm();
+			CategoryList = iComm.getCategories();
+			boolean ret = false;
+			if (CategoryList != null)
+				ret = (!CategoryList.isEmpty());
+			return ret;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				Log.v("Got_Categories","Successfully recieved categories from server");
+				CreateCategories(CategoryList);
+			} else {
+				Log.e("NO_CATEGORIES", "Did not get any categories from the server");
+			}
+		}
+
 	}
 }
 
@@ -148,12 +173,14 @@ class ID_Maker
 class LeveledCheckBox extends CheckBox
 {
 	private final int cLevel;
-	private final ArrayList<CheckBox> cChildren;
-	public LeveledCheckBox(Context iContext, int iLevel)
+	private final ArrayList<LeveledCheckBox> cChildren;
+	Category cData;
+	public LeveledCheckBox(Context iContext, int iLevel, Category iData)
 	{
 		super(iContext);
-		cChildren = new ArrayList<CheckBox>();
+		cChildren = new ArrayList<LeveledCheckBox>();
 		cLevel = iLevel;
+		cData = iData;
 	}
 	public int getLevel()
 	{
@@ -170,6 +197,19 @@ class LeveledCheckBox extends CheckBox
 	public ArrayList<LeveledCheckBox> getCheck()
 	{
 		return null;
+	}
+	public int getDeepestLevel()
+	{
+		if (cChildren.isEmpty())
+			return cLevel;
+		else
+		{
+			int biggest = 0;
+			for (int i = 0; i < cChildren.size() ; i++)
+				if (cChildren.get(i).getDeepestLevel() > biggest)
+					biggest = cChildren.get(i).getDeepestLevel();
+			return biggest;
+		}
 	}
 	@Override
 	public void bringToFront()

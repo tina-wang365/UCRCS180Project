@@ -37,6 +37,7 @@
     <string name="Enter_despription">Enter description of recipe</string>
     <string name="Enter_est_time">Enter estimate cook time</string>
     <string name="MakeARecipe2Header">Add Ingredients</string>
+    <string name="Add_Image">Add Image</string>
     <string name="Add_ingredients">Add Ingredients</string>
     <string name="no_ingredients_added">(No Ingredients added yet)</string>
     <string name="Add_an_Ingredient">Add Ingredient</string>
@@ -50,6 +51,7 @@
     <string name="defaultDirectionsList"> DEFAULT DIRECTIONS LIST</string>
     <string name="tapToComment">Tap here to make a comment!</string>
     <string name="Comment">Comment</string>
+    <string name="msgCannotDisplayRecipe"> Sorry! We cannot display the recipe! </string>
     <!-- Refer to layout/activity_MakeARecipe3.xml -->
     <string name="MakeARecipe3Header">Add Directions</string>
     <string name="no_directions_added">(No directions added yet)</string>
@@ -60,5 +62,7 @@
     <string name="AddImagetoDirection">Add Image</string>
     <string name="title_activity_recipe__forum">Recipe_Forum</string>
     <string name="submit_error">ERROR submitting recipe. Try Again</string>
+    <string name="Search">Search</string>
+    <string name="title_activity_search">SearchActivity</string>
 
 </resources>

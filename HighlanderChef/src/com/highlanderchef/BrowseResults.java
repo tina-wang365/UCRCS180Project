@@ -1,7 +1,9 @@
 package com.highlanderchef;
 
-import android.support.v7.app.ActionBarActivity;
+import java.util.ArrayList;
+
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -10,6 +12,11 @@ public class BrowseResults extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ArrayList<ArrayList<String> > CategoriesSearched = new ArrayList<ArrayList<String> >();
+		int ArrayListSize = savedInstanceState.getInt("Number of ArrayLists");
+		for (int i = 0; i < ArrayListSize ; i++)
+			CategoriesSearched.add(savedInstanceState.getStringArrayList(Integer.toString(i)));
+
 		setContentView(R.layout.activity_browse_results);
 	}
 
