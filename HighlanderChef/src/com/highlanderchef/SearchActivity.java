@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class SearchActivity extends ActionBarActivity {
@@ -48,8 +49,10 @@ public class SearchActivity extends ActionBarActivity {
 	public void SearchSuccess(ArrayList<Recipe> recipies)
 	{
 		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
+
 		for(int i = 0; i < recipies.size(); ++i)
 		{
+
 			TextView tv = new TextView(this);
 			tv.setText(recipies.get(i).getName());
 			//tv.setPadding(0, (i * 30), 0, 0);
@@ -67,6 +70,11 @@ public class SearchActivity extends ActionBarActivity {
 			TextView tv_cooktime = new TextView(this);
 			tv_cooktime.setText(recipies.get(i).getCookTime());
 			rl.addView(tv_cooktime);
+
+			TableRow.LayoutParams llp = new TableRow.LayoutParams();
+			llp.setMargins(2,2,2,2);
+			rl.setLayoutParams(llp);
+
 		}
 
 	}
