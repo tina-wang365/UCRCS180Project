@@ -27,6 +27,9 @@ public class SearchActivity extends ActionBarActivity {
 		String query = intent.getStringExtra("search_query");
 
 		new SearchTask().execute(query);
+
+
+		// TODO: now loading...
 	}
 
 	@Override
