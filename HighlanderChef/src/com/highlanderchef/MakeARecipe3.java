@@ -23,6 +23,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 	Recipe recipe = new Recipe();
 	String picturePath;
+	String errorMessage = "";
 
 	int dir_added_count = 0;
 	int prevTextViewId;
@@ -161,6 +162,8 @@ public class MakeARecipe3 extends ActionBarActivity {
 	public void submitRecipePressed(View view)
 	{
 		new UploadRecipeTask().execute(recipe);
+		TextView tv_error = (TextView) findViewById(R.id.submit_error);
+		tv_error.setVisibility(View.INVISIBLE);//resume_here
 	}
 	public void onSuccess()
 	{
@@ -171,7 +174,9 @@ public class MakeARecipe3 extends ActionBarActivity {
 	public void onFailure()
 	{
 		TextView tv_error = (TextView) findViewById(R.id.submit_error);
+		tv_error.setText(errorMessage);
 		tv_error.setVisibility(View.VISIBLE);
+
 		//TODO implement better case for failure.
 	}
 	private class UploadRecipeTask extends AsyncTask<Recipe, Void, Boolean> {
@@ -180,7 +185,11 @@ public class MakeARecipe3 extends ActionBarActivity {
 		protected Boolean doInBackground(Recipe... params) {
 			Comm c = new Comm();
 			int ret = c.uploadRecipe(params[0]);
-
+			if(ret == Comm.NETWORK_FAIL) {
+				errorMessage = "Error! Network Failed to connect. Check your network";
+			} else if(ret == Comm.API_FAIL) {
+				errorMessage = "Sorry! There was an error making your recipe";
+			}
 			return (ret == Comm.SUCCESS);
 		}
 

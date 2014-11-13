@@ -265,6 +265,7 @@ public class Comm {
 
 	private void parseDirections(Recipe r, String json) {
 		try {
+			System.out.println("parseDirections got json \"" + json + "\"");
 			JsonNode node = mapper.readTree(json);
 			Iterator<JsonNode> ite = node.getElements();
 			while (ite.hasNext()) {

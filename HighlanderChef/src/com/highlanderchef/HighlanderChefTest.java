@@ -29,6 +29,7 @@ public class HighlanderChefTest extends TestCase {
 
 		c.searchRecipes("soup");
 		Recipe simple = c.getRecipe(1);
+		c.uploadRecipe(simple);
 		ArrayList<Ingredient> list = simple.ingredients;
 		for (int i = 0; i < list.size(); i++) {
 			System.out.println(i + " " + list.get(i).amount + " " + list.get(i).name);
