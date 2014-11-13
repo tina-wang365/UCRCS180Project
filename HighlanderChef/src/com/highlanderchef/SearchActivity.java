@@ -113,6 +113,8 @@ public class SearchActivity extends ActionBarActivity {
 			tv_cooktime.setText(recipies.get(i).getCookTime());
 			rl.addView(tv_cooktime);
 
+			final int j = recipies.get(i).id; //so java doesn't complain
+
 			Button b_view = new Button(this);
 			b_view.setText("View");
 
@@ -120,7 +122,8 @@ public class SearchActivity extends ActionBarActivity {
 				@Override
 				public void onClick(View v)
 				{
-					callRecipeIntent();
+
+					callRecipeIntent(j);
 				}
 			});
 			rl.addView(b_view);
@@ -135,10 +138,10 @@ public class SearchActivity extends ActionBarActivity {
 	}
 
 
-	public void callRecipeIntent()
+	public void callRecipeIntent(int index)
 	{
 		Intent intent = new Intent(this, RecipeForum.class);
-		intent.putExtra("recipeID", 50);
+		intent.putExtra("recipeID", index);
 		startActivity(intent);
 	}
 	private class SearchTask extends AsyncTask<String, Void, Boolean>

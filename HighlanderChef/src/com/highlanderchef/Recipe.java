@@ -11,7 +11,7 @@ import android.graphics.Bitmap;
 
 
 public class Recipe implements Serializable{
-	int id;
+	public int id;
 	String name;
 	String description;
 	String cookTime;
