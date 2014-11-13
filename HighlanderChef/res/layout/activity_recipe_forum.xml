@@ -30,8 +30,7 @@
 	    android:layout_alignRight="@+id/selectedRecipeIngredientList"
 	    android:layout_below="@+id/selectedRecipeIngredientList"
 	    android:layout_marginTop="20dp"
-	    android:text="@string/defaultDirectionsList" 
-	    android:visibility="gone"/>
+	    android:text="@string/defaultDirectionsList" />
 
 	<TextView
 	    android:id="@+id/selectedRecipeIngredientList"
@@ -40,8 +39,7 @@
 	    android:layout_alignLeft="@+id/titleOfRecipe"
 	    android:layout_below="@+id/titleOfRecipe"
 	    android:layout_marginTop="15dp"
-	    android:text="@string/defaultIngredientList" 
-	    android:visibility="gone"/>
+	    android:text="@string/defaultIngredientList" />
 	<TextView
  		android:id="@+id/txtRatingValue"
         android:layout_width="wrap_content"
@@ -81,7 +79,7 @@
 	    android:id="@+id/submitComment"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:layout_alignLeft="@+id/selectedRecipeDirectionsList"
+	    android:layout_alignLeft="@+id/selectedRecipeDirectionList"
 	    android:layout_alignParentBottom="true"
 	    android:layout_marginBottom="102dp"
 	    android:onClick="addCommentPressed"
