@@ -39,6 +39,7 @@ public class RecipeForum extends ActionBarActivity {
 		downloadRecipe();
 
 
+		addListenerOnRatingBar();
 		addListenerOnButton();
 	}
 
@@ -147,21 +148,27 @@ public class RecipeForum extends ActionBarActivity {
 	//Event listener are Input events.
 	//change the rating to display
 
-	public void addRatingPressed() {
+	public void addListenerOnRatingBar() {
+
 		ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
 		txtRatingValue = (TextView) findViewById(R.id.txtRatingValue);
 
-		//if rating value changes, then display the current rating
-		//value in the result (textview) automatically.
-		ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
+		//if rating value is changed,
+		//display the current rating value in the result (textview) automatically
+		OnRatingBarChangeListener barChangeListener = new OnRatingBarChangeListener() {
 			@Override
-			public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+			public void onRatingChanged(RatingBar ratingBar, float rating,
+					boolean fromUser) {
 				txtRatingValue.setText(String.valueOf(rating));
-				ratingBar.setRating(rating);
 			}
-		});
+		};
+		ratingBar.setOnRatingBarChangeListener(barChangeListener);
+		//final RatingBar sBar = (RatingBar) findViewById(R.id.serviceBar);
+		//sBar.setOnRatingBarChangeListener(barChangeListener);
 	}
+
 	//display rating
+
 	public void addListenerOnButton() {
 		ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
 		btnComment = (Button) findViewById(R.id.submitComment);
