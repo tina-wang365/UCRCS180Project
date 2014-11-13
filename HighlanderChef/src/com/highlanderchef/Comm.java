@@ -202,9 +202,10 @@ public class Comm {
 	private Bitmap getImage(String relUrl) {
 		System.out.println("getImage(" + serverImgRoot + relUrl);
 		if (relUrl == null) {
+			System.out.println("tried to get a null-url image");
 			return null;
 		}
-
+		byte[] imgData;
 		try {
 			URL url = new URL(serverImgRoot + relUrl);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -223,16 +224,17 @@ public class Comm {
 			if (!runningAndroid) {
 				return null;
 			}
-			byte[] imgData = new byte[len];
+			imgData = new byte[len];
 			BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
 			bis.read(imgData);
-			Bitmap bitmap = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
 			connection.disconnect();
-			return bitmap;
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("getImage failed network");
+			return null;
 		}
-		return null;
+		Bitmap bitmap = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
+		return bitmap;
 	}
 
 	// returns a new URL for the uploaded image, or "" on failure
