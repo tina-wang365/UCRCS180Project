@@ -49,8 +49,6 @@
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 	<!-- Users can select the rating out of 5 stars -->
-
-	<!-- Users can select the rating out of 5 starts --> 
 	<RatingBar
 	    android:id="@+id/recipeRatingBar"
 	    style="?android:attr/ratingBarStyleSmall"
@@ -88,15 +86,5 @@
 	    android:layout_marginBottom="102dp"
 	    android:onClick="addCommentPressed"
 	    android:text="@string/Comment" />
-
-	<RatingBar
-	    android:id="@+id/recipeRatingBar"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_above="@+id/submitComment"
-	    android:layout_alignRight="@+id/errorCannotDisplayRecipe"
-	    android:numStars="5"
-	    android:rating="1"
-	    android:stepSize="1" />
 
 </RelativeLayout>
