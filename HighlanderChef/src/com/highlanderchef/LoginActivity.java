@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class LoginActivity extends ActionBarActivity {
+	private String errorMessage = "";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,7 @@ public class LoginActivity extends ActionBarActivity {
 	public void loginFail(String msg)
 	{
 		TextView invalidlogin = (TextView) findViewById(R.id.invalidlogin);
+		invalidlogin.setText(errorMessage);
 		invalidlogin.setVisibility(View.VISIBLE);
 	}
 
@@ -73,7 +75,11 @@ public class LoginActivity extends ActionBarActivity {
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
 			int ret = c.login(params[0],  params[1]);
-			// Log: ret
+			if(ret == Comm.NETWORK_FAIL) {
+				errorMessage = "Error! Check your connection";
+			} else if(ret == Comm.API_FAIL){
+				errorMessage = "Error! API Fail";
+			}
 			return (ret == Comm.SUCCESS);
 		}
 
