@@ -25,6 +25,7 @@ public class RecipeForum extends ActionBarActivity {
 	private RatingBar ratingBar;
 	private TextView txtRatingValue;
 	private Button btnComment;
+	private float currentRating;
 
 
 	@Override
@@ -160,6 +161,7 @@ public class RecipeForum extends ActionBarActivity {
 			public void onRatingChanged(RatingBar ratingBar, float rating,
 					boolean fromUser) {
 				txtRatingValue.setText(String.valueOf(rating));
+				currentRating = rating; //new data member set to rating
 			}
 		};
 		ratingBar.setOnRatingBarChangeListener(barChangeListener);
