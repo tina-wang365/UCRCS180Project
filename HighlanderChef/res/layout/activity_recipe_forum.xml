@@ -48,7 +48,23 @@
         android:text=""
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
+<<<<<<< HEAD
 	<!-- Users can select the rating out of 5 starts -->
+=======
+	<!-- Users can select the rating out of 5 starts --> 
+	<RatingBar
+	    android:id="@+id/recipeRatingBar"
+	    style="?android:attr/ratingBarStyleSmall"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/submitComment"
+	    android:layout_marginBottom="72dp"
+	    android:layout_below="@+id/selectedRecipeDirectionList"
+	    android:layout_toRightOf="@+id/userCommentText"
+	    android:numStars="5"
+	    android:rating="2.0"
+	    android:stepSize="1.0" />
+>>>>>>> cba5dcd03394fd19fb7fb2ede8d37fac401aa8ea
 	
 	<!-- Let users make a Comment -->
 	<EditText
@@ -56,6 +72,7 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_above="@+id/submitComment"
+	    android:layout_below="@+id/selectedRecipeDirectionList"
 	    android:layout_alignParentLeft="true"
 	    android:layout_marginBottom="57dp"
 	    android:ems="10"
@@ -67,7 +84,7 @@
 	    android:id="@+id/submitComment"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:layout_alignLeft="@+id/selectedRecipeDirectionsList"
+	    android:layout_alignLeft="@+id/selectedRecipeDirectionList"
 	    android:layout_alignParentBottom="true"
 	    android:layout_marginBottom="102dp"
 	    android:onClick="addCommentPressed"

@@ -25,6 +25,7 @@ public class RecipeForum extends ActionBarActivity {
 	private RatingBar ratingBar;
 	private TextView txtRatingValue;
 	private Button btnComment;
+	private float currentRating;
 
 
 	@Override
@@ -61,10 +62,7 @@ public class RecipeForum extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	//TODO: Create a function that receives the recipeID from another activity
-	//TODO: Assume that you have the recipeID (pass in 1). create a task to grab
-	//		the recipe object and display all of its contents.
-
+	
 
 	public void downloadRecipe() {
 		new getRecipeTask().execute(recipeID);
@@ -92,23 +90,19 @@ public class RecipeForum extends ActionBarActivity {
 
 		if(ingredientList.size() > 0) {
 			for(int i = 0; i < ingredientList.size(); ++i) {
-				formatOfIngredient += formatOfIngredient + "* " + ingredientList.get(i).amount + " " + ingredientList.get(i).name;
+				formatOfIngredient += "* " + ingredientList.get(i).amount + " " + ingredientList.get(i).name;
 				if((i + 1) < ingredientList.size()) {
-					formatOfIngredient = formatOfIngredient + "\n";
+					formatOfIngredient += "\n";
 				}
 			}
-
 		}
 		else {
 			formatOfIngredient = "Ingredient List size = 0\n";
 
 		}
 
-
-		//formatOfIngredient = "* 2 cups honey nut toasted oats\n* 1/4 cup of strawberries\n* 2 cups of Blue Diamond Almond and Coconut milk blend";
 		TextView textViewIngredients = (TextView) findViewById(R.id.selectedRecipeIngredientList);
 		textViewIngredients.setText(formatOfIngredient);
-		//textViewIngredients.setMovementMethod(new ScrollingMovementMethod());
 
 
 		//Parse directions into neat format
@@ -162,8 +156,6 @@ public class RecipeForum extends ActionBarActivity {
 
 			}
 		});
-		//final RatingBar sBar = (RatingBar) findViewById(R.id.serviceBar);
-		//sBar.setOnRatingBarChangeListener(barChangeListener);
 	}
 
 	//display rating
@@ -185,22 +177,6 @@ public class RecipeForum extends ActionBarActivity {
 		});
 	}
 
-
-
-	/*public void addCommentPressed(View view)
-	{
-		EditText editTextUserComment = (EditText) findViewById(R.id.userCommentText);
-		String strUserComment = editTextUserComment.getText().toString();
-	}*/
-	//Set the rating of the 5 stars once the user taps on the rating bar.
-	/*public void addRatingPressed(View view)
-	{
-		RatingBar bar = (RatingBar) view;
-		float rating = bar.getRating();
-		bar.setRating(rating);
-	}*/
-
-	//TODO: Create getRecipeTask
 	private class getRecipeTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {

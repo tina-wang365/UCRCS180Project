@@ -3,6 +3,8 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -10,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 public class SearchActivity extends ActionBarActivity {
@@ -23,8 +24,7 @@ public class SearchActivity extends ActionBarActivity {
 		Intent intent = getIntent();
 		String query = intent.getStringExtra("search_query");
 
-		new SearchTask()
-		.execute(query);
+		new SearchTask().execute(query);
 	}
 
 	@Override
@@ -52,7 +52,34 @@ public class SearchActivity extends ActionBarActivity {
 
 		for(int i = 0; i < recipies.size(); ++i)
 		{
+			if(i >= 1)
+			{
+				ImageView iv_divider = new ImageView(this);
 
+				BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+				bmOptions.inJustDecodeBounds = true;
+				BitmapFactory.decodeResource(getResources(), R.drawable.divider, bmOptions);
+
+				//Get the dimensions of the bitmap
+				int photoW = bmOptions.outWidth;
+				int photoH = bmOptions.outHeight;
+
+				int targetW = 500; //TODO find better way to do this.
+				int targetH = 3;
+				//scale image
+				int scalefactor = Math.min(photoW/targetW, photoH/targetH);
+
+				// Decode the image file into a Bitmap sized to fill the View
+				bmOptions.inJustDecodeBounds = false;
+				bmOptions.inSampleSize = scalefactor;
+				bmOptions.inPurgeable = true;
+
+				Bitmap div = BitmapFactory.decodeResource(getResources(), R.drawable.divider, bmOptions);
+
+				iv_divider.setImageBitmap(div);
+				rl.addView(iv_divider);
+
+			}
 			TextView tv = new TextView(this);
 			tv.setText(recipies.get(i).getName());
 			//tv.setPadding(0, (i * 30), 0, 0);
@@ -70,13 +97,7 @@ public class SearchActivity extends ActionBarActivity {
 			TextView tv_cooktime = new TextView(this);
 			tv_cooktime.setText(recipies.get(i).getCookTime());
 			rl.addView(tv_cooktime);
-
-			TableRow.LayoutParams llp = new TableRow.LayoutParams();
-			llp.setMargins(2,2,2,2);
-			rl.setLayoutParams(llp);
-
 		}
-
 	}
 
 	public void SearchFailure(ArrayList<Recipe> recipies)
@@ -106,4 +127,6 @@ public class SearchActivity extends ActionBarActivity {
 		}
 
 	}
+
+
 }
