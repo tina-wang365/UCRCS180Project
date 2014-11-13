@@ -84,12 +84,12 @@ public class SearchActivity extends ActionBarActivity {
 			tv.setText(recipies.get(i).getName());
 			//tv.setPadding(0, (i * 30), 0, 0);
 			rl.addView(tv);
-			if(recipies.get(i).isMainImage())
+			/*if(recipies.get(i).isMainImage())
 			{
 				ImageView iv = new ImageView(this);
 				iv.setImageBitmap(recipies.get(i).getMainImage());
 				rl.addView(iv);
-			}
+			}*/
 			TextView tv_descr = new TextView(this);
 			tv_descr.setText(recipies.get(i).getDescription());
 			rl.addView(tv_descr);
