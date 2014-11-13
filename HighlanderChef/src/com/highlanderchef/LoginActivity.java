@@ -74,13 +74,6 @@ public class LoginActivity extends ActionBarActivity {
 			Comm c = new Comm();
 			int ret = c.login(params[0],  params[1]);
 
-
-			/*
-			 * mdb: temp to test comm requests
-			 */
-			Recipe simple = c.getRecipe(1);
-			c.uploadRecipe(simple);
-
 			// Log: ret
 			return (ret == Comm.SUCCESS);
 		}
