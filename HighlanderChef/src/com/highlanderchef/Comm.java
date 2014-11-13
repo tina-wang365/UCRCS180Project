@@ -177,7 +177,7 @@ public class Comm {
 		{
 			JsonNode r = ite.next();
 			prettyPrint(r);
-			ls.add(parseRecipe(r));
+			ls.add(parseRecipe(r, true));
 		}
 		return ls;
 	}
@@ -195,7 +195,7 @@ public class Comm {
 		while(ite.hasNext())
 		{
 			JsonNode r = ite.next();
-			ls.add(parseRecipe(r));
+			ls.add(parseRecipe(r, true));
 		}
 		return ls;
 	}
@@ -295,6 +295,10 @@ public class Comm {
 	}
 
 	private Recipe parseRecipe(JsonNode node) {
+		return parseRecipe(node, false);
+	}
+
+	private Recipe parseRecipe(JsonNode node, boolean brief) {
 		Recipe r = null;
 
 		try {
@@ -304,12 +308,14 @@ public class Comm {
 			String name = mapper.readValue(node.path("name"), String.class);
 			r = new Recipe(id, name, description, getImage(image_url));
 
-			String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
-			r.parseIngredientsFromJson(ingredientsJson);
-			String directionsJson = mapper.readValue(node.path("directions"), String.class);
-			parseDirections(r, directionsJson);
-			String categoriesJson = mapper.readValue(node.path("categories"), String.class);
-			r.parseCategoriesFromJson(categoriesJson);
+			if (!brief) {
+				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
+				r.parseIngredientsFromJson(ingredientsJson);
+				String directionsJson = mapper.readValue(node.path("directions"), String.class);
+				parseDirections(r, directionsJson);
+				String categoriesJson = mapper.readValue(node.path("categories"), String.class);
+				r.parseCategoriesFromJson(categoriesJson);
+			}
 
 			return r;
 		} catch (Exception e) {
