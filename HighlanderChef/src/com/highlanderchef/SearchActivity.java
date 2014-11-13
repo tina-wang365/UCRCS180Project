@@ -65,7 +65,7 @@ public class SearchActivity extends ActionBarActivity {
 			rl.addView(tv_descr);
 
 			TextView tv_cooktime = new TextView(this);
-			tv_cooktime.setText(recipies.get(i).getDescription());
+			tv_cooktime.setText(recipies.get(i).getCookTime());
 			rl.addView(tv_cooktime);
 		}
 
