@@ -38,7 +38,7 @@ public class RecipeForum extends ActionBarActivity {
 		recipeID = intent.getIntExtra("recipeID", 0);
 		downloadRecipe();
 
-		addListenerOnRatingBar();
+
 		addListenerOnButton();
 	}
 
@@ -147,7 +147,7 @@ public class RecipeForum extends ActionBarActivity {
 	//Event listener are Input events.
 	//change the rating to display
 
-	public void addListenerOnRatingBar() {
+	public void addRatingPressed() {
 		ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
 		txtRatingValue = (TextView) findViewById(R.id.txtRatingValue);
 

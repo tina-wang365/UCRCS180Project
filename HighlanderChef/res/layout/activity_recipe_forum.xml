@@ -58,8 +58,8 @@
 	    android:layout_toRightOf="@+id/userCommentText"
 	    android:numStars="5"
 	    android:onClick="addRatingPressed"
-	    android:rating="0.0"
-	    android:stepSize="0.0" />
+	    android:rating="1"
+	    android:stepSize="1" />
 	
 	<!-- Let users make a Comment -->
 	<EditText
