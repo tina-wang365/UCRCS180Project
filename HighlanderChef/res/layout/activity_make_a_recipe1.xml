@@ -42,6 +42,30 @@
            android:ems="10"
            android:hint="@string/Enter_est_time" />
 
+       <ImageView
+           android:id="@+id/added_image"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+			android:layout_below="@+id/add_image"
+           android:src="@drawable/uploadimage" />
+
+       <Button
+           android:id="@+id/add_image"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignLeft="@+id/add_ingrediant"
+           android:layout_below="@+id/spinner"
+           android:onClick="AddImagePressed"
+           android:text="@string/Add_Image" />
+
+       <Button
+           android:id="@+id/add_ingrediant"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/added_image"
+           android:onClick="AddIngrediantPressed"
+           android:text="@string/Add_ingredients" />
+
        <Spinner
            android:id="@+id/spinner"
            android:layout_width="match_parent"
@@ -49,34 +73,6 @@
            android:layout_alignParentRight="true"
            android:layout_below="@+id/recipe_est_time"
            android:layout_marginTop="20dp" />
-
-       <Button
-           android:id="@+id/add_ingrediant"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_alignParentBottom="true"
-           android:layout_alignRight="@+id/recipe_est_time"
-           android:layout_below="@+id/added_image"
-           android:onClick="AddIngrediantPressed"
-           android:text="@string/Add_ingredients" />
-
-       <ImageView
-           android:id="@+id/added_image"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_alignLeft="@+id/add_ingrediant"
-           android:layout_below="@+id/add_image"
-           android:src="@drawable/uploadimage" />
-
-       <Button
-           android:id="@+id/add_image"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_alignLeft="@+id/added_image"
-           android:layout_below="@+id/spinner"
-           android:onClick="AddImagePressed"
-           android:layout_marginTop="20dp" 
-           android:text="@string/Add_Image" />
 
 </RelativeLayout>
 </ScrollView>
