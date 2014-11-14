@@ -74,7 +74,8 @@ public class BrowseActivity extends Activity {
 				if (iChildren.isEmpty())
 				{
 					//Checkbox is a leaf so open new activity
-					Intent intent = new Intent(BrowseActivity.this, BrowseResults.class);
+					Intent intent = new Intent(BrowseActivity.this, SearchActivity.class);
+					intent.putExtra("CategoryID", iCheckBox.cData.id);
 					startActivity(intent);
 				}
 
