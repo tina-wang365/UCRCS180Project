@@ -182,10 +182,10 @@ public class Comm {
 		return ls;
 	}
 
-	public ArrayList<Recipe> searchRecipesByCategory(String search) {
-		HashMap<String, String> req = new HashMap<>();
-		req.put("categoryID", search);
-		apiRequest("searchCat", req);
+	public ArrayList<Recipe> searchRecipesByCategory(int categoryID) {
+		HashMap<String, Integer> req = new HashMap<>();
+		req.put("categoryID", categoryID);
+		apiRequest("searchcat", req);
 
 		// 		 process whatever JSON we are handed back and
 		//       spin up some Recipe objects, fill them in
