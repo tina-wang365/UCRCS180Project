@@ -16,8 +16,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+
+
 public class SearchActivity extends ActionBarActivity {
 	private final String errorMessage = "";
+	private final String SearchByString = "Search By String";
+	private final String SearchByCategory = "Search By Category";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +30,18 @@ public class SearchActivity extends ActionBarActivity {
 
 		Intent intent = getIntent();
 		String query = intent.getStringExtra("search_query");
+		String category = intent.getStringExtra("category_query");
 
-		new SearchTask().execute(query);
+
+		if (query != null)
+			new SearchTask().execute(SearchByString, query);
+		else if(category != null)
+			new SearchTask().execute(SearchByCategory, category);
+		else
+		{
+			int CategoryQuery = intent.getIntExtra("CategoryID", -1);
+			new SearchTask().execute(SearchByCategory, Integer.toString(CategoryQuery));
+		}
 
 
 		// TODO: now loading...
@@ -150,9 +164,13 @@ public class SearchActivity extends ActionBarActivity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
-			ret = c.searchRecipes(params[0]);
+			if (params[0] == SearchByString)
+				ret = c.searchRecipes(params[1]);
+			else if (params[0] == SearchByCategory)
+				ret = c.searchRecipesByCategory(Integer.parseInt(params[1]));
 			return (ret.size() > 0);
 		}
+
 
 		@Override
 		protected void onPostExecute(Boolean result) {
@@ -166,6 +184,7 @@ public class SearchActivity extends ActionBarActivity {
 		}
 
 	}
+
 
 
 }
