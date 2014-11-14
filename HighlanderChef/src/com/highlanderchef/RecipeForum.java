@@ -22,7 +22,6 @@ public class RecipeForum extends ActionBarActivity {
 	Recipe currentRecipe = null;
 	Comment currentComment = null;
 	int recipeID = 0;
-	private RatingBar ratingBar;
 	//private TextView txtRatingValue;
 	//TODO: HERE IS THE Button I MAKE FOR THE LAST TODO SECTION
 	//WHERE THE TOAST IS BEING CREATED.
@@ -75,6 +74,7 @@ public class RecipeForum extends ActionBarActivity {
 	//ALSO REFER TO THE activity_recipe_forum.xml file for the id.
 	public void addCommentPressed(View v) {
 		EditText userCommentText = (EditText) findViewById(R.id.userCommentText);
+		RatingBar ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
 		currentComment.rating = (int) ratingBar.getRating();
 
 		Toast.makeText(RecipeForum.this,
