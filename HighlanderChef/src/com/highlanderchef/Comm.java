@@ -24,6 +24,7 @@ public class Comm {
 	private static String serverRoot = "http://96.126.122.162:9222/chef/";
 	private static String serverImgRoot = "http://96.126.122.162:9223/";
 	private static boolean runningAndroid = true;
+	private static final int commVersion = 1;
 
 	private static ObjectMapper mapper;
 
@@ -523,6 +524,7 @@ public class Comm {
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 			connection.setRequestProperty("uid", Integer.toString(Comm.id));
 			connection.setRequestProperty("token", Comm.authToken);
+			connection.setRequestProperty("commversion", Integer.toString(Comm.commVersion));
 			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
 			writer.write(payload);
 			writer.close();
