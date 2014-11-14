@@ -13,12 +13,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 
 public class RecipeForum extends ActionBarActivity {
 
 	Recipe currentRecipe = null;
-	Comment currentComment = null;
+	//	Comment currentComment = null;
 	int recipeID = 0;
 	private Button btnComment;
 	private RatingBar ratingBar;
@@ -34,13 +35,6 @@ public class RecipeForum extends ActionBarActivity {
 		Intent intent = getIntent();
 		recipeID = intent.getIntExtra("recipeID", 0);
 		downloadRecipe();
-		/*
-		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
-		TextView tv_cooktime = new TextView(this);
-		   tv_cooktime.setText(recipies.get(i).getCookTime());
-		   rl.addView(tv_cooktime);
-		 */
-		currentComment = new Comment(recipeID, 0, "HelloWorld");
 
 
 	}
@@ -64,22 +58,11 @@ public class RecipeForum extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void addCommentPressed(View v) {
-		/*EditText userCommentText = (EditText) findViewById(R.id.userCommentText);
-		RatingBar ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
-		currentComment.rating = (int) ratingBar.getRating();
-
-		Toast.makeText(RecipeForum.this,
-				String.valueOf(ratingBar.getRating()),
-				Toast.LENGTH_SHORT).show();
-		currentComment.comment = userCommentText.getText().toString();
-		new postCommentTask().execute(currentComment); */
-
-	}
 	public void downloadRecipe() {
 		new getRecipeTask().execute(recipeID);
 	}
 	LinearLayout ll;
+
 
 	public void displayRecipeSuccess(Recipe recipe) {
 		ll = (LinearLayout) findViewById(R.id.rflayout);
@@ -165,11 +148,26 @@ public class RecipeForum extends ActionBarActivity {
 		et_comment.setLayoutParams(params);
 		ll.addView(et_comment);
 
+		RatingBar ratingBar = new RatingBar(this);
+		ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
+			@Override
+			public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+
+			}
+		});
+
+		ratingBar.setStepSize((float) 0.5);
+		ratingBar.setMax(5);
+		ratingBar.setId(1);
+		ratingBar.setRating(2.0f);
+		ll.addView(ratingBar);
+
 		Button b_comment = new Button(this);
 		b_comment.setText("Comment");
 		final int id = recipe.id;
 
-		ratingBar = new RatingBar(this);
+		RatingBar r_bar = new RatingBar(this);
+		ratingBar = r_bar;
 		ll.addView(ratingBar);
 
 		b_comment.setOnClickListener(new View.OnClickListener(){
@@ -179,7 +177,7 @@ public class RecipeForum extends ActionBarActivity {
 			{
 				EditText et2 = (EditText) findViewById(1111);
 				final String comment_text = et2.getText().toString();
-				Comment new_comment = new Comment(id, ratingBar.getRating(), comment_text);
+				Comment new_comment = new Comment(id, r_bar.getRating(), comment_text);
 				addComment(new_comment);
 				et2.getText().clear();
 			}
@@ -197,7 +195,12 @@ public class RecipeForum extends ActionBarActivity {
 			ll.addView(tv_comment);
 		}
 	}
-
+	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+		// TODO Auto-generated method stub
+		TextView rate_val = new TextView(this);
+		rate_val.setText(Float.toString(ratingBar.getRating()));
+		//tv_comment.rating = ratingBar.getRating();
+	}
 	public void addComment(Comment comment)
 	{
 		TextView tv_comment = new TextView(this);
