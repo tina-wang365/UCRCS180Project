@@ -1,91 +1,94 @@
-   	<ScrollView
-   	    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-     	android:id="@+id/ScrollView1"
-     	android:layout_width="wrap_content"
-      	android:layout_height="wrap_content" >
-<RelativeLayout 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.highlanderchef.MakeARecipe3" >
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+ 	android:id="@+id/ScrollView1"
+ 	android:layout_width="wrap_content"
+  	android:layout_height="wrap_content" >
+	<RelativeLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:paddingBottom="@dimen/activity_vertical_margin"
+	    android:paddingLeft="@dimen/activity_horizontal_margin"
+	    android:paddingRight="@dimen/activity_horizontal_margin"
+	    android:paddingTop="@dimen/activity_vertical_margin"
+	    tools:context="com.highlanderchef.MakeARecipe3" >
+	    
+	    <TextView
+	        android:id="@+id/makearecipe3header"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/MakeARecipe3Header" />
+	]
+	    <Button
+	        android:id="@+id/button2"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBaseline="@+id/button1"
+	        android:layout_alignBottom="@+id/button1"
+	        android:layout_alignLeft="@+id/addadirection"
+	        android:layout_marginLeft="15dp"
+	        android:onClick="addImageToDirectionPressed"
+	        android:text="@string/AddImagetoDirection" />
+	
+	    <Button
+	        android:id="@+id/button3"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignRight="@+id/addadirection"
+	        android:layout_below="@+id/button1"
+	        android:layout_marginRight="18dp"
+	        android:onClick="submitRecipePressed"
+	        android:text="@string/Submit_Recipe" />
+	
+	    <Button
+	        android:id="@+id/button1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/addadirection"
+	        android:layout_marginTop="24dp"
+	        android:layout_toRightOf="@+id/button2"
+	        android:onClick="addADirectionPressed"
+	        android:text="@string/Add_directions_button" />
+	
+	    <ImageView
+	        android:id="@+id/added_image"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/button3"
+	        android:layout_centerHorizontal="true"
+	        android:layout_marginTop="28dp"
+	        android:src="@drawable/uploadimage" />
+	
+	   <TextView
+	       android:id="@+id/submit_error"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_alignLeft="@+id/button2"
+	       android:layout_below="@+id/button3"
+	       android:text="@string/submit_error" />
+	
+	   <EditText
+	       android:id="@+id/addadirection"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_alignLeft="@+id/makearecipe3header"
+	       android:layout_below="@+id/makearecipe3header"
+	       android:ems="10"
+	       android:hint="@string/Enter_a_direction" >
+	
+	       <requestFocus />
+	   </EditText>
 
+	   	<LinearLayout
+	   	    android:id="@+id/linearLayoutDirections"
+	   	    android:layout_width="wrap_content"
+	   	    android:layout_height="wrap_content"
+	   	    android:layout_alignParentBottom="true"
+	   	    android:layout_below="@+id/added_image"
+	   	    android:layout_toLeftOf="@+id/button3"
+	   	    android:orientation="vertical" >
 
-    
-    <TextView
-        android:id="@+id/makearecipe3header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/MakeARecipe3Header" />
-
-	<RelativeLayout        
-		android:id="@+id/linearLayoutImages"
-     	android:layout_width="wrap_content"
-      	android:layout_height="wrap_content" >    
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button1"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_alignLeft="@+id/addadirection"
-        android:layout_marginLeft="15dp"
-        android:onClick="addImageToDirectionPressed"
-        android:text="@string/AddImagetoDirection" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/addadirection"
-        android:layout_below="@+id/button1"
-        android:layout_marginRight="18dp"
-        android:onClick="submitRecipePressed"
-        android:text="@string/Submit_Recipe" />
-
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/addadirection"
-        android:layout_marginTop="24dp"
-        android:layout_toRightOf="@+id/button2"
-        android:onClick="addADirectionPressed"
-        android:text="@string/Add_directions_button" />
-
-    <ImageView
-        android:id="@+id/added_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button3"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp"
-        android:src="@drawable/uploadimage" />
-
-   <TextView
-       android:id="@+id/submit_error"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_alignLeft="@+id/button2"
-       android:layout_below="@+id/button3"
-       android:text="@string/submit_error" />
-
-   <EditText
-       android:id="@+id/addadirection"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_alignLeft="@+id/makearecipe3header"
-       android:layout_below="@+id/makearecipe3header"
-       android:ems="10"
-       android:hint="@string/Enter_a_direction" >
-
-       <requestFocus />
-   </EditText>
-
-</RelativeLayout>
+	   	</LinearLayout>
+	   
+	</RelativeLayout>
 </ScrollView>

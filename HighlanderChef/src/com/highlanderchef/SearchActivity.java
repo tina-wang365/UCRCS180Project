@@ -68,18 +68,12 @@ public class SearchActivity extends ActionBarActivity {
 
 	public void SearchSuccess(ArrayList<Recipe> recipies)
 	{
-
-		if(recipies.size() == 0) {
-			//TODO create textview in xml for errors, linear layout cant display messages
-			TextView searchNoResults = (TextView) findViewById(R.id.linearLayoutResults);//darren
-			searchNoResults.setText("No Matches found");
-			searchNoResults.setVisibility(View.VISIBLE);
-		}
+		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		for(int i = 0; i < recipies.size(); ++i)
 		{
 			if(recipies.get(i) == null )
 				continue;
-			LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
+			//LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 			//code for dividers
 			if(i >= 1)
 			{
