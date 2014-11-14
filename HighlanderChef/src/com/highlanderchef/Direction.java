@@ -23,7 +23,7 @@ public class Direction implements Serializable
 
 	public Direction(String text, ArrayList<Bitmap> bmps) {
 		this.text = text;
-		this.images = bmps;
+		this.images = (ArrayList<Bitmap>)bmps.clone();
 
 	}
 
