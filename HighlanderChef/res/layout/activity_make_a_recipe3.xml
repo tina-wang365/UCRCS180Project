@@ -14,32 +14,11 @@
         android:layout_height="wrap_content"
         android:text="@string/MakeARecipe3Header" />
 
-    <TextView
-        android:id="@+id/listofingredientsadded"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/makearecipe3header"
-        android:layout_below="@+id/makearecipe3header"
-        android:layout_marginTop="15dp"
-        android:text="@string/no_directions_added" />
-
 	<RelativeLayout        
 		android:id="@+id/linearLayoutImages"
      	android:layout_width="wrap_content"
       	android:layout_height="wrap_content" >    
     </RelativeLayout>
-    
-    <EditText
-        android:id="@+id/addadirection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/listofingredientsadded"
-        android:layout_below="@+id/listofingredientsadded"
-        android:ems="10"
-        android:hint="@string/Enter_a_direction" >
-
-        <requestFocus />
-    </EditText>
 
     <Button
         android:id="@+id/button2"
@@ -88,5 +67,17 @@
        android:layout_alignLeft="@+id/button2"
        android:layout_below="@+id/button3"
        android:text="@string/submit_error" />
+
+   <EditText
+       android:id="@+id/addadirection"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignLeft="@+id/makearecipe3header"
+       android:layout_below="@+id/makearecipe3header"
+       android:ems="10"
+       android:hint="@string/Enter_a_direction" >
+
+       <requestFocus />
+   </EditText>
 
 </RelativeLayout>

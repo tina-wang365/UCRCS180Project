@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public class Ingredient implements Serializable
 {
-	String name;
+	public String name;
 
-	String amount; //ex. 3, 1/2 cup, 5 ounces.
+	public String amount; //ex. 3, 1/2 cup, 5 ounces.
 
 	public Ingredient(String name, String amount) {
 		this.name = name;

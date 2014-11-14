@@ -16,14 +16,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MakeARecipe3 extends ActionBarActivity {
 
 	Recipe recipe = new Recipe();
 	String picturePath;
+	String errorMessage = "";
 
 	int dir_added_count = 0;
+	int prevTextViewId;
 	ArrayList<Bitmap> added_images = new ArrayList<Bitmap>();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 		TextView tv_error = (TextView) findViewById(R.id.submit_error);
 		tv_error.setVisibility(View.INVISIBLE);
+		prevTextViewId = R.id.added_image;
 	}
 
 	@Override
@@ -72,33 +76,29 @@ public class MakeARecipe3 extends ActionBarActivity {
 		if(new_dir.length() == 0 )
 		{ return; }
 
-		TextView textview_dir_list = (TextView) findViewById(R.id.listofingredientsadded);
-
 		//creates new text for ingredients list, includes newly added ingredient
-		String new_dir_list = "";
-		int i;
-		//LinearLayout linear_layout = (LinearLayout) findViewById(R.id.linearLayoutImages);
-		for(i = 0; i < recipe.directionSize(); ++i)
-		{
-			int tmp = i + 1;
-			new_dir_list += tmp + ") " + recipe.getADirection(i).getDirectionText() + '\n';
-			/*Bitmap tmp_image = recipe.getAnImage(i);
-			if(tmp_image != null)
-			{
-				ImageView image = new ImageView(MakeARecipe3.this);
-				image.setImageBitmap(tmp_image);
-				linear_layout.addView(image);
-			}*/
-		}
-		++i;
-		new_dir_list += i + ") " + new_dir;
+		RelativeLayout linear_layout = (RelativeLayout) findViewById(R.id.linearLayoutImages);
+
+		++dir_added_count;
+		TextView tv = new TextView(MakeARecipe3.this);
+		tv.setText(dir_added_count + ") " + new_dir);
+
+		tv.setId(dir_added_count);
+		final RelativeLayout.LayoutParams params =
+				new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+		params.addRule(RelativeLayout.BELOW, prevTextViewId);
+		tv.setLayoutParams(params);
+
+		prevTextViewId = dir_added_count;
+		linear_layout.addView(tv, params);
+		//EditText et = (EditText) findViewById(R.id.addadirection);
+		//linear_layout.addView(et, params);
 
 		recipe.AddADirection(new_dir, added_images);
-		textview_dir_list.setText(new_dir_list);
 		edittext_new_dir.getText().clear();
 		ImageView imageview = (ImageView) findViewById(R.id.added_image);
 		imageview.setImageResource(R.drawable.uploadimage);
-		++dir_added_count;
 	}
 
 	private static int RESULT_LOAD_IMAGE = 1;
@@ -174,7 +174,9 @@ public class MakeARecipe3 extends ActionBarActivity {
 	public void onFailure()
 	{
 		TextView tv_error = (TextView) findViewById(R.id.submit_error);
+		tv_error.setText(errorMessage);
 		tv_error.setVisibility(View.VISIBLE);
+
 		//TODO implement better case for failure.
 	}
 	private class UploadRecipeTask extends AsyncTask<Recipe, Void, Boolean> {
@@ -183,7 +185,11 @@ public class MakeARecipe3 extends ActionBarActivity {
 		protected Boolean doInBackground(Recipe... params) {
 			Comm c = new Comm();
 			int ret = c.uploadRecipe(params[0]);
-
+			if(ret == Comm.NETWORK_FAIL) {
+				errorMessage = "Error! Network Failed to connect. Check your network";
+			} else if(ret == Comm.API_FAIL) {
+				errorMessage = "Sorry! There was an error making your recipe";
+			}
 			return (ret == Comm.SUCCESS);
 		}
 
@@ -193,9 +199,33 @@ public class MakeARecipe3 extends ActionBarActivity {
 				onSuccess();
 			} else {
 				onFailure();
-
 			}
 		}
-
 	}
+
+	public void setMainImage()
+	{
+		String picturePath = recipe.mainImagepath;
+
+		//load bitmap
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(picturePath, bmOptions);
+
+		// Decode the image file into a Bitmap sized to fill the View
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inPurgeable = true;
+
+		Bitmap bitmap = BitmapFactory.decodeFile(picturePath, bmOptions);
+
+		if(bitmap != null)
+		{
+			recipe.setMainImage(bitmap);
+		}
+		else
+		{
+			//TODO added error response
+		}
+	}
+
 }
