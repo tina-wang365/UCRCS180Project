@@ -398,7 +398,25 @@ public class Comm {
 			} else {
 				return API_FAIL;
 			}
-		} else{
+		} else {
+			return ret;
+		}
+	}
+
+	public int postComment(Comment c) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(id));
+		req.put("rid", Integer.toString(c.recipeID));
+		req.put("rating", Integer.toString(c.rating));
+		req.put("comment", c.comment);
+		int ret = apiRequest("rate", req);
+		if (ret == 0) {
+			if (lastStatus == 1) {
+				return SUCCESS;
+			} else {
+				return API_FAIL;
+			}
+		} else {
 			return ret;
 		}
 	}
