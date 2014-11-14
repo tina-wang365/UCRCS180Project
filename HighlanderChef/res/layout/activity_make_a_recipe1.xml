@@ -60,15 +60,6 @@
            android:onClick="AddIngrediantPressed"
            android:text="@string/Add_ingredients" />
 
-       <Button
-           android:id="@+id/add_image"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_alignLeft="@+id/add_ingrediant"
-           android:layout_below="@+id/spinner"
-           android:onClick="AddImagePressed"
-           android:text="@string/Add_Image" />
-
        <ImageView
            android:id="@+id/added_image"
            android:layout_width="wrap_content"
@@ -76,6 +67,16 @@
            android:layout_alignLeft="@+id/add_ingrediant"
            android:layout_below="@+id/add_image"
            android:src="@drawable/uploadimage" />
+
+       <Button
+           android:id="@+id/add_image"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignLeft="@+id/added_image"
+           android:layout_below="@+id/spinner"
+           android:onClick="AddImagePressed"
+           android:layout_marginTop="20dp" 
+           android:text="@string/Add_Image" />
 
 </RelativeLayout>
 </ScrollView>
