@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,7 +40,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 		TextView tv_header = (TextView) findViewById(R.id.makearecipe3header);
 		String header = tv_header.getText().toString();
-		tv_header.setText(header + "for " + recipe.getName());
+		tv_header.setText(header + " for " + recipe.getName());
 
 		TextView tv_error = (TextView) findViewById(R.id.submit_error);
 		tv_error.setVisibility(View.INVISIBLE);
@@ -77,7 +78,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 		{ return; }
 
 		//creates new text for ingredients list, includes newly added ingredient
-		RelativeLayout linear_layout = (RelativeLayout) findViewById(R.id.linearLayoutImages);
+		LinearLayout linear_layout = (LinearLayout) findViewById(R.id.linearLayoutDirections);
 
 		++dir_added_count;
 		TextView tv = new TextView(MakeARecipe3.this);
