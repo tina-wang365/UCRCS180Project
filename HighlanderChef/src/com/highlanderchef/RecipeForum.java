@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
@@ -21,11 +22,13 @@ import android.widget.Toast;
 public class RecipeForum extends ActionBarActivity {
 
 	Recipe currentRecipe = null;
+	Comment currentComment = null;
 	int recipeID = 0;
 	private RatingBar ratingBar;
 	//private TextView txtRatingValue;
 	private Button btnComment;
 	float userRating = 0;
+
 
 
 	@Override
@@ -39,9 +42,11 @@ public class RecipeForum extends ActionBarActivity {
 		recipeID = intent.getIntExtra("recipeID", 0);
 		downloadRecipe();
 
-
+		currentComment = new Comment(recipeID, 0, "");
 		addListenerOnRatingBar();
 		addListenerOnButton();
+
+		new postCommentTask().execute(currentComment);
 	}
 
 	@Override
@@ -63,7 +68,11 @@ public class RecipeForum extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	public void addCommentPressed(View v) {
+		EditText editTextComment = (EditText) findViewById(R.id.userCommentText);
+		currentComment.comment = editTextComment.getText().toString();
 
+	}
 	public void downloadRecipe() {
 		new getRecipeTask().execute(recipeID);
 	}
@@ -78,10 +87,6 @@ public class RecipeForum extends ActionBarActivity {
 		TextView textViewTitle = (TextView) findViewById(R.id.titleOfRecipe);
 		textViewTitle.setText(title);
 
-		//Display main Image
-		//ImageView imageViewMainImage;
-
-		//Parse ingredients into neat format
 		String formatOfIngredient = "";
 
 		if(ingredientList.size() > 0) {
@@ -145,7 +150,7 @@ public class RecipeForum extends ActionBarActivity {
 					boolean fromUser) {
 
 				//txtRatingValue.setText(String.valueOf(rating));
-				userRating = rating;
+				currentComment.rating = (int) rating;
 
 
 			}
@@ -162,7 +167,7 @@ public class RecipeForum extends ActionBarActivity {
 		btnComment.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				new postCommentTask().execute(currentComment);
 				Toast.makeText(RecipeForum.this,
 						String.valueOf(ratingBar.getRating()),
 						Toast.LENGTH_SHORT).show();
