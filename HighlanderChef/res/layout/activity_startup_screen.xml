@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     android:baselineAligned="true"
     android:orientation="vertical" >
-
+<!--
     <Button
         android:layout_width="129dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:onClick="BrowsePressed"
-        android:text="@string/browse" />
+        android:text="@string/browse" /> -->
 
     <LinearLayout
         android:layout_width="match_parent"
