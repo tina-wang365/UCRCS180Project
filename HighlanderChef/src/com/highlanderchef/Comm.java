@@ -32,9 +32,9 @@ public class Comm {
 	private JsonNode rootNode;
 
 	// User account info
-	private int id;
-	private String email;
-	private String authToken;
+	private static volatile int id;
+	private static volatile String email;
+	private static volatile String authToken;
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
@@ -68,6 +68,10 @@ public class Comm {
 		this.email = email;
 		lastJSON = "";
 		System.out.println("Creating new Comm");
+	}
+
+	public int getUserID() {
+		return id;
 	}
 
 	public String getEmail() {
