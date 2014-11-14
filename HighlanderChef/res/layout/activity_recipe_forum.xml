@@ -14,16 +14,16 @@
 
     <TextView
 	    android:id="@+id/titleOfRecipe"
-	    android:layout_width="wrap_content"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:text="@string/recipeTitle" />
     
     <ImageView
         android:id="@+id/recipeImage"
-	    android:layout_width="wrap_content"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@+id/titleOfRecipe"
-	    android:layout_alignLeft="@+id/titleOfRecipe"
+	    android:layout_toRightOf="@+id/titleOfRecipe"
 	    android:layout_marginTop="5dp"
 	     />
 	
@@ -33,7 +33,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_alignRight="@+id/selectedRecipeIngredientList"
 	    android:layout_below="@+id/selectedRecipeIngredientList"
-	    android:layout_marginTop="20dp"
+	    android:layout_marginTop="5dp"
 	    android:text="@string/defaultDirectionsList" />
 
 	<TextView
@@ -42,7 +42,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_alignLeft="@+id/titleOfRecipe"
 	    android:layout_below="@+id/recipeImage"
-	    android:layout_marginTop="15dp"
+	    android:layout_marginTop="5dp"
 	    android:text="@string/defaultIngredientList" />
 <!-- 
 	<TextView	
@@ -68,6 +68,7 @@
 	    android:id="@+id/recipeRatingBar"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
+	    android:layout_toRightOf="@+id/userCommentText"
 	    android:layout_below="@+id/selectedRecipeDirectionList"
 	    android:layout_above="@+id/submitComment"
 	    android:numStars="5"
@@ -78,6 +79,7 @@
 	    android:id="@+id/submitComment"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/userCommentText"
 	    android:layout_alignLeft="@+id/selectedRecipeDirectionList"
 	    android:layout_alignParentBottom="true"
 	    android:onClick="addCommentPressed"
@@ -88,7 +90,6 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_above="@+id/recipeRatingBar"
-	    android:layout_alignLeft="@+id/recipeRatingBar"
 	    android:ems="10"
 	    android:gravity="bottom"
 	    android:hint="@string/tapToComment" />
