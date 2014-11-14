@@ -11,11 +11,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
-import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,10 +48,6 @@ public class RecipeForum extends ActionBarActivity {
 		   rl.addView(tv_cooktime);
 		 */
 		currentComment = new Comment(recipeID, 0, "HelloWorld");
-		addListenerOnRatingBar();
-		addListenerOnButton();
-
-
 	}
 
 	@Override
@@ -81,6 +75,11 @@ public class RecipeForum extends ActionBarActivity {
 	//ALSO REFER TO THE activity_recipe_forum.xml file for the id.
 	public void addCommentPressed(View v) {
 		EditText editTextComment = (EditText) findViewById(R.id.submitComment);
+		currentComment.rating = (int) ratingBar.getRating();
+
+		Toast.makeText(RecipeForum.this,
+				String.valueOf(ratingBar.getRating()),
+				Toast.LENGTH_SHORT).show();
 		currentComment.comment = editTextComment.getText().toString();
 		new postCommentTask().execute(currentComment);
 
@@ -149,49 +148,8 @@ public class RecipeForum extends ActionBarActivity {
 		TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
 		failedToDisplayRecipe.setVisibility(View.VISIBLE);
 	}
-	//Event listener are Input events.
-	//change the rating to display
-
-	public void addListenerOnRatingBar() {
-
-		ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
-
-		ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
-			@Override
-			public void onRatingChanged(RatingBar ratingBar, float rating,
-					boolean fromUser) {
-
-				//txtRatingValue.setText(String.valueOf(rating));
-				//currentComment.rating = (int) rating;
-			}
-		});
-	}
-
-	//display rating
-
-	public void addListenerOnButton() {
-		ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
-		//TODO: I USE submitComment TO MAKE A TOAST.
-		//The Comment button that you see on the phone makes that
-		//toast message and sends the rating. Refer to the id "submitComment"
-		//in the activity_recipe_forum.xml
-		btnComment = (Button) findViewById(R.id.submitComment);
-
-		//if click on me, then display the current rating value
-		btnComment.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
 
 
-				currentComment.rating = (int) ratingBar.getRating();
-
-				Toast.makeText(RecipeForum.this,
-						String.valueOf(ratingBar.getRating()),
-						Toast.LENGTH_SHORT).show();
-			}
-
-		});
-	}
 
 	public void postCommentSuccess() {
 
