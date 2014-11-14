@@ -23,7 +23,6 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@+id/titleOfRecipe"
-	    android:layout_toRightOf="@+id/titleOfRecipe"
 	    android:layout_marginTop="5dp"
 	     />
 	
@@ -31,7 +30,6 @@
 	    android:id="@+id/selectedRecipeIngredientList"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:layout_alignLeft="@+id/titleOfRecipe"
 	    android:layout_below="@+id/recipeImage"
 	    android:layout_marginTop="5dp"
 	    android:text="@string/defaultIngredientList" />
@@ -40,7 +38,6 @@
 	    android:id="@+id/selectedRecipeDirectionList"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_alignLeft="@+id/titleOfRecipe"
 	    android:layout_below="@+id/selectedRecipeIngredientList"
 	    android:layout_marginTop="5dp"
 	    android:text="@string/defaultDirectionsList" />
@@ -80,7 +77,6 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_toRightOf="@+id/userCommentText"
-	    android:layout_above="@+id/submitComment"
 	    android:numStars="5"
 	    android:rating="3"
 	    android:stepSize="1" />
@@ -90,7 +86,6 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@+id/userCommentText"
-	    android:layout_alignLeft="@+id/selectedRecipeDirectionList"
 	    android:onClick="addCommentPressed"
 	    android:text="@string/Comment" />
 
