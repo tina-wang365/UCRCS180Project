@@ -202,6 +202,7 @@ public class Comm {
 			System.out.println("tried to get a null-url image");
 			return null;
 		}
+
 		try {
 			URL url = new URL(serverImgRoot + relUrl);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -476,6 +477,8 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			connection.setRequestProperty("uid", Integer.toString(Comm.id));
+			connection.setRequestProperty("token", Comm.authToken);
 			OutputStream os = connection.getOutputStream();
 			os.write(payload);
 			os.close();
@@ -518,6 +521,8 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			connection.setRequestProperty("uid", Integer.toString(Comm.id));
+			connection.setRequestProperty("token", Comm.authToken);
 			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
 			writer.write(payload);
 			writer.close();
