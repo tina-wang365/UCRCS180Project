@@ -79,7 +79,7 @@ public class LoginActivity extends ActionBarActivity {
 			if(ret == Comm.NETWORK_FAIL) {
 				errorMessage = "Error! Check your connection";
 			} else if(ret == Comm.API_FAIL){
-				errorMessage = "Error! API Fail";
+				errorMessage = "Error! Wrong username or password";
 			} else if(ret == 500) {
 				errorMessage = "Server Error!";
 			}
