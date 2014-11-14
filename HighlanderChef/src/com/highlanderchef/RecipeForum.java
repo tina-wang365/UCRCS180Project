@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,8 @@ public class RecipeForum extends ActionBarActivity {
 		   rl.addView(tv_cooktime);
 		 */
 		currentComment = new Comment(recipeID, 0, "HelloWorld");
+
+
 	}
 
 	@Override
@@ -135,6 +138,19 @@ public class RecipeForum extends ActionBarActivity {
 		TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
 		failedToDisplayRecipe.setVisibility(View.INVISIBLE);
 
+		ImageView ivmain = (ImageView) findViewById(R.id.recipeImage);
+		ivmain.setImageBitmap(currentRecipe.mainImage);
+
+		/*
+		 * mdb: this is how to do a dynamic add... may need to also add a
+		 *      paam for ABOVE
+		RelativeLayout rr = (RelativeLayout) findViewById(R.id.rflayout);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.FILL_PARENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
+		params.addRule(RelativeLayout.BELOW, R.id.titleOfRecipe);
+		rr.addView(ivmain, params);
+		 */
 	}
 
 	public void displayRecipeFailure(String text) {

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    android:id="@+id/rflayout" 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,6 +17,15 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:text="@string/recipeTitle" />
+    
+    <ImageView
+        android:id="@+id/recipeImage"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/titleOfRecipe"
+	    android:layout_alignLeft="@+id/titleOfRecipe"
+	    android:layout_marginTop="5dp"
+	     />
 	
 	<TextView
 	    android:id="@+id/selectedRecipeDirectionList"
@@ -30,7 +41,7 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_alignLeft="@+id/titleOfRecipe"
-	    android:layout_below="@+id/titleOfRecipe"
+	    android:layout_below="@+id/recipeImage"
 	    android:layout_marginTop="15dp"
 	    android:text="@string/defaultIngredientList" />
 <!-- 
@@ -57,6 +68,7 @@
 	    android:id="@+id/recipeRatingBar"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/selectedRecipeDirectionList"
 	    android:layout_above="@+id/submitComment"
 	    android:numStars="5"
 	    android:rating="3"
