@@ -9,12 +9,18 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.highlanderchef.RecipeForum" >
-
+    
+ 
+        android:id="@+id/ScrollView2"
+     	android:layout_width="wrap_content"
+      	android:layout_height="wrap_content" >
+ 
     <TextView
 	    android:id="@+id/titleOfRecipe"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:text="@string/recipeTitle" />
+
 	
 	<TextView
 	    android:id="@+id/selectedRecipeDirectionList"
@@ -71,5 +77,5 @@
 	    android:ems="10"
 	    android:gravity="bottom"
 	    android:hint="@string/tapToComment" />
-	  
+	
 </RelativeLayout>
