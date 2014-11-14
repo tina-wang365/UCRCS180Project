@@ -140,9 +140,13 @@ public class SearchActivity extends ActionBarActivity {
 
 	public void SearchFailure(ArrayList<Recipe> recipies)
 	{
-		TextView searchNoResults = (TextView) findViewById(R.id.linearLayoutResults);//darren
-		searchNoResults.setText("No Recipes Found!");
-		searchNoResults.setVisibility(View.VISIBLE);
+		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
+		TextView tv_descr = new TextView(this);
+		tv_descr.setText("No Recipes Found!");
+		rl.addView(tv_descr);
+		//TextView searchNoResults = (TextView) findViewById(R.id.linearLayoutResults);//darren
+		//searchNoResults.setText("No Recipes Found!");
+		rl.setVisibility(View.VISIBLE);
 	}
 
 
