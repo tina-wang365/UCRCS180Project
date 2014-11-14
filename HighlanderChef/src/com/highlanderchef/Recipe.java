@@ -18,6 +18,8 @@ public class Recipe implements Serializable{
 	public Bitmap mainImage;
 	public String mainImagepath;
 
+	public float rating;
+
 	public ArrayList<Integer> categories;
 	public ArrayList<Ingredient> ingredients;
 	public ArrayList<Direction> directions;
