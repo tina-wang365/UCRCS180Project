@@ -171,6 +171,14 @@ public class RecipeForum extends ActionBarActivity {
 		});
 	}
 
+	public void postCommentSuccess() {
+
+	}
+
+	public void postCommentFailure() {
+
+	}
+
 	private class getRecipeTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
@@ -190,6 +198,25 @@ public class RecipeForum extends ActionBarActivity {
 				displayRecipeFailure("Could not display the recipe for some reason");
 			}
 		}
+	}
 
+	private class postCommentTask extends AsyncTask<Comment, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Comment... params) {
+			Comm c = new Comm();
+			int ret = c.postComment(params[0]);
+			return (ret != Comm.SUCCESS);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				Log.v("postComment", "postCommentSuccess");
+				postCommentSuccess();
+			} else {
+				Log.v("postComment", "postComentFailure");
+				postCommentFailure();
+			}
+		}
 	}
 }
