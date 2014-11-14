@@ -1,6 +1,7 @@
 package com.highlanderchef;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -140,19 +141,32 @@ public class MakeARecipe1 extends ActionBarActivity {
 		if(categories.size() > 0)
 		{
 			ArrayList<String> level0_spinner = new ArrayList<String>();
+			Stack<String> cat_prefix = new Stack<String>();
+			int last_level = 0;
 			for(int i = 0; i < categories.size(); ++i)
 			{
-				if(categories.get(i).level == 0)
-				{
-					level0_spinner.add(categories.get(i).name);
-
+				if (last_level > categories.get(i).level) {
+					cat_prefix.pop();
 				}
+				if(categories.get(i).level == 0) {
+					cat_prefix.push(categories.get(i).name);
+				} else {
+					cat_prefix.push(cat_prefix.peek() + " > " + categories.get(i).name);
+				}
+
+				if (i == (categories.size() - 1)) {
+					level0_spinner.add(cat_prefix.peek());
+				} else if (categories.get(i + 1).level <= categories.get(i).level) {
+					level0_spinner.add(cat_prefix.peek());
+				}
+
+				last_level = categories.get(i).level;
 			}
 			spinner = (Spinner) findViewById(R.id.spinner);
 			ArrayAdapter<String> adapter_state = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, level0_spinner);
 			adapter_state.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spinner.setAdapter(adapter_state);
-			spinner.setOnItemSelectedListener(this);
+			//spinner.setOnItemSelectedListener(this);
 
 		}
 	}
