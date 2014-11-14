@@ -26,6 +26,8 @@ public class RecipeForum extends ActionBarActivity {
 	int recipeID = 0;
 	private RatingBar ratingBar;
 	//private TextView txtRatingValue;
+	//TODO: HERE IS THE Button I MAKE FOR THE LAST TODO SECTION
+	//WHERE THE TOAST IS BEING CREATED.
 	private Button btnComment;
 	float userRating = 0;
 
@@ -73,8 +75,10 @@ public class RecipeForum extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	//HERE I ATTEMPT TO GET THE ID submitComment so that EDITTEXT RECEIVES THE STRING
+
+	//TODO: HERE I ATTEMPT TO GET THE ID submitComment so that EDITTEXT RECEIVES THE STRING
 	//UPON INPUT. I FEEL LIKE I AM MISSING SOMETHING HERE TO GET THE STRING MODIFIED :(.
+	//ALSO REFER TO THE activity_recipe_forum.xml file for the id.
 	public void addCommentPressed(View v) {
 		EditText editTextComment = (EditText) findViewById(R.id.submitComment);
 		currentComment.comment = editTextComment.getText().toString();
@@ -168,7 +172,10 @@ public class RecipeForum extends ActionBarActivity {
 
 	public void addListenerOnButton() {
 		ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
-		//HERE I USE submitComment to make a toast. This is tied with the submit rating.
+		//TODO: I USE submitComment TO MAKE A TOAST.
+		//The Comment button that you see on the phone makes that
+		//toast message and sends the rating. Refer to the id "submitComment"
+		//in the activity_recipe_forum.xml
 		btnComment = (Button) findViewById(R.id.submitComment);
 
 		//if click on me, then display the current rating value
