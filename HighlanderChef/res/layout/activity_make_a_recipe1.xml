@@ -66,6 +66,7 @@
            android:layout_height="wrap_content"
            android:layout_alignParentBottom="true"
            android:layout_alignRight="@+id/recipe_est_time"
+           android:layout_below="@+id/add_image"
            android:onClick="AddIngrediantPressed"
            android:text="@string/Add_ingredients" />
 
