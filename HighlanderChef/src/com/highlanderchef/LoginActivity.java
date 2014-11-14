@@ -75,11 +75,13 @@ public class LoginActivity extends ActionBarActivity {
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
 			int ret = c.login(params[0],  params[1]);
+
 			if(ret == Comm.NETWORK_FAIL) {
 				errorMessage = "Error! Check your connection";
 			} else if(ret == Comm.API_FAIL){
 				errorMessage = "Error! API Fail";
 			}
+
 			return (ret == Comm.SUCCESS);
 		}
 

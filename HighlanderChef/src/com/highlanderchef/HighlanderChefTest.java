@@ -39,7 +39,7 @@ public class HighlanderChefTest extends TestCase {
 			System.out.println(i + " " + dirs.get(i).text);
 		}
 		System.out.println("now display the categories");
-		ArrayList<String> cats = simple.categories;
+		ArrayList<Integer> cats = simple.categories;
 		for(int i = 0; i < cats.size(); i++) {
 			System.out.println(i + " " + cats.get(i));
 		}

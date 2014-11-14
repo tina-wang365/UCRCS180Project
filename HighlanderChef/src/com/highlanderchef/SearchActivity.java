@@ -10,6 +10,11 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+<<<<<<< HEAD
+=======
+import android.view.View;
+import android.widget.Button;
+>>>>>>> 68bb2ab7355ccf9dd62c1b371ee3ea130caa0a2a
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,6 +31,9 @@ public class SearchActivity extends ActionBarActivity {
 		String query = intent.getStringExtra("search_query");
 
 		new SearchTask().execute(query);
+
+
+		// TODO: now loading...
 	}
 
 	@Override
@@ -52,8 +60,13 @@ public class SearchActivity extends ActionBarActivity {
 		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		for(int i = 0; i < recipies.size(); ++i)
 		{
+			if(recipies.get(i) == null )
+				continue;
+			//LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
+			//code for dividers
 			if(i >= 1)
 			{
+
 				ImageView iv_divider = new ImageView(this);
 
 				BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -78,33 +91,56 @@ public class SearchActivity extends ActionBarActivity {
 
 				iv_divider.setImageBitmap(div);
 				rl.addView(iv_divider);
-
 			}
 			TextView tv = new TextView(this);
-			tv.setText(recipies.get(i).getName());
+			tv.setText(recipies.get(i).getName() + "\n");
 			//tv.setPadding(0, (i * 30), 0, 0);
 			rl.addView(tv);
-			/*if(recipies.get(i).isMainImage())
+			if(recipies.get(i).isMainImage())
 			{
 				ImageView iv = new ImageView(this);
 				iv.setImageBitmap(recipies.get(i).getMainImage());
 				rl.addView(iv);
-			}*/
+			}
 			TextView tv_descr = new TextView(this);
-			tv_descr.setText(recipies.get(i).getDescription());
+			tv_descr.setText("Description \n" + recipies.get(i).getDescription());
 			rl.addView(tv_descr);
 
 			TextView tv_cooktime = new TextView(this);
 			tv_cooktime.setText(recipies.get(i).getCookTime());
 			rl.addView(tv_cooktime);
+
+			final int j = recipies.get(i).id; //so java doesn't complain
+
+			Button b_view = new Button(this);
+			b_view.setText("View");
+
+			b_view.setOnClickListener(new View.OnClickListener(){
+				@Override
+				public void onClick(View v)
+				{
+
+					callRecipeIntent(j);
+				}
+			});
+			rl.addView(b_view);
 		}
 	}
 
 	public void SearchFailure(ArrayList<Recipe> recipies)
 	{
-
+		TextView searchNoResults = (TextView) findViewById(R.id.linearLayoutResults);//darren
+		searchNoResults.setText("No Recipes Found!");
+		searchNoResults.setVisibility(View.VISIBLE);
 	}
 
+
+	public void callRecipeIntent(int index)
+	{
+		Intent intent = new Intent(this, RecipeForum.class);
+		intent.putExtra("recipeID", index);
+		startActivity(intent);
+	}
 	private class SearchTask extends AsyncTask<String, Void, Boolean>
 	{
 		ArrayList<Recipe> ret = new ArrayList<Recipe>();

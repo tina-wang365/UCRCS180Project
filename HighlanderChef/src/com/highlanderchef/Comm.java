@@ -1,6 +1,5 @@
 package com.highlanderchef;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
@@ -121,7 +120,7 @@ public class Comm {
 			System.out.println(i + " " + dirs.get(i).text);
 		}
 		System.out.println("now display the categories");
-		ArrayList<String> cats = simple.categories;
+		ArrayList<Integer> cats = simple.categories;
 		for(int i = 0; i < cats.size(); i++) {
 			System.out.println(i + " " + cats.get(i));
 		}
@@ -178,15 +177,15 @@ public class Comm {
 		{
 			JsonNode r = ite.next();
 			prettyPrint(r);
-			ls.add(parseRecipe(r));
+			ls.add(parseRecipe(r, true));
 		}
 		return ls;
 	}
 
-	public ArrayList<Recipe> searchRecipesByCategory(String search) {
-		HashMap<String, String> req = new HashMap<>();
-		req.put("categoryID", search);
-		apiRequest("searchCat", req);
+	public ArrayList<Recipe> searchRecipesByCategory(int categoryID) {
+		HashMap<String, Integer> req = new HashMap<>();
+		req.put("categoryID", categoryID);
+		apiRequest("searchcat", req);
 
 		// 		 process whatever JSON we are handed back and
 		//       spin up some Recipe objects, fill them in
@@ -196,7 +195,7 @@ public class Comm {
 		while(ite.hasNext())
 		{
 			JsonNode r = ite.next();
-			ls.add(parseRecipe(r));
+			ls.add(parseRecipe(r, true));
 		}
 		return ls;
 	}
@@ -221,28 +220,33 @@ public class Comm {
 			}
 
 			int len = connection.getContentLength();
-			System.out.println("getImage sees content-length " + connection.getContentLength());
-
-			if (!runningAndroid) {
+			System.out.println("getImage sees content-length " + len);
+			String type = connection.getContentType();
+			System.out.println("getImage sees content-type " + type);
+			Bitmap bitmap = BitmapFactory.decodeStream(connection.getInputStream());
+			if (bitmap == null) {
+				System.out.println("BitmapFactory failed to decode PNG from stream");
+				connection.disconnect();
 				return null;
+			} else {
+				connection.disconnect();
+				return bitmap;
 			}
-			imgData = new byte[len];
-			BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
-			bis.read(imgData);
-			connection.disconnect();
 		} catch (Exception e) {
 			System.out.println("Error in getImage");
 			e.printStackTrace();
 			System.out.println("getImage failed network");
 			return null;
 		}
-		Bitmap bitmap = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
-		return bitmap;
 	}
 
 	// returns a new URL for the uploaded image, or "" on failure
 	public String imageUpload(Bitmap bmp) {
 		System.out.println("imageUpload");
+		if (bmp == null) {
+			System.out.println("tried to upload a null image -- bailing");
+			return "";
+		}
 		try {
 			HashMap<String, Object> o = new HashMap<>();
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -278,6 +282,7 @@ public class Comm {
 				while(ite2.hasNext()) {
 					JsonNode img = ite2.next();
 					String img_url = img.getTextValue();
+					System.out.println("parseDirections found img_url " + img_url);
 					Bitmap bmp = getImage(img_url);
 					bmps.add(bmp);
 				}
@@ -291,6 +296,10 @@ public class Comm {
 	}
 
 	private Recipe parseRecipe(JsonNode node) {
+		return parseRecipe(node, false);
+	}
+
+	private Recipe parseRecipe(JsonNode node, boolean brief) {
 		Recipe r = null;
 
 		try {
@@ -298,14 +307,17 @@ public class Comm {
 			String description = mapper.readValue(node.path("description"), String.class);
 			String image_url = mapper.readValue(node.path("img_url"), String.class);
 			String name = mapper.readValue(node.path("name"), String.class);
+			System.out.println("parseRecipe for image_url " + image_url);
 			r = new Recipe(id, name, description, getImage(image_url));
 
-			String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
-			r.parseIngredientsFromJson(ingredientsJson);
-			String directionsJson = mapper.readValue(node.path("directions"), String.class);
-			parseDirections(r, directionsJson);
-			String categoriesJson = mapper.readValue(node.path("categories"), String.class);
-			r.parseCategoriesFromJson(categoriesJson);
+			if (!brief) {
+				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
+				r.parseIngredientsFromJson(ingredientsJson);
+				String directionsJson = mapper.readValue(node.path("directions"), String.class);
+				parseDirections(r, directionsJson);
+				String categoriesJson = mapper.readValue(node.path("categories"), String.class);
+				r.parseCategoriesFromJson(categoriesJson);
+			}
 
 			return r;
 		} catch (Exception e) {
@@ -335,7 +347,7 @@ public class Comm {
 		recipe.put("cookTime", r.cookTime);
 		System.out.println("uploadRecipe uploading main image");
 		recipe.put("image_url", imageUpload(r.mainImage));
-		recipe.put("categories", "STUB");
+		recipe.put("categories", r.categories);
 		recipe.put("ingredients", r.ingredients);
 
 		recipe.put("directions", r.directions);
@@ -391,6 +403,11 @@ public class Comm {
 		}
 	}
 
+	/*
+	 * getCategories returns a pre-sorted list of categories.
+	 *   ie Each top level category is followed by its children,
+	 *      and they are followed by their children in hierarchical order.
+	 */
 	public ArrayList<Category> getCategories() {
 		ArrayList<Category> cats = new ArrayList<>();
 		int ret = apiRequest("categories", null);

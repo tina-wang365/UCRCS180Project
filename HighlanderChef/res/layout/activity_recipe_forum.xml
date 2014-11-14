@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="bottom"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -14,19 +15,10 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:text="@string/recipeTitle" />
-    
-	<TextView
-	    android:id="@+id/errorCannotDisplayRecipe"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_above="@+id/userCommentText"
-	    android:layout_centerHorizontal="true"
-	    android:layout_marginBottom="30dp"
-	    android:text="@string/msgCannotDisplayRecipe" />
 	
 	<TextView
 	    android:id="@+id/selectedRecipeDirectionList"
-	    android:layout_width="wrap_content"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_alignRight="@+id/selectedRecipeIngredientList"
 	    android:layout_below="@+id/selectedRecipeIngredientList"
@@ -41,41 +33,25 @@
 	    android:layout_below="@+id/titleOfRecipe"
 	    android:layout_marginTop="15dp"
 	    android:text="@string/defaultIngredientList" />
-	<TextView
- 		android:id="@+id/txtRatingValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceSmall" />
 
-	<!-- Users can select the rating out of 5 stars -->
+
+	<TextView
+	    android:id="@+id/errorCannotDisplayRecipe"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/selectedRecipeDirectionList"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginTop="29dp"
+	    android:text="@string/msgCannotDisplayRecipe" />
+
 	<RatingBar
 	    android:id="@+id/recipeRatingBar"
-	    style="?android:attr/ratingBarStyleSmall"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_above="@+id/submitComment"
-	    android:layout_marginBottom="72dp"
-	    android:layout_below="@+id/selectedRecipeDirectionList"
-	    android:layout_toRightOf="@+id/userCommentText"
 	    android:numStars="5"
-	    android:rating="2.0"
-	    android:stepSize="1.0" />
-
-
-	<!-- Let users make a Comment -->
-	<EditText
-	    android:id="@+id/userCommentText"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_above="@+id/submitComment"
-	    android:layout_below="@+id/selectedRecipeDirectionList"
-	    android:layout_alignParentLeft="true"
-	    android:layout_marginBottom="57dp"
-	    android:ems="10"
-	    android:hint="@string/tapToComment" />
-
-	<!-- User can add a comment by pressing this button -->
+	    android:rating="3"
+	    android:stepSize="1" />
 
 	<Button
 	    android:id="@+id/submitComment"
@@ -83,8 +59,17 @@
 	    android:layout_height="wrap_content"
 	    android:layout_alignLeft="@+id/selectedRecipeDirectionList"
 	    android:layout_alignParentBottom="true"
-	    android:layout_marginBottom="102dp"
 	    android:onClick="addCommentPressed"
 	    android:text="@string/Comment" />
 
+	<EditText
+	    android:id="@+id/userCommentText"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/recipeRatingBar"
+	    android:layout_alignLeft="@+id/recipeRatingBar"
+	    android:ems="10"
+	    android:gravity="bottom"
+	    android:hint="@string/tapToComment" />
+	  
 </RelativeLayout>
