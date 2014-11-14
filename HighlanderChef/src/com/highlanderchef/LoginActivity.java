@@ -80,6 +80,8 @@ public class LoginActivity extends ActionBarActivity {
 				errorMessage = "Error! Check your connection";
 			} else if(ret == Comm.API_FAIL){
 				errorMessage = "Error! API Fail";
+			} else if(ret == 500) {
+				errorMessage = "Server Error!";
 			}
 
 			return (ret == Comm.SUCCESS);
