@@ -81,7 +81,7 @@ public class RecipeForum extends ActionBarActivity {
 
 		//Set objects for display on activity
 		TextView textViewCookTime = new TextView(this);
-		textViewCookTime.setText(recipe.cookTime);
+		textViewCookTime.setText("5 mins" + "\n");
 		textViewCookTime.setLayoutParams(params);
 		ll.addView(textViewCookTime);
 
