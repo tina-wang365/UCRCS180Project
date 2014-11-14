@@ -1,9 +1,9 @@
 package com.highlanderchef;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -18,7 +19,6 @@ import org.codehaus.jackson.map.module.SimpleModule;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Base64;
 
 public class Comm {
 	private static String serverRoot = "http://96.126.122.162:9222/chef/";
@@ -37,11 +37,10 @@ public class Comm {
 	private String authToken;
 
 	public static final int SUCCESS = 0;
-	public static final int CONN_FAILED = -1;
-	public static final int CONN_TIMEOUT = -2;
 	public static final int JSON_ERROR = -3;
-	public static final int GENL_FAIL = -4;
-	public static final int NOT_IMPL = -42;
+	public static final int API_FAIL = -50;
+	public static final int NETWORK_FAIL = -60;
+
 
 	private void registerMapperSerializers() {
 		SimpleModule module = new SimpleModule("DirectionModule", new Version(1,0,0,null));
@@ -49,23 +48,25 @@ public class Comm {
 		mapper.registerModule(module);
 	}
 
+	private void initMapper() {
+		mapper = new ObjectMapper();
+		registerMapperSerializers();
+		mapper.getJsonFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+		mapper.getJsonFactory().configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, true);
+	}
+
 	public Comm() {
+		System.out.println("Creating new Comm");
 		lastJSON = "";
 		email = "";
 		authToken = "";
-
-		mapper = new ObjectMapper();
-		registerMapperSerializers();
-		System.out.println("Creating new Comm");
+		initMapper();
 	}
 
 	public Comm(String email, String authToken) {
 		this.authToken = authToken;
 		this.email = email;
 		lastJSON = "";
-
-		mapper = new ObjectMapper();
-		registerMapperSerializers();
 		System.out.println("Creating new Comm");
 	}
 
@@ -119,13 +120,12 @@ public class Comm {
 			System.out.println(i + " " + dirs.get(i).text);
 		}
 		System.out.println("now display the categories");
-		ArrayList<String> cats = simple.categories;
+		ArrayList<Integer> cats = simple.categories;
 		for(int i = 0; i < cats.size(); i++) {
 			System.out.println(i + " " + cats.get(i));
 		}
 		if(simple.categories.size() == 0)
 			System.out.println("there are no categories");
-
 	}
 
 	public int newAccount(String email, String password) {
@@ -152,7 +152,7 @@ public class Comm {
 					this.id = userId.intValue();
 					return SUCCESS;
 				} else {
-					return GENL_FAIL;
+					return API_FAIL;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -177,15 +177,15 @@ public class Comm {
 		{
 			JsonNode r = ite.next();
 			prettyPrint(r);
-			ls.add(parseRecipe(r));
+			ls.add(parseRecipe(r, true));
 		}
 		return ls;
 	}
 
-	public ArrayList<Recipe> searchRecipesByCategory(String search) {
-		HashMap<String, String> req = new HashMap<>();
-		req.put("categoryID", search);
-		apiRequest("searchCat", req);
+	public ArrayList<Recipe> searchRecipesByCategory(int categoryID) {
+		HashMap<String, Integer> req = new HashMap<>();
+		req.put("categoryID", categoryID);
+		apiRequest("searchcat", req);
 
 		// 		 process whatever JSON we are handed back and
 		//       spin up some Recipe objects, fill them in
@@ -195,7 +195,7 @@ public class Comm {
 		while(ite.hasNext())
 		{
 			JsonNode r = ite.next();
-			ls.add(parseRecipe(r));
+			ls.add(parseRecipe(r, true));
 		}
 		return ls;
 	}
@@ -203,9 +203,10 @@ public class Comm {
 	private Bitmap getImage(String relUrl) {
 		System.out.println("getImage(" + serverImgRoot + relUrl);
 		if (relUrl == null) {
+			System.out.println("tried to get a null-url image");
 			return null;
 		}
-
+		byte[] imgData;
 		try {
 			URL url = new URL(serverImgRoot + relUrl);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -219,33 +220,39 @@ public class Comm {
 			}
 
 			int len = connection.getContentLength();
-			System.out.println("getImage sees content-length " + connection.getContentLength());
-
-			if (!runningAndroid) {
+			System.out.println("getImage sees content-length " + len);
+			String type = connection.getContentType();
+			System.out.println("getImage sees content-type " + type);
+			Bitmap bitmap = BitmapFactory.decodeStream(connection.getInputStream());
+			if (bitmap == null) {
+				System.out.println("BitmapFactory failed to decode PNG from stream");
+				connection.disconnect();
 				return null;
+			} else {
+				connection.disconnect();
+				return bitmap;
 			}
-			byte[] imgData = new byte[len];
-			BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
-			bis.read(imgData);
-			Bitmap bitmap = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
-			connection.disconnect();
-			return bitmap;
 		} catch (Exception e) {
+			System.out.println("Error in getImage");
 			e.printStackTrace();
+			System.out.println("getImage failed network");
+			return null;
 		}
-		return null;
 	}
 
 	// returns a new URL for the uploaded image, or "" on failure
 	public String imageUpload(Bitmap bmp) {
 		System.out.println("imageUpload");
+		if (bmp == null) {
+			System.out.println("tried to upload a null image -- bailing");
+			return "";
+		}
 		try {
 			HashMap<String, Object> o = new HashMap<>();
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			bmp = Bitmap.createScaledBitmap(bmp, 1024, 768, false);
 			if (bmp.compress(Bitmap.CompressFormat.PNG, 90, stream)) {
-				o.put("bmp", Base64.encode(stream.toByteArray(), Base64.DEFAULT));
-				apiRequest("imageupload", o);
+				apiRequestBytePayload("imageupload", stream.toByteArray());
 				if (lastStatus == 1) {
 					String url = mapper.readValue(rootNode.path("image_url"), String.class);
 					return url;
@@ -256,6 +263,7 @@ public class Comm {
 				return "";
 			}
 		} catch (Exception e) {
+			System.out.println("Error in imageUpload");
 			e.printStackTrace();
 		}
 		return "";
@@ -263,16 +271,18 @@ public class Comm {
 
 	private void parseDirections(Recipe r, String json) {
 		try {
+			System.out.println("parseDirections got json \"" + json + "\"");
 			JsonNode node = mapper.readTree(json);
 			Iterator<JsonNode> ite = node.getElements();
 			while (ite.hasNext()) {
 				JsonNode dir = ite.next();
 				String text = mapper.readValue(dir.path("text"), String.class);
-				Iterator<JsonNode> ite2 = node.getElements();
+				Iterator<JsonNode> ite2 = dir.path("img").getElements();
 				ArrayList<Bitmap> bmps = new ArrayList<Bitmap>();
 				while(ite2.hasNext()) {
 					JsonNode img = ite2.next();
 					String img_url = img.getTextValue();
+					System.out.println("parseDirections found img_url " + img_url);
 					Bitmap bmp = getImage(img_url);
 					bmps.add(bmp);
 				}
@@ -280,11 +290,16 @@ public class Comm {
 				r.addDirection(text, bmps);
 			}
 		} catch (Exception e) {
+			System.out.println("Error in parseDirections - mapper.readTree or mapper.readValue");
 			e.printStackTrace();
 		}
 	}
 
 	private Recipe parseRecipe(JsonNode node) {
+		return parseRecipe(node, false);
+	}
+
+	private Recipe parseRecipe(JsonNode node, boolean brief) {
 		Recipe r = null;
 
 		try {
@@ -292,17 +307,21 @@ public class Comm {
 			String description = mapper.readValue(node.path("description"), String.class);
 			String image_url = mapper.readValue(node.path("img_url"), String.class);
 			String name = mapper.readValue(node.path("name"), String.class);
+			System.out.println("parseRecipe for image_url " + image_url);
 			r = new Recipe(id, name, description, getImage(image_url));
 
-			String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
-			r.parseIngredientsFromJson(ingredientsJson);
-			String directionsJson = mapper.readValue(node.path("directions"), String.class);
-			parseDirections(r, directionsJson);
-			String categoriesJson = mapper.readValue(node.path("categories"), String.class);
-			r.parseCategoriesFromJson(categoriesJson);
+			if (!brief) {
+				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
+				r.parseIngredientsFromJson(ingredientsJson);
+				String directionsJson = mapper.readValue(node.path("directions"), String.class);
+				parseDirections(r, directionsJson);
+				String categoriesJson = mapper.readValue(node.path("categories"), String.class);
+				r.parseCategoriesFromJson(categoriesJson);
+			}
 
 			return r;
 		} catch (Exception e) {
+			System.out.println("Error in parseRecipe - mapper.readValue");
 			e.printStackTrace();
 		}
 		return null;
@@ -328,7 +347,7 @@ public class Comm {
 		recipe.put("cookTime", r.cookTime);
 		System.out.println("uploadRecipe uploading main image");
 		recipe.put("image_url", imageUpload(r.mainImage));
-		recipe.put("categories", "STUB");
+		recipe.put("categories", r.categories);
 		recipe.put("ingredients", r.ingredients);
 
 		recipe.put("directions", r.directions);
@@ -346,7 +365,7 @@ public class Comm {
 		if (lastStatus == 1) {
 			return SUCCESS;
 		} else {
-			return GENL_FAIL;
+			return API_FAIL;
 		}
 	}
 
@@ -360,7 +379,7 @@ public class Comm {
 			if (lastStatus == 1) {
 				return SUCCESS;
 			} else {
-				return GENL_FAIL;
+				return API_FAIL;
 			}
 		} else {
 			return ret;
@@ -377,13 +396,36 @@ public class Comm {
 			if (lastStatus == 1) {
 				return SUCCESS;
 			} else {
-				return GENL_FAIL;
+				return API_FAIL;
 			}
-		} else{
+		} else {
 			return ret;
 		}
 	}
 
+	public int postComment(Comment c) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(id));
+		req.put("rid", Integer.toString(c.recipeID));
+		req.put("rating", Integer.toString(c.rating));
+		req.put("comment", c.comment);
+		int ret = apiRequest("rate", req);
+		if (ret == 0) {
+			if (lastStatus == 1) {
+				return SUCCESS;
+			} else {
+				return API_FAIL;
+			}
+		} else {
+			return ret;
+		}
+	}
+
+	/*
+	 * getCategories returns a pre-sorted list of categories.
+	 *   ie Each top level category is followed by its children,
+	 *      and they are followed by their children in hierarchical order.
+	 */
 	public ArrayList<Category> getCategories() {
 		ArrayList<Category> cats = new ArrayList<>();
 		int ret = apiRequest("categories", null);
@@ -400,6 +442,7 @@ public class Comm {
 						Integer level = mapper.readValue(r.path("level"), Integer.class);
 						cats.add(new Category(id.intValue(), level.intValue(), name));
 					} catch (Exception e) {
+						System.out.println("failed in getCategories - mapper.readValue");
 						e.printStackTrace();
 						return null;
 					}
@@ -420,7 +463,50 @@ public class Comm {
 			return apiRequestPayload(relUrl, mapper.writeValueAsString(o));
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("died writing value string " + o);
 			return JSON_ERROR;
+		}
+	}
+
+	private int apiRequestBytePayload(String relUrl, byte[] payload) {
+		String line;
+		StringBuffer jsonString = new StringBuffer();
+		try {
+			URL url = new URL(serverRoot + relUrl);
+
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			OutputStream os = connection.getOutputStream();
+			os.write(payload);
+			os.close();
+			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			while ((line = br.readLine()) != null) {
+				jsonString.append(line);
+			}
+			br.close();
+			connection.disconnect();
+			System.out.println(jsonString);
+			lastJSON = jsonString.toString();
+			rootNode = mapper.readTree(lastJSON);
+			lastStatus = API_FAIL;
+			try {
+				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
+				lastStatus = status;
+				return SUCCESS;
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("failed in apiRequest : fail to readValue from \"status\" ");
+				return API_FAIL;
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			System.out.println("failed in apiRequest: failed URL");
+			return NETWORK_FAIL;
 		}
 	}
 
@@ -449,18 +535,20 @@ public class Comm {
 			System.out.println(jsonString);
 			lastJSON = jsonString.toString();
 			rootNode = mapper.readTree(lastJSON);
-			lastStatus = GENL_FAIL;
+			lastStatus = API_FAIL;
 			try {
 				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
 				lastStatus = status;
 				return SUCCESS;
 			} catch (Exception e) {
 				e.printStackTrace();
-				return GENL_FAIL;
+				System.out.println("failed in apiRequest : fail to readValue from \"status\" ");
+				return API_FAIL;
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			return CONN_FAILED;
+			System.out.println("failed in apiRequest: failed URL");
+			return NETWORK_FAIL;
 		}
 	}
 }

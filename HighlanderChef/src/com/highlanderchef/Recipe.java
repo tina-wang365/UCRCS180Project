@@ -11,14 +11,14 @@ import android.graphics.Bitmap;
 
 
 public class Recipe implements Serializable{
-	int id;
+	public int id;
 	String name;
 	String description;
 	String cookTime;
 	Bitmap mainImage;
 	String mainImagepath;
 
-	ArrayList<String> categories;
+	ArrayList<Integer> categories;
 	ArrayList<Ingredient> ingredients;
 	ArrayList<Direction> directions;
 
@@ -30,13 +30,13 @@ public class Recipe implements Serializable{
 		this.description = description;
 		this.mainImage = mainImage;
 
-		categories = new ArrayList<String>();
+		categories = new ArrayList<Integer>();
 		ingredients = new ArrayList<Ingredient>();
 		directions = new ArrayList<Direction>();
 	}
 	public Recipe()
 	{
-		categories = new ArrayList<String>();
+		categories = new ArrayList<Integer>();
 		ingredients = new ArrayList<Ingredient>();
 		directions = new ArrayList<Direction>();
 		this.mainImage = null;
@@ -76,10 +76,8 @@ public class Recipe implements Serializable{
 			Iterator<JsonNode> ite = node.getElements();
 			while(ite.hasNext()) {
 				JsonNode cat = ite.next();
-				String text = cat.getTextValue();
-				//for now do them as strings
-				//Category c = new Category(text);
-				categories.add(text);
+				Integer ingr = new Integer(cat.getIntValue());
+				categories.add(ingr);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -157,6 +155,11 @@ public class Recipe implements Serializable{
 	public Bitmap getMainImage()
 	{
 		return this.mainImage;
+	}
+
+	public boolean isMainImage()
+	{
+		return (this.mainImage != null);
 	}
 
 }
