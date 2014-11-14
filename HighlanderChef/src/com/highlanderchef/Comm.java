@@ -329,6 +329,22 @@ public class Comm {
 				parseDirections(r, directionsJson);
 				String categoriesJson = mapper.readValue(node.path("categories"), String.class);
 				r.parseCategoriesFromJson(categoriesJson);
+
+				try {
+					JsonNode comments = node.path("comments");
+					Iterator<JsonNode> ite = comments.iterator();
+					while(ite.hasNext())
+					{
+						JsonNode cnode = ite.next();
+						Integer rating = mapper.readValue(cnode.path("rating"), Integer.class);
+						String comment = mapper.readValue(cnode.path("comment"), String.class);
+						String username = mapper.readValue(cnode.path("username"), String.class);
+						r.comments.add(new Comment(id, rating.intValue(), comment, username));
+					}
+				} catch (Exception e) {
+					System.out.println("parseRecipe had an exception parsing comments");
+					e.printStackTrace();
+				}
 			}
 
 			return r;
