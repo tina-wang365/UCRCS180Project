@@ -28,6 +28,10 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 	int dir_added_count = 0;
 	int prevTextViewId;
+
+	boolean newimage = false;
+	Bitmap newimagebm;
+
 	ArrayList<Bitmap> added_images = new ArrayList<Bitmap>();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 		Intent intent = getIntent();
 		recipe = (Recipe)intent.getSerializableExtra("recipe");
 
+		setMainImage();
 
 		TextView tv_header = (TextView) findViewById(R.id.makearecipe3header);
 		String header = tv_header.getText().toString();
@@ -83,8 +88,10 @@ public class MakeARecipe3 extends ActionBarActivity {
 		++dir_added_count;
 		TextView tv = new TextView(MakeARecipe3.this);
 		tv.setText(dir_added_count + ") " + new_dir);
-
 		tv.setId(dir_added_count);
+
+
+
 		final RelativeLayout.LayoutParams params =
 				new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -93,10 +100,10 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 		prevTextViewId = dir_added_count;
 		linear_layout.addView(tv, params);
-		//EditText et = (EditText) findViewById(R.id.addadirection);
-		//linear_layout.addView(et, params);
+
 
 		recipe.AddADirection(new_dir, added_images);
+		added_images.clear();
 		edittext_new_dir.getText().clear();
 		ImageView imageview = (ImageView) findViewById(R.id.added_image);
 		imageview.setImageResource(R.drawable.uploadimage);
@@ -124,11 +131,16 @@ public class MakeARecipe3 extends ActionBarActivity {
 			picturePath = cursor.getString(columnIndex);
 			cursor.close();
 
-			ImageView imageView = (ImageView) findViewById(R.id.added_image);
+			LinearLayout linear_layout = (LinearLayout) findViewById(R.id.linearLayoutDirections);
+			ImageView imageView = new ImageView(this);
 
-			//Get the dimensions of the Image View
-			int targetW = imageView.getWidth();
-			int targetH = imageView.getHeight();
+			final RelativeLayout.LayoutParams params =
+					new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+							RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params.addRule(RelativeLayout.BELOW, prevTextViewId);
+			imageView.setLayoutParams(params);
+
+
 
 			//load bitmap
 			BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -140,7 +152,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 			int photoH = bmOptions.outHeight;
 
 			//scale image
-			int scalefactor = Math.min(photoW/targetW, photoH/targetH);
+			int scalefactor = Math.min(photoW/100, photoH/100);
 
 			// Decode the image file into a Bitmap sized to fill the View
 			bmOptions.inJustDecodeBounds = false;
@@ -152,12 +164,14 @@ public class MakeARecipe3 extends ActionBarActivity {
 			if(bitmap != null)
 			{
 				imageView.setImageBitmap(bitmap);
+				linear_layout.addView(imageView, params);
 				added_images.add(bitmap);
 			}
 			else
 			{
-				//TODO added error response
+				//TODO some error message
 			}
+
 		}
 	}
 	public void submitRecipePressed(View view)
