@@ -40,6 +40,7 @@ public class Comm {
 	public static final int JSON_ERROR = -3;
 	public static final int API_FAIL = -50;
 	public static final int NETWORK_FAIL = -60;
+	public static final int AUTH_FAIL = -70;
 
 
 	private void registerMapperSerializers() {
@@ -142,9 +143,9 @@ public class Comm {
 				if (lastStatus == 1) {
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
-					Comm.email = email;
+					this.email = email;
 					Integer userId = mapper.readValue(rootNode.path("id"), Integer.class);
-					Comm.id = userId.intValue();
+					this.id = userId.intValue();
 					return SUCCESS;
 				} else {
 					return API_FAIL;
@@ -533,7 +534,11 @@ public class Comm {
 			try {
 				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
 				lastStatus = status;
-				return SUCCESS;
+				if (lastStatus == -1) {
+					return AUTH_FAIL;
+				} else {
+					return SUCCESS;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("failed in apiRequest : fail to readValue from \"status\" ");
