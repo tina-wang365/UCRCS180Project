@@ -73,6 +73,8 @@ public class RecipeForum extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	//HERE I ATTEMPT TO GET THE ID submitComment so that EDITTEXT RECEIVES THE STRING
+	//UPON INPUT. I FEEL LIKE I AM MISSING SOMETHING HERE TO GET THE STRING MODIFIED :(.
 	public void addCommentPressed(View v) {
 		EditText editTextComment = (EditText) findViewById(R.id.submitComment);
 		currentComment.comment = editTextComment.getText().toString();
@@ -166,6 +168,7 @@ public class RecipeForum extends ActionBarActivity {
 
 	public void addListenerOnButton() {
 		ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
+		//HERE I USE submitComment to make a toast. This is tied with the submit rating.
 		btnComment = (Button) findViewById(R.id.submitComment);
 
 		//if click on me, then display the current rating value
