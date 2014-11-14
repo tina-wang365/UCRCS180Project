@@ -22,9 +22,6 @@ public class RecipeForum extends ActionBarActivity {
 	Recipe currentRecipe = null;
 	Comment currentComment = null;
 	int recipeID = 0;
-	//private TextView txtRatingValue;
-	//TODO: HERE IS THE Button I MAKE FOR THE LAST TODO SECTION
-	//WHERE THE TOAST IS BEING CREATED.
 	private Button btnComment;
 	float userRating = 0;
 
@@ -68,10 +65,6 @@ public class RecipeForum extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-
-	//TODO: HERE I ATTEMPT TO GET THE ID submitComment so that EDITTEXT RECEIVES THE STRING
-	//UPON INPUT. I FEEL LIKE I AM MISSING SOMETHING HERE TO GET THE STRING MODIFIED :(.
-	//ALSO REFER TO THE activity_recipe_forum.xml file for the id.
 	public void addCommentPressed(View v) {
 		EditText userCommentText = (EditText) findViewById(R.id.userCommentText);
 		RatingBar ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
