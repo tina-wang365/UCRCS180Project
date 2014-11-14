@@ -41,12 +41,17 @@ public class RecipeForum extends ActionBarActivity {
 		Intent intent = getIntent();
 		recipeID = intent.getIntExtra("recipeID", 0);
 		downloadRecipe();
-
-		currentComment = new Comment(recipeID, 0, "");
+		/*
+		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
+		TextView tv_cooktime = new TextView(this);
+		   tv_cooktime.setText(recipies.get(i).getCookTime());
+		   rl.addView(tv_cooktime);
+		 */
+		currentComment = new Comment(recipeID, 0, "HelloWorld");
 		addListenerOnRatingBar();
 		addListenerOnButton();
 
-		new postCommentTask().execute(currentComment);
+
 	}
 
 	@Override
@@ -69,8 +74,10 @@ public class RecipeForum extends ActionBarActivity {
 	}
 
 	public void addCommentPressed(View v) {
-		EditText editTextComment = (EditText) findViewById(R.id.userCommentText);
+		EditText editTextComment = (EditText) findViewById(R.id.submitComment);
 		currentComment.comment = editTextComment.getText().toString();
+
+		new postCommentTask().execute(currentComment);
 
 	}
 	public void downloadRecipe() {
@@ -110,7 +117,7 @@ public class RecipeForum extends ActionBarActivity {
 		String formatOfDirection = "";
 		if(directionList.size() > 0) {
 			for(int i = 0; i < directionList.size(); ++i) {
-				formatOfDirection += i + ". " + directionList.get(i).text;
+				formatOfDirection += (i + 1) + ". " + directionList.get(i).text;
 				if((i + 1) < directionList.size()) {
 					formatOfDirection += "\n";
 				}
@@ -150,9 +157,7 @@ public class RecipeForum extends ActionBarActivity {
 					boolean fromUser) {
 
 				//txtRatingValue.setText(String.valueOf(rating));
-				currentComment.rating = (int) rating;
-
-
+				//currentComment.rating = (int) rating;
 			}
 		});
 	}
@@ -167,6 +172,7 @@ public class RecipeForum extends ActionBarActivity {
 		btnComment.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				currentComment.rating = (int) ratingBar.getRating();
 				new postCommentTask().execute(currentComment);
 				Toast.makeText(RecipeForum.this,
 						String.valueOf(ratingBar.getRating()),
