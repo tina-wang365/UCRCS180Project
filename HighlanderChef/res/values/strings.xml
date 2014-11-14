@@ -56,10 +56,11 @@
     <string name="MakeARecipe3Header">Add Directions</string>
     <string name="no_directions_added">(No directions added yet)</string>
     <string name="Enter_a_direction">Enter a step</string>
+    <string name="New_directions_header">Added Directions </string>
     <string name="Submit_Recipe">Submit Recipe</string>
     <string name="ConfirmationMessage">Recipe successfully added</string>
     <string name="title_activity_recipe_forum">RecipeForumActivity</string>
-    <string name="AddImagetoDirection">Add Image</string>
+    <string name="AddImagetoDirection">Add image to direction</string>
     <string name="title_activity_recipe__forum">Recipe_Forum</string>
     <string name="submit_error">ERROR submitting recipe. Try Again</string>
     <string name="Search">Search</string>
