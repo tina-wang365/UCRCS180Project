@@ -187,8 +187,8 @@ public class RecipeForum extends ActionBarActivity {
 		for(int i = 0; i < recipe.comments.size(); ++i)
 		{
 			TextView tv_comment = new TextView(this);
-			tv_comment.setText(recipe.comments.get(i).username + "\t\t" +
-					recipe.comments.get(i).rating + "\n" +
+			tv_comment.setText(recipe.comments.get(i).username + "\t\t\"" +
+					recipe.comments.get(i).rating + " stars\"\n" +
 					recipe.comments.get(i).comment + "\n\n\n");
 			tv_comment.setLayoutParams(params);
 			ll.addView(tv_comment);
