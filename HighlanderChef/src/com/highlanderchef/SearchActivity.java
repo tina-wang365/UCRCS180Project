@@ -39,6 +39,7 @@ public class SearchActivity extends ActionBarActivity {
 			new SearchTask().execute(SearchByCategory, category);
 		else
 		{
+			//Should never reach here
 			int CategoryQuery = intent.getIntExtra("CategoryID", -1);
 			new SearchTask().execute(SearchByCategory, Integer.toString(CategoryQuery));
 		}
