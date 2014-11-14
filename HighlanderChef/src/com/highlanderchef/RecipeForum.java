@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 
 public class RecipeForum extends ActionBarActivity {
@@ -148,27 +147,17 @@ public class RecipeForum extends ActionBarActivity {
 		et_comment.setLayoutParams(params);
 		ll.addView(et_comment);
 
-		RatingBar ratingBar = new RatingBar(this);
-		ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
-			@Override
-			public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-
-			}
-		});
-
-		ratingBar.setStepSize((float) 0.5);
-		ratingBar.setMax(5);
-		ratingBar.setId(1);
-		ratingBar.setRating(2.0f);
-		ll.addView(ratingBar);
-
 		Button b_comment = new Button(this);
 		b_comment.setText("Comment");
 		final int id = recipe.id;
 
-		RatingBar r_bar = new RatingBar(this);
-		ratingBar = r_bar;
-		ll.addView(ratingBar);
+		ratingBar = new RatingBar(this);
+		ratingBar.setStepSize((float) 0.5);
+		ratingBar.setMax(5);
+		ratingBar.setId(1);
+		ratingBar.setRating(2.0f);
+		ratingBar.setNumStars(5);
+		ll.addView(ratingBar, params);
 
 		b_comment.setOnClickListener(new View.OnClickListener(){
 
@@ -177,7 +166,7 @@ public class RecipeForum extends ActionBarActivity {
 			{
 				EditText et2 = (EditText) findViewById(1111);
 				final String comment_text = et2.getText().toString();
-				Comment new_comment = new Comment(id, r_bar.getRating(), comment_text);
+				Comment new_comment = new Comment(id, ratingBar.getRating(), comment_text, Comm.getEmail());
 				addComment(new_comment);
 				et2.getText().clear();
 			}
@@ -204,8 +193,8 @@ public class RecipeForum extends ActionBarActivity {
 	public void addComment(Comment comment)
 	{
 		TextView tv_comment = new TextView(this);
-		tv_comment.setText(comment.username + "\t\t" +
-				comment.rating + "\n" +
+		tv_comment.setText(comment.username + "\t\t\"" +
+				comment.rating + " stars\"\n" +
 				comment.comment + "\n\n\n");
 		final LinearLayout.LayoutParams params =
 				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,

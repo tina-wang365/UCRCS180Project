@@ -19,6 +19,13 @@ public class Comment {
 		this.username = username;
 	}
 
+	Comment(int recipeID, float rating, String comment, String username) {
+		this.recipeID = recipeID;
+		this.rating = (int)rating;
+		this.comment = comment;
+		this.username = username;
+	}
+
 	Comment(int recipeID, float rating, String comment) {
 		this.recipeID = recipeID;
 		this.rating = (int)rating;
