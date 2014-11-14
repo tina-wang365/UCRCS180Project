@@ -82,7 +82,6 @@ public class RecipeForum extends ActionBarActivity {
 	public void addCommentPressed(View v) {
 		EditText editTextComment = (EditText) findViewById(R.id.submitComment);
 		currentComment.comment = editTextComment.getText().toString();
-
 		new postCommentTask().execute(currentComment);
 
 	}
@@ -182,8 +181,10 @@ public class RecipeForum extends ActionBarActivity {
 		btnComment.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+
+
 				currentComment.rating = (int) ratingBar.getRating();
-				new postCommentTask().execute(currentComment);
+
 				Toast.makeText(RecipeForum.this,
 						String.valueOf(ratingBar.getRating()),
 						Toast.LENGTH_SHORT).show();
@@ -241,3 +242,4 @@ public class RecipeForum extends ActionBarActivity {
 		}
 	}
 }
+
