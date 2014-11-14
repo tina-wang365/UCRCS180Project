@@ -207,6 +207,8 @@ public class RecipeForum extends ActionBarActivity {
 		tv_comment.setLayoutParams(params);
 		LinearLayout ll = (LinearLayout) findViewById(R.id.rflayout);
 		ll.addView(tv_comment);
+
+		new postCommentTask().execute(comment);
 	}
 
 	public void displayRecipeFailure(String text) {
