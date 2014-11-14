@@ -22,7 +22,7 @@ public class SearchActivity extends ActionBarActivity {
 	private final String errorMessage = "";
 	private final String SearchByString = "Search By String";
 	private final String SearchByCategory = "Search By Category";
-	private final String SearchByUID = "Search By UID";
+	private final String SearchByMyUID = "Search By UID";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class SearchActivity extends ActionBarActivity {
 		} else if(category != null) {
 			new SearchTask().execute(SearchByCategory, category);
 		} else {
-			new SearchTask().execute(SearchByUID);
+			new SearchTask().execute(SearchByMyUID);
 		}
 
 		// TODO: now loading...
@@ -164,7 +164,7 @@ public class SearchActivity extends ActionBarActivity {
 				ret = c.searchRecipes(params[1]);
 			} else if (params[0] == SearchByCategory) {
 				ret = c.searchRecipesByCategory(Integer.parseInt(params[1]));
-			} else if (params[0] == SearchByUID) {
+			} else if (params[0] == SearchByMyUID) {
 				ret = c.searchRecipesByUID(c.getUserID());
 			}
 			return (ret.size() > 0);
