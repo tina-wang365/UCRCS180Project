@@ -21,6 +21,7 @@ public class Recipe implements Serializable{
 	ArrayList<Integer> categories;
 	ArrayList<Ingredient> ingredients;
 	ArrayList<Direction> directions;
+	ArrayList<Comment> comments;
 
 	//add categories, description, img_url, name, rid
 
@@ -33,12 +34,14 @@ public class Recipe implements Serializable{
 		categories = new ArrayList<Integer>();
 		ingredients = new ArrayList<Ingredient>();
 		directions = new ArrayList<Direction>();
+		comments = new ArrayList<Comment>();
 	}
 	public Recipe()
 	{
 		categories = new ArrayList<Integer>();
 		ingredients = new ArrayList<Ingredient>();
 		directions = new ArrayList<Direction>();
+		comments = new ArrayList<Comment>();
 		this.mainImage = null;
 	}
 
