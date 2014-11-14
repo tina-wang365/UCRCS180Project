@@ -66,15 +66,16 @@
 	    android:layout_height="wrap_content"
 	    android:layout_marginTop="29dp"
 	    android:text="@string/msgCannotDisplayRecipe" />-->
-<!-- 
+<!--
 	<EditText
 	    android:id="@+id/userCommentText"
-	    android:layout_width="wrap_content"
+	    android:layout_width="318dp"
 	    android:layout_height="wrap_content"
 	    android:ems="10"
 	    android:gravity="bottom"
 	    android:hint="@string/tapToComment" />
 	
+ 
 	<RatingBar
 	    android:id="@+id/recipeRatingBar"
 	    android:layout_width="wrap_content"

@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -78,17 +79,25 @@ public class RecipeForum extends ActionBarActivity {
 	public void downloadRecipe() {
 		new getRecipeTask().execute(recipeID);
 	}
+	LinearLayout ll;
+
 	public void displayRecipeSuccess(Recipe recipe) {
-		LinearLayout ll = (LinearLayout) findViewById(R.id.rflayout);
+		ll = (LinearLayout) findViewById(R.id.rflayout);
 		final LinearLayout.LayoutParams params =
 				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT);
 
 		//Set objects for display on activity
 		TextView textViewTitle = new TextView(this);
-		textViewTitle.setText(recipe.name);
+		textViewTitle.setText(recipe.name + "\n");
 		textViewTitle.setLayoutParams(params);
 		ll.addView(textViewTitle);
+
+		//Set objects for display on activity
+		TextView textViewDes = new TextView(this);
+		textViewDes.setText(recipe.description);
+		textViewDes.setLayoutParams(params);
+		ll.addView(textViewDes);
 
 		if(recipe.mainImage != null)
 		{
@@ -127,21 +136,16 @@ public class RecipeForum extends ActionBarActivity {
 			{
 				formatOfDirection += (i + 1) + ". " + recipe.directions.get(i).text;
 
-
 				TextView textViewDirections = new TextView(this);
 				textViewDirections.setText(formatOfDirection);
 				textViewIngredients.setLayoutParams(params);
 				ll.addView(textViewDirections);
 				formatOfDirection = "";
 
-				/*LinearLayout ll_d_images = new LinearLayout(this);
-				final LinearLayout.LayoutParams d_image_params =
-						new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-								LinearLayout.LayoutParams.WRAP_CONTENT
-								);*/
-
 				for(int j = 0; j < recipe.directions.get(i).images.size(); ++j)
 				{
+					//TODO set images horizontal    .setLayoutDirection()
+
 					ImageView iv_dir_image = new ImageView(this);
 					iv_dir_image.setImageBitmap(recipe.directions.get(i).images.get(j));
 					iv_dir_image.setLayoutParams(params);
@@ -154,23 +158,55 @@ public class RecipeForum extends ActionBarActivity {
 			formatOfDirection = "Direction List size = 0";
 		}
 
+		EditText et_comment = new EditText(this);
+		et_comment.setHint("Add a comment");
+		et_comment.setId(1111);
+		//et_params.addRule(RelativeLayout.BELOW, ll.getChildAt(ll.getChildCount()-1).getId());
+		et_comment.setLayoutParams(params);
+		ll.addView(et_comment);
 
+		Button b_comment = new Button(this);
+		b_comment.setText("Comment");
+		final int id = recipe.id;
 
-		//TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
-		//failedToDisplayRecipe.setVisibility(View.INVISIBLE);
+		b_comment.setOnClickListener(new View.OnClickListener(){
 
+			@Override
+			public void onClick(View v)
+			{
+				EditText et2 = (EditText) findViewById(1111);
+				final String comment_text = et2.getText().toString();
+				Comment new_comment = new Comment(id, 3, comment_text);
+				addComment(new_comment);
+				et2.getText().clear();
+			}
+		});
+		ll.addView(b_comment);
 
+		//comments
+		for(int i = 0; i < recipe.comments.size(); ++i)
+		{
+			TextView tv_comment = new TextView(this);
+			tv_comment.setText(recipe.comments.get(i).username + "\t\t" +
+					recipe.comments.get(i).rating + "\n" +
+					recipe.comments.get(i).comment + "\n\n\n");
+			tv_comment.setLayoutParams(params);
+			ll.addView(tv_comment);
+		}
+	}
 
-		/*
-		 * mdb: this is how to do a dynamic add... may need to also add a
-		 *      paam for ABOVE
-		RelativeLayout rr = (RelativeLayout) findViewById(R.id.rflayout);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.FILL_PARENT,
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		params.addRule(RelativeLayout.BELOW, R.id.titleOfRecipe);
-		rr.addView(ivmain, params);
-		 */
+	public void addComment(Comment comment)
+	{
+		TextView tv_comment = new TextView(this);
+		tv_comment.setText(comment.username + "\t\t" +
+				comment.rating + "\n" +
+				comment.comment + "\n\n\n");
+		final LinearLayout.LayoutParams params =
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
+		tv_comment.setLayoutParams(params);
+		LinearLayout ll = (LinearLayout) findViewById(R.id.rflayout);
+		ll.addView(tv_comment);
 	}
 
 	public void displayRecipeFailure(String text) {
