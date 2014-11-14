@@ -403,6 +403,11 @@ public class Comm {
 		}
 	}
 
+	/*
+	 * getCategories returns a pre-sorted list of categories.
+	 *   ie Each top level category is followed by its children,
+	 *      and they are followed by their children in hierarchical order.
+	 */
 	public ArrayList<Category> getCategories() {
 		ArrayList<Category> cats = new ArrayList<>();
 		int ret = apiRequest("categories", null);
