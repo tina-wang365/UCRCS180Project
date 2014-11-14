@@ -10,11 +10,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-<<<<<<< HEAD
-=======
 import android.view.View;
 import android.widget.Button;
->>>>>>> 68bb2ab7355ccf9dd62c1b371ee3ea130caa0a2a
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
