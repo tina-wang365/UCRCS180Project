@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -51,11 +50,6 @@ public class SearchActivity extends ActionBarActivity {
 	public void SearchSuccess(ArrayList<Recipe> recipies)
 	{
 		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
-		if(recipies.size() == 0) {
-			TextView searchNoResults = (TextView) findViewById(R.id.linearLayoutResults);//darren
-			searchNoResults.setText("No Recipes Found!");
-			searchNoResults.setVisibility(View.VISIBLE);
-		}
 		for(int i = 0; i < recipies.size(); ++i)
 		{
 			if(i >= 1)
