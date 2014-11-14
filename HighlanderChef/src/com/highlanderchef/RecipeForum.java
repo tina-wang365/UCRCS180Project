@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 public class RecipeForum extends ActionBarActivity {
 
 	Recipe currentRecipe = null;
-	Comment currentComment = null;
 	int recipeID = 0;
 	private RatingBar ratingBar;
 	//private TextView txtRatingValue;
@@ -41,7 +39,7 @@ public class RecipeForum extends ActionBarActivity {
 		recipeID = intent.getIntExtra("recipeID", 0);
 		downloadRecipe();
 
-		currentComment = new Comment(recipeID, 0, "");
+
 		addListenerOnRatingBar();
 		addListenerOnButton();
 	}
@@ -65,10 +63,6 @@ public class RecipeForum extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void addCommentPressed(View view, Comment c) {
-		EditText editTextComment = (EditText) findViewById(R.id.userCommentText);
-		c.comment = editTextComment.getText().toString();
-	}
 
 	public void downloadRecipe() {
 		new getRecipeTask().execute(recipeID);
@@ -84,7 +78,8 @@ public class RecipeForum extends ActionBarActivity {
 		TextView textViewTitle = (TextView) findViewById(R.id.titleOfRecipe);
 		textViewTitle.setText(title);
 
-
+		//Display main Image
+		//ImageView imageViewMainImage;
 
 		//Parse ingredients into neat format
 		String formatOfIngredient = "";
@@ -150,7 +145,7 @@ public class RecipeForum extends ActionBarActivity {
 					boolean fromUser) {
 
 				//txtRatingValue.setText(String.valueOf(rating));
-				currentComment.rating = (int) rating;
+				userRating = rating;
 
 
 			}
@@ -175,9 +170,8 @@ public class RecipeForum extends ActionBarActivity {
 
 		});
 	}
-	public void postCommentSuccess() {
-		TextView postedComment = new TextView(this);
 
+	public void postCommentSuccess() {
 
 	}
 
