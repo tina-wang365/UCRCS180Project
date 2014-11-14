@@ -197,6 +197,21 @@ public class Comm {
 		return ls;
 	}
 
+	public ArrayList<Recipe> searchRecipesByUID(int userID) {
+		HashMap<String, Integer> req = new HashMap<>();
+		req.put("uid", userID);
+		apiRequest("searchuid", req);
+
+		ArrayList<Recipe> ls = new ArrayList<>();
+		Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+		while(ite.hasNext())
+		{
+			JsonNode r = ite.next();
+			ls.add(parseRecipe(r, true));
+		}
+		return ls;
+	}
+
 	private Bitmap getImage(String relUrl) {
 		System.out.println("getImage(" + serverImgRoot + relUrl);
 		if (relUrl == null) {

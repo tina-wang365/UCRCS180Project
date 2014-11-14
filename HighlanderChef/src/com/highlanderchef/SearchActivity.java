@@ -22,6 +22,7 @@ public class SearchActivity extends ActionBarActivity {
 	private final String errorMessage = "";
 	private final String SearchByString = "Search By String";
 	private final String SearchByCategory = "Search By Category";
+	private final String SearchByMyUID = "Search By UID";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +34,13 @@ public class SearchActivity extends ActionBarActivity {
 		String category = intent.getStringExtra("category_query");
 
 
-		if (query != null)
+		if (query != null) {
 			new SearchTask().execute(SearchByString, query);
-		else if(category != null)
+		} else if(category != null) {
 			new SearchTask().execute(SearchByCategory, category);
-		else
-		{
-			int CategoryQuery = intent.getIntExtra("CategoryID", -1);
-			new SearchTask().execute(SearchByCategory, Integer.toString(CategoryQuery));
+		} else {
+			new SearchTask().execute(SearchByMyUID);
 		}
-
 
 		// TODO: now loading...
 	}
@@ -162,10 +160,13 @@ public class SearchActivity extends ActionBarActivity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
-			if (params[0] == SearchByString)
+			if (params[0] == SearchByString) {
 				ret = c.searchRecipes(params[1]);
-			else if (params[0] == SearchByCategory)
+			} else if (params[0] == SearchByCategory) {
 				ret = c.searchRecipesByCategory(Integer.parseInt(params[1]));
+			} else if (params[0] == SearchByMyUID) {
+				ret = c.searchRecipesByUID(c.getUserID());
+			}
 			return (ret.size() > 0);
 		}
 
