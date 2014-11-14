@@ -67,7 +67,7 @@ public class Comm {
 		return id;
 	}
 
-	public String getEmail() {
+	public static String getEmail() {
 		return email;
 	}
 
