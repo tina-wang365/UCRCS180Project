@@ -24,6 +24,7 @@ public class Comm {
 	private static String serverRoot = "http://96.126.122.162:9222/chef/";
 	private static String serverImgRoot = "http://96.126.122.162:9223/";
 	private static boolean runningAndroid = true;
+	private static final int commVersion = 1;
 
 	private static ObjectMapper mapper;
 
@@ -40,6 +41,7 @@ public class Comm {
 	public static final int JSON_ERROR = -3;
 	public static final int API_FAIL = -50;
 	public static final int NETWORK_FAIL = -60;
+	public static final int AUTH_FAIL = -70;
 
 
 	private void registerMapperSerializers() {
@@ -201,7 +203,7 @@ public class Comm {
 			System.out.println("tried to get a null-url image");
 			return null;
 		}
-		byte[] imgData;
+
 		try {
 			URL url = new URL(serverImgRoot + relUrl);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -476,6 +478,8 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			connection.setRequestProperty("uid", Integer.toString(Comm.id));
+			connection.setRequestProperty("token", Comm.authToken);
 			OutputStream os = connection.getOutputStream();
 			os.write(payload);
 			os.close();
@@ -518,6 +522,9 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			connection.setRequestProperty("uid", Integer.toString(Comm.id));
+			connection.setRequestProperty("token", Comm.authToken);
+			connection.setRequestProperty("commversion", Integer.toString(Comm.commVersion));
 			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
 			writer.write(payload);
 			writer.close();
@@ -534,7 +541,11 @@ public class Comm {
 			try {
 				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
 				lastStatus = status;
-				return SUCCESS;
+				if (lastStatus == -1) {
+					return AUTH_FAIL;
+				} else {
+					return SUCCESS;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("failed in apiRequest : fail to readValue from \"status\" ");
