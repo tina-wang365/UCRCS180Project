@@ -30,8 +30,13 @@ public class SearchActivity extends ActionBarActivity {
 
 		Intent intent = getIntent();
 		String query = intent.getStringExtra("search_query");
+		String category = intent.getStringExtra("category_query");
+
+
 		if (query != null)
 			new SearchTask().execute(SearchByString, query);
+		else if(category != null)
+			new SearchTask().execute(SearchByCategory, category);
 		else
 		{
 			int CategoryQuery = intent.getIntExtra("CategoryID", -1);
@@ -162,7 +167,7 @@ public class SearchActivity extends ActionBarActivity {
 			if (params[0] == SearchByString)
 				ret = c.searchRecipes(params[1]);
 			else if (params[0] == SearchByCategory)
-				ret = c.searchRecipesByCategory(Integer.parseInt(params[0]));
+				ret = c.searchRecipesByCategory(Integer.parseInt(params[1]));
 			return (ret.size() > 0);
 		}
 
@@ -179,6 +184,7 @@ public class SearchActivity extends ActionBarActivity {
 		}
 
 	}
+
 
 
 }
