@@ -74,13 +74,13 @@ public class RecipeForum extends ActionBarActivity {
 	//UPON INPUT. I FEEL LIKE I AM MISSING SOMETHING HERE TO GET THE STRING MODIFIED :(.
 	//ALSO REFER TO THE activity_recipe_forum.xml file for the id.
 	public void addCommentPressed(View v) {
-		EditText editTextComment = (EditText) findViewById(R.id.submitComment);
+		EditText userCommentText = (EditText) findViewById(R.id.userCommentText);
 		currentComment.rating = (int) ratingBar.getRating();
 
 		Toast.makeText(RecipeForum.this,
 				String.valueOf(ratingBar.getRating()),
 				Toast.LENGTH_SHORT).show();
-		currentComment.comment = editTextComment.getText().toString();
+		currentComment.comment = userCommentText.getText().toString();
 		new postCommentTask().execute(currentComment);
 
 	}
