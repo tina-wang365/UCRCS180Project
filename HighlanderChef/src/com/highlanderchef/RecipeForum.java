@@ -1,9 +1,6 @@
 package com.highlanderchef;
 
-import java.util.ArrayList;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -12,11 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RatingBar;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class RecipeForum extends ActionBarActivity {
 
@@ -32,8 +27,8 @@ public class RecipeForum extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recipe_forum);
-		TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
-		failedToDisplayRecipe.setVisibility(View.INVISIBLE);
+		//TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
+		//failedToDisplayRecipe.setVisibility(View.INVISIBLE);
 
 		Intent intent = getIntent();
 		recipeID = intent.getIntExtra("recipeID", 0);
@@ -69,7 +64,7 @@ public class RecipeForum extends ActionBarActivity {
 	}
 
 	public void addCommentPressed(View v) {
-		EditText userCommentText = (EditText) findViewById(R.id.userCommentText);
+		/*EditText userCommentText = (EditText) findViewById(R.id.userCommentText);
 		RatingBar ratingBar = (RatingBar) findViewById(R.id.recipeRatingBar);
 		currentComment.rating = (int) ratingBar.getRating();
 
@@ -77,69 +72,94 @@ public class RecipeForum extends ActionBarActivity {
 				String.valueOf(ratingBar.getRating()),
 				Toast.LENGTH_SHORT).show();
 		currentComment.comment = userCommentText.getText().toString();
-		new postCommentTask().execute(currentComment);
+		new postCommentTask().execute(currentComment); */
 
 	}
 	public void downloadRecipe() {
 		new getRecipeTask().execute(recipeID);
 	}
 	public void displayRecipeSuccess(Recipe recipe) {
-		//Load information about this particular recipe
-		String title = recipe.name;
-		ArrayList<Ingredient> ingredientList = recipe.ingredients;
-		ArrayList<Direction> directionList = recipe.directions;
-		Bitmap mainPhoto = recipe.mainImage;
+		LinearLayout ll = (LinearLayout) findViewById(R.id.rflayout);
+		final LinearLayout.LayoutParams params =
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
 
 		//Set objects for display on activity
-		TextView textViewTitle = (TextView) findViewById(R.id.titleOfRecipe);
-		textViewTitle.setText(title);
+		TextView textViewTitle = new TextView(this);
+		textViewTitle.setText(recipe.name);
+		textViewTitle.setLayoutParams(params);
+		ll.addView(textViewTitle);
 
+		if(recipe.mainImage != null)
+		{
+			//set main image
+			ImageView ivmain = new ImageView(this);
+			ivmain.setImageBitmap(currentRecipe.mainImage);
+			ivmain.setLayoutParams(params);
+			ll.addView(ivmain);
+		}
+
+		//create string for ingredient text
 		String formatOfIngredient = "";
-
-		if(ingredientList.size() > 0) {
-			for(int i = 0; i < ingredientList.size(); ++i) {
-				formatOfIngredient += "* " + ingredientList.get(i).amount + " " + ingredientList.get(i).name;
-				if((i + 1) < ingredientList.size()) {
+		if(recipe.ingredients.size() > 0) {
+			for(int i = 0; i < recipe.ingredients.size(); ++i) {
+				formatOfIngredient += "* " + recipe.ingredients.get(i).amount + " " + recipe.ingredients.get(i).name;
+				if((i + 1) < recipe.ingredients.size()) {
 					formatOfIngredient += "\n";
 				}
 			}
+			formatOfIngredient += "\n";
 		}
 		else {
 			formatOfIngredient = "Ingredient List size = 0\n";
-
 		}
 
-		TextView textViewIngredients = (TextView) findViewById(R.id.selectedRecipeIngredientList);
+		TextView textViewIngredients = new TextView(this);
 		textViewIngredients.setText(formatOfIngredient);
-
+		textViewIngredients.setLayoutParams(params);
+		ll.addView(textViewIngredients);
 
 		//Parse directions into neat format
 		String formatOfDirection = "";
-		if(directionList.size() > 0) {
-			for(int i = 0; i < directionList.size(); ++i) {
-				formatOfDirection += (i + 1) + ". " + directionList.get(i).text;
-				if((i + 1) < directionList.size()) {
-					formatOfDirection += "\n";
+		if(recipe.directions.size() > 0)
+		{
+			for(int i = 0; i < recipe.directions.size(); ++i)
+			{
+				formatOfDirection += (i + 1) + ". " + recipe.directions.get(i).text;
+
+
+				TextView textViewDirections = new TextView(this);
+				textViewDirections.setText(formatOfDirection);
+				textViewIngredients.setLayoutParams(params);
+				ll.addView(textViewDirections);
+				formatOfDirection = "";
+
+				/*LinearLayout ll_d_images = new LinearLayout(this);
+				final LinearLayout.LayoutParams d_image_params =
+						new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+								LinearLayout.LayoutParams.WRAP_CONTENT
+								);*/
+
+				for(int j = 0; j < recipe.directions.get(i).images.size(); ++j)
+				{
+					ImageView iv_dir_image = new ImageView(this);
+					iv_dir_image.setImageBitmap(recipe.directions.get(i).images.get(j));
+					iv_dir_image.setLayoutParams(params);
+					ll.addView(iv_dir_image);
 				}
-				//TODO: upload images. If user doesn't submit image, then do not generate an image.
-				//if more than 1 image is found, then display photos scrollable from left to right.
-				//images less than the size of the width of the screen should be displayed statically.
-				//Otherwise, pictures should be scrolled from left to right to get the last image,
-				//and right to left to get to the first image.
 			}
 		}
-		else {
+		else
+		{
 			formatOfDirection = "Direction List size = 0";
 		}
-		TextView textViewDirections = (TextView) findViewById(R.id.selectedRecipeDirectionList);
-		textViewDirections.setText(formatOfDirection);
 
 
-		TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
-		failedToDisplayRecipe.setVisibility(View.INVISIBLE);
 
-		ImageView ivmain = (ImageView) findViewById(R.id.recipeImage);
-		ivmain.setImageBitmap(currentRecipe.mainImage);
+		//TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
+		//failedToDisplayRecipe.setVisibility(View.INVISIBLE);
+
+
 
 		/*
 		 * mdb: this is how to do a dynamic add... may need to also add a
@@ -154,8 +174,8 @@ public class RecipeForum extends ActionBarActivity {
 	}
 
 	public void displayRecipeFailure(String text) {
-		TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
-		failedToDisplayRecipe.setVisibility(View.VISIBLE);
+		//TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
+		//failedToDisplayRecipe.setVisibility(View.VISIBLE);
 	}
 
 

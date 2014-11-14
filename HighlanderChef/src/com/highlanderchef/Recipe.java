@@ -12,16 +12,16 @@ import android.graphics.Bitmap;
 
 public class Recipe implements Serializable{
 	public int id;
-	String name;
-	String description;
-	String cookTime;
-	Bitmap mainImage;
-	String mainImagepath;
+	public String name;
+	public String description;
+	public String cookTime;
+	public Bitmap mainImage;
+	public String mainImagepath;
 
-	ArrayList<Integer> categories;
-	ArrayList<Ingredient> ingredients;
-	ArrayList<Direction> directions;
-	ArrayList<Comment> comments;
+	public ArrayList<Integer> categories;
+	public ArrayList<Ingredient> ingredients;
+	public ArrayList<Direction> directions;
+	public ArrayList<Comment> comments;
 
 	//add categories, description, img_url, name, rid
 
