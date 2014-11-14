@@ -142,9 +142,9 @@ public class Comm {
 				if (lastStatus == 1) {
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
-					this.email = email;
+					Comm.email = email;
 					Integer userId = mapper.readValue(rootNode.path("id"), Integer.class);
-					this.id = userId.intValue();
+					Comm.id = userId.intValue();
 					return SUCCESS;
 				} else {
 					return API_FAIL;
@@ -201,7 +201,6 @@ public class Comm {
 			System.out.println("tried to get a null-url image");
 			return null;
 		}
-		byte[] imgData;
 		try {
 			URL url = new URL(serverImgRoot + relUrl);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
