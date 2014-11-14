@@ -116,6 +116,7 @@ public class Recipe implements Serializable{
 	public void AddADirection(String dir, ArrayList<Bitmap> bmp)
 	{
 		this.directions.add(new Direction(dir, bmp ));
+		bmp.clear();
 	}
 	public void AddADirection(String dir)
 	{
