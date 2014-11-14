@@ -27,16 +27,7 @@
 	    android:layout_marginTop="5dp"
 	     />
 	
-	<TextView
-	    android:id="@+id/selectedRecipeDirectionList"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_alignRight="@+id/selectedRecipeIngredientList"
-	    android:layout_below="@+id/selectedRecipeIngredientList"
-	    android:layout_marginTop="5dp"
-	    android:text="@string/defaultDirectionsList" />
-
-	<TextView
+    <TextView
 	    android:id="@+id/selectedRecipeIngredientList"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
@@ -44,6 +35,17 @@
 	    android:layout_below="@+id/recipeImage"
 	    android:layout_marginTop="5dp"
 	    android:text="@string/defaultIngredientList" />
+    
+	<TextView
+	    android:id="@+id/selectedRecipeDirectionList"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/titleOfRecipe"
+	    android:layout_below="@+id/selectedRecipeIngredientList"
+	    android:layout_marginTop="5dp"
+	    android:text="@string/defaultDirectionsList" />
+
+
 <!-- 
 	<TextView	
 		android:id="@+id/postCommentSuccess"
@@ -64,12 +66,20 @@
 	    android:layout_marginTop="29dp"
 	    android:text="@string/msgCannotDisplayRecipe" />
 
+	<EditText
+	    android:id="@+id/userCommentText"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_toLeftOf="@+id/recipeRatingBar"
+	    android:ems="10"
+	    android:gravity="bottom"
+	    android:hint="@string/tapToComment" />
+	
 	<RatingBar
 	    android:id="@+id/recipeRatingBar"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_toRightOf="@+id/userCommentText"
-	    android:layout_below="@+id/selectedRecipeDirectionList"
 	    android:layout_above="@+id/submitComment"
 	    android:numStars="5"
 	    android:rating="3"
@@ -81,17 +91,8 @@
 	    android:layout_height="wrap_content"
 	    android:layout_below="@+id/userCommentText"
 	    android:layout_alignLeft="@+id/selectedRecipeDirectionList"
-	    android:layout_alignParentBottom="true"
 	    android:onClick="addCommentPressed"
 	    android:text="@string/Comment" />
 
-	<EditText
-	    android:id="@+id/userCommentText"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_above="@+id/recipeRatingBar"
-	    android:ems="10"
-	    android:gravity="bottom"
-	    android:hint="@string/tapToComment" />
 	  
 </RelativeLayout>
