@@ -1,10 +1,6 @@
-<ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-      android:id="@+id/ScrollView2"
-      android:layout_width="wrap_content"
-       android:layout_height="wrap_content" >
-<RelativeLayout 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
@@ -15,66 +11,74 @@
     tools:context="com.highlanderchef.RecipeForum" >
 
     <TextView
-     android:id="@+id/titleOfRecipe"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:text="@string/recipeTitle" />
- 
- <TextView
-     android:id="@+id/selectedRecipeDirectionList"
-     android:layout_width="match_parent"
-     android:layout_height="wrap_content"
-     android:layout_alignRight="@+id/selectedRecipeIngredientList"
-     android:layout_below="@+id/selectedRecipeIngredientList"
-     android:layout_marginTop="20dp"
-     android:text="@string/defaultDirectionsList" />
+	    android:id="@+id/titleOfRecipe"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/recipeTitle" />
+	
+	<TextView
+	    android:id="@+id/selectedRecipeDirectionList"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignRight="@+id/selectedRecipeIngredientList"
+	    android:layout_below="@+id/selectedRecipeIngredientList"
+	    android:layout_marginTop="20dp"
+	    android:text="@string/defaultDirectionsList" />
 
- <TextView
-     android:id="@+id/selectedRecipeIngredientList"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:layout_alignLeft="@+id/titleOfRecipe"
-     android:layout_below="@+id/titleOfRecipe"
-     android:layout_marginTop="15dp"
-     android:text="@string/defaultIngredientList" />
+	<TextView
+	    android:id="@+id/selectedRecipeIngredientList"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/titleOfRecipe"
+	    android:layout_below="@+id/titleOfRecipe"
+	    android:layout_marginTop="15dp"
+	    android:text="@string/defaultIngredientList" />
+<!-- 
+	<TextView	
+		android:id="@+id/postCommentSuccess"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/titleOfRecipe"
+	    android:layout_below="@+id/titleOfRecipe"
+	    android:layout_marginTop="15dp"
+	    android:text="@string/commentSuccess" />
+	 -->   
+	
+	<TextView
+	    android:id="@+id/errorCannotDisplayRecipe"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/selectedRecipeDirectionList"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginTop="29dp"
+	    android:text="@string/msgCannotDisplayRecipe" />
 
+	<RatingBar
+	    android:id="@+id/recipeRatingBar"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/submitComment"
+	    android:numStars="5"
+	    android:rating="3"
+	    android:stepSize="1" />
 
- <TextView
-     android:id="@+id/errorCannotDisplayRecipe"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:layout_below="@+id/selectedRecipeDirectionList"
-     android:layout_centerHorizontal="true"
-     android:layout_marginTop="29dp"
-     android:text="@string/msgCannotDisplayRecipe" />
+	<Button
+	    android:id="@+id/submitComment"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/selectedRecipeDirectionList"
+	    android:layout_alignParentBottom="true"
+	    android:onClick="addCommentPressed"
+	    android:text="@string/Comment" />
 
- <RatingBar
-     android:id="@+id/recipeRatingBar"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:layout_above="@+id/submitComment"
-     android:numStars="5"
-     android:rating="3"
-     android:stepSize="1" />
-
- <Button
-     android:id="@+id/submitComment"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:layout_alignLeft="@+id/selectedRecipeDirectionList"
-     android:layout_alignParentBottom="true"
-     android:onClick="addCommentPressed"
-     android:text="@string/Comment" />
-
- <EditText
-     android:id="@+id/userCommentText"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:layout_above="@+id/recipeRatingBar"
-     android:layout_alignLeft="@+id/recipeRatingBar"
-     android:ems="10"
-     android:gravity="bottom"
-     android:hint="@string/tapToComment" />
-   
+	<EditText
+	    android:id="@+id/userCommentText"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/recipeRatingBar"
+	    android:layout_alignLeft="@+id/recipeRatingBar"
+	    android:ems="10"
+	    android:gravity="bottom"
+	    android:hint="@string/tapToComment" />
+	  
 </RelativeLayout>
-</ScrollView>
