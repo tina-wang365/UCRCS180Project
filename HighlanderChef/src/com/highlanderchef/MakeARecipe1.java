@@ -1,26 +1,38 @@
 package com.highlanderchef;
 
+import java.util.ArrayList;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 public class MakeARecipe1 extends ActionBarActivity {
 	Recipe recipe = new Recipe();
+	ArrayList<Category> categories;
+	String errorMessage = "";
+	Spinner spinner;
+	Bundle b;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_make_a_recipe1);
+
+		new GetCategoriesTask().execute(1);
 	}
 
 	@Override
@@ -121,5 +133,62 @@ public class MakeARecipe1 extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	public void catOnSuccess()
+	{
+		if(categories.size() > 0)
+		{
+			ArrayList<String> level0_spinner = new ArrayList<String>();
+			for(int i = 0; i < categories.size(); ++i)
+			{
+				if(categories.get(i).level == 0)
+				{
+					level0_spinner.add(categories.get(i).name);
+
+				}
+			}
+			spinner = (Spinner) findViewById(R.id.spinner);
+			ArrayAdapter<String> adapter_state = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, level0_spinner);
+			adapter_state.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			spinner.setAdapter(adapter_state);
+			spinner.setOnItemSelectedListener(this);
+
+		}
+	}
+
+	public void onItemSelected(AdapterView<?> parent, View view, int position,
+			long id) {
+		spinner.setSelection(position);
+		String selState = (String) spinner.getSelectedItem();
+
+	}
+	public void catOnFailure()
+	{
+
+	}
+
+	private class GetCategoriesTask extends AsyncTask<Object, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(Object... params) {
+			Comm c = new Comm();
+			categories = c.getCategories();
+			if(categories != null) {
+				errorMessage = "Error! Network Failed to connect. Check your network";
+			} else if(categories == null) {
+				errorMessage = "Sorry! There was an error making your recipe";
+			}
+			return (categories != null);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				catOnSuccess();
+			} else {
+				catOnFailure();
+			}
+		}
 	}
 }

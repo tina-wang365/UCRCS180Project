@@ -65,5 +65,10 @@
            android:layout_alignRight="@+id/add_image"
            android:layout_below="@+id/add_image"
            android:src="@drawable/uploadimage" />
+       
+       <Spinner
+           android:id="@+id/spinner"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content" />
 
 </RelativeLayout>

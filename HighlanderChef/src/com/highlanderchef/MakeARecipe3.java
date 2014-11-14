@@ -32,6 +32,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 	boolean newimage = false;
 	Bitmap newimagebm;
 
+
 	ArrayList<Bitmap> added_images = new ArrayList<Bitmap>();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -217,6 +218,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 			}
 		}
 	}
+
 
 	public void setMainImage()
 	{
