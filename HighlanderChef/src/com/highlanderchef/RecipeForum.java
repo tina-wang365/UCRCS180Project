@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class RecipeForum extends ActionBarActivity {
@@ -20,8 +21,7 @@ public class RecipeForum extends ActionBarActivity {
 	Comment currentComment = null;
 	int recipeID = 0;
 	private Button btnComment;
-	float userRating = 0;
-
+	private RatingBar ratingBar;
 
 
 	@Override
@@ -169,6 +169,9 @@ public class RecipeForum extends ActionBarActivity {
 		b_comment.setText("Comment");
 		final int id = recipe.id;
 
+		ratingBar = new RatingBar(this);
+		ll.addView(ratingBar);
+
 		b_comment.setOnClickListener(new View.OnClickListener(){
 
 			@Override
@@ -176,7 +179,7 @@ public class RecipeForum extends ActionBarActivity {
 			{
 				EditText et2 = (EditText) findViewById(1111);
 				final String comment_text = et2.getText().toString();
-				Comment new_comment = new Comment(id, 3, comment_text);
+				Comment new_comment = new Comment(id, ratingBar.getRating(), comment_text);
 				addComment(new_comment);
 				et2.getText().clear();
 			}
