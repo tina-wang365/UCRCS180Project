@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,7 +73,10 @@ public class BrowseActivity extends Activity {
 
 				if (iChildren.isEmpty())
 				{
-					//Checkbox is a left so open new activity
+					//Checkbox is a leaf so open new activity
+					Intent intent = new Intent(BrowseActivity.this, SearchActivity.class);
+					intent.putExtra("CategoryID", iCheckBox.cData.id);
+					startActivity(intent);
 				}
 
 				if (((CheckBox) iView).isChecked())

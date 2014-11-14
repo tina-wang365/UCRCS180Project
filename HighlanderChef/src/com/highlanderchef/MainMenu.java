@@ -1,8 +1,10 @@
 package com.highlanderchef;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +17,7 @@ public class MainMenu extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		new UsernameTask().execute();
 		setContentView(R.layout.activity_main_menu);
 
 		Intent intent = getIntent();
@@ -30,10 +33,6 @@ public class MainMenu extends ActionBarActivity {
 			//TODO test this
 			tv_con_msg.setText(con_msg);
 		}
-
-		String username = "";
-		String strWelcomeFormat = getResources().getString(R.string.Welcome_Chef);
-		String strWelcomeMsg = String.format(strWelcomeFormat,username);
 	}
 
 	@Override
@@ -86,6 +85,38 @@ public class MainMenu extends ActionBarActivity {
 		Intent intent = new Intent(this, SearchActivity.class);
 		intent.putExtra("search_query", search_query);
 		startActivity(intent);
+
+	}
+
+	public void setUsername(String iName)
+	{
+		String username = iName;
+		String strWelcomeFormat = getResources().getString(R.string.Welcome_Chef);
+		String strWelcomeMsg = String.format(strWelcomeFormat,username);
+		((TextView) findViewById(R.id.textView1)).setText(strWelcomeMsg);
+	}
+
+	private class UsernameTask extends AsyncTask<String, Void, Boolean>
+	{
+		String cUsername = new String();
+		@Override
+		protected Boolean doInBackground(String... params) {
+			Comm iComm = new Comm();
+			cUsername = iComm.getEmail();
+			return (cUsername.length() > 0);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				setUsername(cUsername);
+			}
+			else {
+				Log.e("get_username_fail","Could not get username from server.");
+				setUsername(new String());
+			}
+		}
 
 	}
 }
