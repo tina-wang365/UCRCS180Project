@@ -24,6 +24,8 @@ import android.widget.Spinner;
 public class MakeARecipe1 extends ActionBarActivity {
 	Recipe recipe = new Recipe();
 	ArrayList<Category> categories;
+	ArrayList<Integer> categoryIDs;
+	int curSelCat = 0;
 	String errorMessage = "";
 	Spinner spinner;
 	Bundle b;
@@ -78,6 +80,8 @@ public class MakeARecipe1 extends ActionBarActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null)
 		{
+			recipe.categories.clear();
+			recipe.categories.add(categoryIDs.get(curSelCat));
 			Uri selectedImage = data.getData();
 			String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
@@ -142,6 +146,7 @@ public class MakeARecipe1 extends ActionBarActivity {
 		{
 			ArrayList<String> level0_spinner = new ArrayList<String>();
 			Stack<String> cat_prefix = new Stack<String>();
+			categoryIDs.clear();
 			int last_level = 0;
 			for(int i = 0; i < categories.size(); ++i)
 			{
@@ -156,8 +161,10 @@ public class MakeARecipe1 extends ActionBarActivity {
 
 				if (i == (categories.size() - 1)) {
 					level0_spinner.add(cat_prefix.peek());
+					categoryIDs.add(new Integer(categories.get(i).id));
 				} else if (categories.get(i + 1).level <= categories.get(i).level) {
 					level0_spinner.add(cat_prefix.peek());
+					categoryIDs.add(new Integer(categories.get(i).id));
 				}
 
 				last_level = categories.get(i).level;
@@ -175,6 +182,7 @@ public class MakeARecipe1 extends ActionBarActivity {
 			long id) {
 		spinner.setSelection(position);
 		String selState = (String) spinner.getSelectedItem();
+		curSelCat = spinner.getSelectedItemPosition();
 
 	}
 	public void catOnFailure()
