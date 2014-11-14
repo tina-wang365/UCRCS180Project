@@ -34,8 +34,6 @@ public class RecipeForum extends ActionBarActivity {
 		Intent intent = getIntent();
 		recipeID = intent.getIntExtra("recipeID", 0);
 		downloadRecipe();
-
-
 	}
 
 	@Override
@@ -77,9 +75,15 @@ public class RecipeForum extends ActionBarActivity {
 
 		//Set objects for display on activity
 		TextView textViewDes = new TextView(this);
-		textViewDes.setText(recipe.description);
+		textViewDes.setText(recipe.description + "\n");
 		textViewDes.setLayoutParams(params);
 		ll.addView(textViewDes);
+
+		//Set objects for display on activity
+		TextView textViewCookTime = new TextView(this);
+		textViewCookTime.setText(recipe.cookTime);
+		textViewCookTime.setLayoutParams(params);
+		ll.addView(textViewCookTime);
 
 		if(recipe.mainImage != null)
 		{
