@@ -36,6 +36,12 @@ public class Comm {
 	private static volatile int id;
 	private static volatile String email = "";
 	private static volatile String authToken = "";
+	//MILESTONE1
+	private static ArrayList<Recipe> favorites;
+	private static ArrayList<Integer> followers; //users that are following THIS user
+	private static ArrayList<Integer> following; //users that THIS user are following
+	private static Boolean update;
+
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
@@ -78,6 +84,14 @@ public class Comm {
 	public String getLastJSON() {
 		return lastJSON;
 	}
+	//MILESTONE1
+	public ArrayList<Recipe> getFavorites() {
+		return favorites;
+	}
+	//MILESTONE1
+	public ArrayList<Integer> getFollowers() {
+		return followers;
+	}
 	public static void prettyPrint(String s) {
 		try {
 			Object json = mapper.readValue(s, Object.class);
@@ -92,6 +106,23 @@ public class Comm {
 			System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
 		} catch (Exception e) {
 			System.out.println("EXCEPTION in prettyPrint");
+		}
+	}
+	//MILESTONE1
+	public static void sendNotificationToFollowers() {
+		if(update) {
+			for(int i = 0; i < followers.size(); i++) {
+				//send notification that you have uploaded a new recipe
+				//set update to false
+			}
+		}
+	}
+	//MILESTONE1
+	public static void checkNotification() {
+		for(int i = 0; i < following.size(); i++) {
+			//if(following[i].update == true) { //conflict here. list "following" should be object "users" and not just an integer of their id
+			//update list and show the recipe they have just uploaded
+			//}
 		}
 	}
 
@@ -400,6 +431,9 @@ public class Comm {
 		apiRequest("uploadrecipe", req);
 
 		if (lastStatus == 1) {
+			//MILESTONE1
+			req.put("update", true);
+			this.update = true; //i think its supposed to be this one
 			return SUCCESS;
 		} else {
 			return API_FAIL;
