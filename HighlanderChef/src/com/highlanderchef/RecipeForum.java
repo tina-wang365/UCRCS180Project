@@ -81,7 +81,16 @@ public class RecipeForum extends ActionBarActivity {
 
 		//Set objects for display on activity
 		TextView textViewCookTime = new TextView(this);
-		textViewCookTime.setText("5 mins" + "\n");
+		if(recipe.cookTime == null) {
+			String estimate = "Estimate: N/A";
+			textViewCookTime.setText(estimate);
+			System.out.println("Cook Time N/A");
+		}
+		else {
+			System.out.println("cookTime is not empty!");
+			textViewCookTime.setText(recipe.cookTime);
+		}
+
 		textViewCookTime.setLayoutParams(params);
 		ll.addView(textViewCookTime);
 
@@ -92,6 +101,9 @@ public class RecipeForum extends ActionBarActivity {
 			ivmain.setImageBitmap(currentRecipe.mainImage);
 			ivmain.setLayoutParams(params);
 			ll.addView(ivmain);
+		}
+		else {
+
 		}
 
 		//create string for ingredient text
