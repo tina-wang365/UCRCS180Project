@@ -24,6 +24,7 @@ public class LoginActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_login);
 		TextView invalidlogin = (TextView) findViewById(R.id.invalidlogin);
 		invalidlogin.setVisibility(View.INVISIBLE);
+
 	}
 
 	@Override
@@ -59,7 +60,9 @@ public class LoginActivity extends ActionBarActivity {
 
 	public void loginSuccess()
 	{
-		Intent intent = new Intent(this, MainMenu.class);
+		//TODO CHANGE MAIN MENU TO UserHomepage.class
+		Intent intent = new Intent(this, UserHomepage.class);
+		//Intent intent = new Intent(this, MainMenu.class);
 		startActivity(intent);
 	}
 

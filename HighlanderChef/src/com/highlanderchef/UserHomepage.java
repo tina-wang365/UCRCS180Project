@@ -23,6 +23,8 @@ public class UserHomepage extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_homepage);
+		new UsernameTask().execute();
+		new UserRecipes().execute();
 	}
 
 	@Override
@@ -42,6 +44,11 @@ public class UserHomepage extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	public void FollowUser(View iView)
+	{
+		//Add current user to the user's (being viewed) follower list
 	}
 
 	public void callRecipeIntent(int index)
