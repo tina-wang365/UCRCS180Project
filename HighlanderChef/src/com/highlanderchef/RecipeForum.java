@@ -62,9 +62,9 @@ public class RecipeForum extends ActionBarActivity {
 
 
 	public void displayRecipeSuccess(Recipe recipe) {
-		ll = (LinearLayout) findViewById(R.id.rflayout);
+		ll = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		final LinearLayout.LayoutParams params =
-				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT);
 
 		//Set objects for display on activity
@@ -163,18 +163,25 @@ public class RecipeForum extends ActionBarActivity {
 		et_comment.setLayoutParams(params);
 		ll.addView(et_comment);
 
+		final LinearLayout.LayoutParams params_rb =
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
 		Button b_comment = new Button(this);
 		b_comment.setText("Comment");
 		final int id = recipe.id;
 
+		final LinearLayout.LayoutParams params_com =
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
 		ratingBar = new RatingBar(this);
 		ratingBar.setStepSize((float) 0.5);
 		ratingBar.setMax(5);
 		ratingBar.setId(1);
 		ratingBar.setRating(2.0f);
 		ratingBar.setNumStars(5);
-		ll.addView(ratingBar, params);
+		ll.addView(ratingBar, params_rb);
 
+		b_comment.setLayoutParams(params_com);
 		b_comment.setOnClickListener(new View.OnClickListener(){
 
 			@Override
