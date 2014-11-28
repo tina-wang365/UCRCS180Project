@@ -92,6 +92,10 @@
             android:name=".UserHomepage"
             android:label="@string/title_activity_user_homepage" >
         </activity>
+        <activity
+            android:name=".ImageComp"
+            android:label="@string/title_activity_image_comp" >
+        </activity>
     </application>
 
 </manifest>

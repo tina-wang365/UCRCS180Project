@@ -1,6 +1,7 @@
 package com.highlanderchef;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -143,11 +144,28 @@ public class RecipeForum extends ActionBarActivity {
 				for(int j = 0; j < recipe.directions.get(i).images.size(); ++j)
 				{
 					//TODO set images horizontal    .setLayoutDirection()
-
 					ImageView iv_dir_image = new ImageView(this);
 					iv_dir_image.setImageBitmap(recipe.directions.get(i).images.get(j));
 					iv_dir_image.setLayoutParams(params);
 					ll.addView(iv_dir_image);
+
+					//button to do image comparison
+					Button image_comp = new Button(this);
+					image_comp.setText("Compare");
+					final LinearLayout.LayoutParams params_comp =
+							new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+									LinearLayout.LayoutParams.WRAP_CONTENT);
+					image_comp.setLayoutParams(params_comp);
+					final Bitmap image = recipe.directions.get(i).images.get(j);
+					image_comp.setOnClickListener(new View.OnClickListener(){
+
+						@Override
+						public void onClick(View v)
+						{
+							callImageCompIntent(image);
+						}
+					});
+					ll.addView(image_comp);
 				}
 			}
 		}
@@ -156,6 +174,7 @@ public class RecipeForum extends ActionBarActivity {
 			formatOfDirection = "Direction List size = 0";
 		}
 
+		//commetns edit text field
 		EditText et_comment = new EditText(this);
 		et_comment.setHint("Add a comment");
 		et_comment.setId(1111);
@@ -163,16 +182,11 @@ public class RecipeForum extends ActionBarActivity {
 		et_comment.setLayoutParams(params);
 		ll.addView(et_comment);
 
+		//comments rating bar
 		final LinearLayout.LayoutParams params_rb =
 				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT);
-		Button b_comment = new Button(this);
-		b_comment.setText("Comment");
 		final int id = recipe.id;
-
-		final LinearLayout.LayoutParams params_com =
-				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT);
 		ratingBar = new RatingBar(this);
 		ratingBar.setStepSize((float) 0.5);
 		ratingBar.setMax(5);
@@ -181,6 +195,12 @@ public class RecipeForum extends ActionBarActivity {
 		ratingBar.setNumStars(5);
 		ll.addView(ratingBar, params_rb);
 
+		//submit comment button
+		Button b_comment = new Button(this);
+		b_comment.setText("Comment");
+		final LinearLayout.LayoutParams params_com =
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
 		b_comment.setLayoutParams(params_com);
 		b_comment.setOnClickListener(new View.OnClickListener(){
 
@@ -196,7 +216,7 @@ public class RecipeForum extends ActionBarActivity {
 		});
 		ll.addView(b_comment);
 
-		//comments
+		//display comments
 		for(int i = 0; i < recipe.comments.size(); ++i)
 		{
 			TextView tv_comment = new TextView(this);
@@ -207,6 +227,14 @@ public class RecipeForum extends ActionBarActivity {
 			ll.addView(tv_comment);
 		}
 	}
+
+	public void callImageCompIntent(Bitmap bmp)
+	{
+		Intent intent = new Intent(this, ImageComp.class);
+		intent.putExtra("image", bmp);
+		startActivity(intent);
+	}
+
 	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 		// TODO Auto-generated method stub
 		TextView rate_val = new TextView(this);
