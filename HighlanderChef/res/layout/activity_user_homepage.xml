@@ -21,19 +21,20 @@
         android:id="@+id/Follow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Follow"
-        android:onClick="FollowUser" />
+        android:onClick="FollowUser"
+        android:text="@string/Follow" />
 
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/RelativeLayout1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
-        </LinearLayout>
+        </RelativeLayout>
     </ScrollView>
 
 </LinearLayout>
