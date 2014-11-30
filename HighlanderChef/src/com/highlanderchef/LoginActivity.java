@@ -60,9 +60,7 @@ public class LoginActivity extends ActionBarActivity {
 
 	public void loginSuccess()
 	{
-		//TODO CHANGE MAIN MENU TO UserHomepage.class
-		Intent intent = new Intent(this, UserHomepage.class);
-		//Intent intent = new Intent(this, MainMenu.class);
+		Intent intent = new Intent(this, MainMenu.class);
 		startActivity(intent);
 	}
 

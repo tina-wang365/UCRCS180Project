@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,15 +17,20 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class UserHomepage extends ActionBarActivity {
+
+	private static final int LENGTH_SHORT = 2000;
+
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_homepage);
 		new UsernameTask().execute();
-		new UserRecipes().execute();
+		//new UserRecipes().execute();
 	}
 
 	@Override
@@ -49,6 +55,16 @@ public class UserHomepage extends ActionBarActivity {
 	public void FollowUser(View iView)
 	{
 		//Add current user to the user's (being viewed) follower list
+		//Toast.makeText(context, text, duration)
+		int pos[] = {0 , 0};
+		Button follow = (Button) findViewById(R.id.Follow);
+		follow.getLocationOnScreen(pos);
+
+		Toast followToast = Toast.makeText(getApplicationContext(), "You are now following the user", LENGTH_SHORT);
+		followToast.setGravity(Gravity.TOP, 0, pos[1] + 20); //gravity, x-offset, y-offset
+		followToast.show();
+
+
 	}
 
 	public void callRecipeIntent(int index)
@@ -60,7 +76,7 @@ public class UserHomepage extends ActionBarActivity {
 
 	public void setUsername(String iName)
 	{
-		((TextView) findViewById(R.id.textView1)).setText(iName);
+		((TextView) findViewById(R.id.Username)).setText(iName);
 	}
 
 	@SuppressWarnings("unused")
@@ -69,7 +85,8 @@ public class UserHomepage extends ActionBarActivity {
 		String cUsername = new String();
 		@Override
 		protected Boolean doInBackground(String... params) {
-			cUsername = Comm.getEmail();
+			Comm IComm = new Comm();
+			cUsername = IComm.getEmail();
 			return (cUsername.length() > 0);
 		}
 
