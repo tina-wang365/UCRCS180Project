@@ -1,36 +1,46 @@
 package com.highlanderchef;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-public class ImageComp extends ActionBarActivity {
+public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callback{
 
 	int recipeID = 0;
 	Bitmap image1;
-	Bitmap image2;
-	private ImageView imageView;
 
-	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-	private Uri fileUri;
-	public static final int MEDIA_TYPE_IMAGE = 1;
-	public static final int MEDIA_TYPE_VIDEO = 2;
-	private static final int REQUEST_CODE = 1;
+	private CameraManager cameraManager;
+	private CaptureActivityHandler handler;
+	private Result savedResultToShow;
+	private ViewfinderView viewfinderView;
+	private TextView statusView;
+	private View resultView;
+	private Result lastResult;
+	private boolean hasSurface;
+	private String characterSet;
+	private InactivityTimer inactivityTimer;
+
+
+	ViewfinderView getViewfinderView() {
+		return viewfinderView;
+	}
+
+	public Handler getHandler() {
+		return handler;
+	}
+
+	CameraManager getCameraManager() {
+		return cameraManager;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,86 +53,123 @@ public class ImageComp extends ActionBarActivity {
 		ImageView iv_image1 = (ImageView) findViewById(R.id.image1);
 		iv_image1.setImageBitmap(image1);
 
+		hasSurface = false;
+		inactivityTimer = new InactivityTimer(this);
+
+
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		InputStream stream = null;
-		if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK)
-		{
-			try
-			{
-				// recyle unused bitmaps
-				if (image2 != null) {
-					image2.recycle();
-				}
-				stream = getContentResolver().openInputStream(data.getData());
-				image2 = BitmapFactory.decodeStream(stream);
+	protected void onResume()
+	{
+		super.onResume();
 
-				imageView.setImageBitmap(image2);
-			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				if (stream != null)
-				{
-					try
-					{
-						stream.close();
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
-	/** Create a file Uri for saving an image or video */
-	private static Uri getOutputMediaFileUri(int type){
-		return Uri.fromFile(getOutputMediaFile(type));
-	}
+		// CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
+		// want to open the camera driver and measure the screen size if we're going to show the help on
+		// first launch. That led to bugs where the scanning rectangle was the wrong size and partially
+		// off screen.
+		cameraManager = new CameraManager(getApplication());
 
-	//public boolean CompareImages()
-	//{
-	//		Mat image1 = new Mat();
-	//	Utils.bitmapToMat(this.image1, image1);
-	//}
+		viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
+		viewfinderView.setCameraManager(cameraManager);
 
-	/** Create a File for saving an image or video */
-	private static File getOutputMediaFile(int type){
-		// To be safe, you should check that the SDCard is mounted
-		// using Environment.getExternalStorageState() before doing this.
+		resultView = findViewById(R.id.result_view);
+		statusView = (TextView) findViewById(R.id.status_view);
 
-		File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "MyCameraApp");
-		// This location works best if you want the created images to be shared
-		// between applications and persist after your app has been uninstalled.
+		handler = null;
+		lastResult = null;
 
-		// Create the storage directory if it does not exist
-		if (! mediaStorageDir.exists()){
-			if (! mediaStorageDir.mkdirs()){
-				//TODO add error message
-				return null;
-			}
-		}
+		resetStatusView();
 
-		// Create a media file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-		File mediaFile;
-		if (type == MEDIA_TYPE_IMAGE){
-			mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-					"IMG_"+ timeStamp + ".jpg");
-		} else if(type == MEDIA_TYPE_VIDEO) {
-			mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-					"VID_"+ timeStamp + ".mp4");
+		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
+		SurfaceHolder surfaceHolder = surfaceView.getHolder();
+		if (hasSurface) {
+			// The activity was paused but not stopped, so the surface still exists. Therefore
+			// surfaceCreated() won't be called, so init the camera here.
+			initCamera(surfaceHolder);
 		} else {
-			return null;
+			// Install the callback and wait for surfaceCreated() to init the camera.
+			surfaceHolder.addCallback(this);
 		}
 
-		return mediaFile;
+		inactivityTimer.onResume();
+
+		Intent intent = getIntent();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		if (handler != null) {
+			handler.quitSynchronously();
+			handler = null;
+		}
+		inactivityTimer.onPause();
+		cameraManager.closeDriver();
+		if (!hasSurface) {
+			SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
+			SurfaceHolder surfaceHolder = surfaceView.getHolder();
+			surfaceHolder.removeCallback(this);
+		}
+		super.onPause();
+	}
+	@Override
+	protected void onDestroy()
+	{
+		inactivityTimer.shutdown();
+		super.onDestroy();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_BACK:
+			if (source == IntentSource.NATIVE_APP_INTENT) {
+				setResult(RESULT_CANCELED);
+				finish();
+				return true;
+			}
+			if ((source == IntentSource.NONE || source == IntentSource.ZXING_LINK) && lastResult != null) {
+				restartPreviewAfterDelay(0L);
+				return true;
+			}
+			break;
+		case KeyEvent.KEYCODE_FOCUS:
+		case KeyEvent.KEYCODE_CAMERA:
+			// Handle these events so they don't launch the Camera app
+			return true;
+			// Use volume up/down to turn on light
+		case KeyEvent.KEYCODE_VOLUME_DOWN:
+			cameraManager.setTorch(false);
+			return true;
+		case KeyEvent.KEYCODE_VOLUME_UP:
+			cameraManager.setTorch(true);
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent)
+	{
+		if (resultCode == RESULT_OK) {
+			if (requestCode == HISTORY_REQUEST_CODE) {
+				int itemNumber = intent.getIntExtra(Intents.History.ITEM_NUMBER, -1);
+				if (itemNumber >= 0) {
+					HistoryItem historyItem = historyManager.buildHistoryItem(itemNumber);
+
+					//TODO change this to perform image comp
+					decodeOrStoreSavedBitmap(null, historyItem.getResult());
+				}
+			}
+		}
 	}
 
 	@Override

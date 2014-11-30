@@ -4,14 +4,11 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.hardware.Camera;
-import android.hardware.Camera.PreviewCallback;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 
 public class CameraManager
 {
-
-
 	private final Context context;
 	private final CameraConfigurationManager configManager;
 	private Camera camera;
