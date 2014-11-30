@@ -36,6 +36,8 @@ public class StartupScreen extends ActionBarActivity {
 
 	public void LoginPressed(View view)
 	{
+		//Intent intent = new Intent(this, UserHomepage.class);
+		//startActivity(intent);
 		Intent intent = new Intent(this, LoginActivity.class);
 		startActivity(intent);
 	}

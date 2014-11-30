@@ -21,8 +21,9 @@ import android.widget.Toast;
 
 public class UserHomepage extends ActionBarActivity {
 
-	//User CurrentUser;
-	//User UserBeingViewed
+	//User UserLoggedIn;
+	//User UserBeingViewed;
+	int currentUserID; //
 
 	private static final int LENGTH_SHORT = 2000;
 
@@ -30,8 +31,10 @@ public class UserHomepage extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_homepage);
+		Intent intent = getIntent();
+		currentUserID = intent.getIntExtra("userID", 0);
 		new UsernameTask().execute();
-		new UserRecipes().execute();
+		new UserRecipes().execute(Integer.toString(currentUserID));
 	}
 
 	@Override
@@ -181,36 +184,34 @@ public class UserHomepage extends ActionBarActivity {
 			dParams.setMargins(0, 5, 0, 5);
 			ILayout.addView(tv_descr, dParams);
 
-
-			TextView tv_cooktime = new TextView(this);
-			tv_cooktime.setText(RecipeList.get(i).getCookTime());
-			RelativeLayout.LayoutParams cParams =
-					new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-			cParams.addRule(RelativeLayout.ALIGN_TOP, tv.getId());
-			cParams.addRule(RelativeLayout.RIGHT_OF, tv.getId());
-			ILayout.addView(tv_cooktime);
-
 			final int j = RecipeList.get(i).id; //so java doesn't complain
 
-			//			Button b_view = new Button(this);
-			//			b_view.setId(MakerInstance.useCurrID());
-			//			b_view.setText("View");
-			//
-			//			b_view.setOnClickListener(new View.OnClickListener(){
-			//				@Override
-			//				public void onClick(View v)
-			//				{
-			//
-			//					callRecipeIntent(j);
-			//				}
-			//			});
-			//			RelativeLayout.LayoutParams bParams =
-			//					new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-			//			bParams.addRule(RelativeLayout.ALIGN_TOP, tv_cooktime.getId());
-			//			bParams.addRule(RelativeLayout.RIGHT_OF, tv_cooktime.getId());
-			//			bParams.setMargins(0, 5, 0, 5);
-			//			ILayout.addView(b_view, bParams);
-			//			lastView = b_view;
+			Button b_view = new Button(this);
+			b_view.setId(MakerInstance.useCurrID());
+			b_view.setText("View");
+			b_view.setOnClickListener(new View.OnClickListener(){
+				@Override
+				public void onClick(View v)
+				{
+
+					callRecipeIntent(j);
+				}
+			});
+			RelativeLayout.LayoutParams bParams =
+					new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT , RelativeLayout.LayoutParams.MATCH_PARENT );
+			if(RecipeList.get(i).isMainImage())
+			{
+				bParams.addRule(RelativeLayout.BELOW, iv.getId());
+				bParams.addRule(RelativeLayout.ALIGN_LEFT, iv.getId());
+			}
+			else
+			{
+				bParams.addRule(RelativeLayout.BELOW, tv_descr.getId());
+				bParams.addRule(RelativeLayout.ALIGN_LEFT, tv_descr.getId());
+			}
+			bParams.setMargins(0, 5, 0, 5);
+			ILayout.addView(b_view, bParams);
+			lastView = b_view;
 		}
 	}
 
@@ -230,7 +231,7 @@ public class UserHomepage extends ActionBarActivity {
 		{
 			Comm IComm = new Comm();
 			//Get Recipes of the User
-			UserRecipeList = IComm.searchRecipesByUID(0);
+			UserRecipeList = IComm.searchRecipesByUID(Integer.parseInt(params[0]));
 			return (UserRecipeList != null);
 		}
 
