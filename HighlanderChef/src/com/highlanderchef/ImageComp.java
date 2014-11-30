@@ -6,6 +6,7 @@ import java.util.Date;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +21,7 @@ public class ImageComp extends ActionBarActivity {
 
 	int recipeID = 0;
 	Bitmap image1;
+	Bitmap image2;
 
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	private Uri fileUri;
@@ -42,32 +44,68 @@ public class ImageComp extends ActionBarActivity {
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);  // set the image file name
 		startActivityForResult(intent_camera, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-			if (resultCode == RESULT_OK) {
+		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+		{
+			if (resultCode == RESULT_OK)
+			{
 				// Image captured and saved to fileUri specified in the Intent
 				Toast.makeText(this, "Image saved to:\n" +
-						data.getData(), Toast.LENGTH_LONG).show();
-			} else if (resultCode == RESULT_CANCELED) {
+						fileUri.toString(), Toast.LENGTH_LONG).show();
+
+				BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+				bmOptions.inJustDecodeBounds = true;
+				BitmapFactory.decodeFile(fileUri.toString());
+				//Get the dimensions of the bitmap
+				int photoW = bmOptions.outWidth;
+				int photoH = bmOptions.outHeight;
+
+				int targetW = 500; //TODO find better way to do this.
+				int targetH = 3;
+				//scale image
+				int scalefactor = Math.min(photoW/targetW, photoH/targetH);
+
+				// Decode the image file into a Bitmap sized to fill the View
+				bmOptions.inJustDecodeBounds = false;
+				bmOptions.inSampleSize = scalefactor;
+				bmOptions.inPurgeable = true;
+
+				image2 = BitmapFactory.decodeFile(fileUri.toString());
+				ImageView iv_image2 = (ImageView) findViewById(R.id.image2);
+				iv_image2.setImageBitmap(image2);
+
+
+			}
+			else if (resultCode == RESULT_CANCELED)
+			{
 				// User cancelled the image capture
-			} else {
+			}
+			else
+			{
 				// Image capture failed, advise user
 			}
 		}
+
 	}
 	/** Create a file Uri for saving an image or video */
 	private static Uri getOutputMediaFileUri(int type){
 		return Uri.fromFile(getOutputMediaFile(type));
 	}
 
+	//public boolean CompareImages()
+	//{
+	//		Mat image1 = new Mat();
+	//	Utils.bitmapToMat(this.image1, image1);
+	//}
+
 	/** Create a File for saving an image or video */
 	private static File getOutputMediaFile(int type){
 		// To be safe, you should check that the SDCard is mounted
 		// using Environment.getExternalStorageState() before doing this.
 
-		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-				Environment.DIRECTORY_PICTURES), "MyCameraApp");
+		File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "MyCameraApp");
 		// This location works best if you want the created images to be shared
 		// between applications and persist after your app has been uninstalled.
 

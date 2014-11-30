@@ -81,7 +81,6 @@ public class SearchActivity extends ActionBarActivity {
 				BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 				bmOptions.inJustDecodeBounds = true;
 				BitmapFactory.decodeResource(getResources(), R.drawable.divider, bmOptions);
-
 				//Get the dimensions of the bitmap
 				int photoW = bmOptions.outWidth;
 				int photoH = bmOptions.outHeight;
