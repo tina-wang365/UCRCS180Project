@@ -1,32 +1,36 @@
 package com.highlanderchef;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 public class ImageComp extends ActionBarActivity {
 
 	int recipeID = 0;
 	Bitmap image1;
 	Bitmap image2;
+	private ImageView imageView;
 
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	private Uri fileUri;
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	public static final int MEDIA_TYPE_VIDEO = 2;
+	private static final int REQUEST_CODE = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,55 +43,48 @@ public class ImageComp extends ActionBarActivity {
 		ImageView iv_image1 = (ImageView) findViewById(R.id.image1);
 		iv_image1.setImageBitmap(image1);
 
-		Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);  // create a file to save the video
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);  // set the image file name
-		startActivityForResult(intent_camera, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+		Intent intent_camera = new Intent();
+		intent_camera.setType("image/*");
+		intent_camera.setAction(Intent.ACTION_GET_CONTENT);
+		intent_camera.addCategory(Intent.CATEGORY_OPENABLE);
+		startActivityForResult(intent_camera, REQUEST_CODE);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+		InputStream stream = null;
+		if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK)
 		{
-			if (resultCode == RESULT_OK)
+			try
 			{
-				// Image captured and saved to fileUri specified in the Intent
-				Toast.makeText(this, "Image saved to:\n" +
-						fileUri.toString(), Toast.LENGTH_LONG).show();
+				// recyle unused bitmaps
+				if (image2 != null) {
+					image2.recycle();
+				}
+				stream = getContentResolver().openInputStream(data.getData());
+				image2 = BitmapFactory.decodeStream(stream);
 
-				BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-				bmOptions.inJustDecodeBounds = true;
-				BitmapFactory.decodeFile(fileUri.toString());
-				//Get the dimensions of the bitmap
-				int photoW = bmOptions.outWidth;
-				int photoH = bmOptions.outHeight;
-
-				int targetW = 500; //TODO find better way to do this.
-				int targetH = 3;
-				//scale image
-				int scalefactor = Math.min(photoW/targetW, photoH/targetH);
-
-				// Decode the image file into a Bitmap sized to fill the View
-				bmOptions.inJustDecodeBounds = false;
-				bmOptions.inSampleSize = scalefactor;
-				bmOptions.inPurgeable = true;
-
-				image2 = BitmapFactory.decodeFile(fileUri.toString());
-				ImageView iv_image2 = (ImageView) findViewById(R.id.image2);
-				iv_image2.setImageBitmap(image2);
-
-
+				imageView.setImageBitmap(image2);
 			}
-			else if (resultCode == RESULT_CANCELED)
+			catch (FileNotFoundException e)
 			{
-				// User cancelled the image capture
+				e.printStackTrace();
 			}
-			else
+			finally
 			{
-				// Image capture failed, advise user
+				if (stream != null)
+				{
+					try
+					{
+						stream.close();
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
 			}
 		}
-
 	}
 	/** Create a file Uri for saving an image or video */
 	private static Uri getOutputMediaFileUri(int type){
