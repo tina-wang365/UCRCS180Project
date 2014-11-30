@@ -69,5 +69,7 @@
     <!-- Refer to layout/activity_user_homepage.xml -->
     <string name="Follow">Follow</string>
     <string name="title_activity_image_comp">ImageComp</string>
+    <string name="title_activity_camera">Camera</string>
+    <string name="title_activity_cam">Cam</string>
 
 </resources>
