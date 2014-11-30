@@ -66,7 +66,8 @@
     <string name="Search">Search</string>
     <string name="title_activity_search">SearchActivity</string>
     <string name="title_activity_user_homepage">UserHomepage</string>
-    <!--  Refer to layout/activity_user_homepage.xml -->
+    <!-- Refer to layout/activity_user_homepage.xml -->
     <string name="Follow">Follow</string>
+    <string name="title_activity_image_comp">ImageComp</string>
 
 </resources>
