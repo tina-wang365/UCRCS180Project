@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 public class UserHomepage extends ActionBarActivity {
 
+	//User CurrentUser;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,7 +62,7 @@ public class UserHomepage extends ActionBarActivity {
 
 	public void setUsername(String iName)
 	{
-		((TextView) findViewById(R.id.textView1)).setText(iName);
+		((TextView) findViewById(R.id.Username)).setText(iName);
 	}
 
 	@SuppressWarnings("unused")
@@ -89,7 +91,7 @@ public class UserHomepage extends ActionBarActivity {
 
 	public void PopulateRecipeList(ArrayList<Recipe> RecipeList)
 	{
-		LinearLayout ILinearLayout = (LinearLayout) findViewById(R.id.LinearLayout1);
+		LinearLayout ILinearLayout = (LinearLayout) findViewById(R.id.RecipeLayout);
 		for(int i = 0; i < RecipeList.size(); ++i)
 		{
 			if(RecipeList.get(i) == null )
@@ -108,7 +110,7 @@ public class UserHomepage extends ActionBarActivity {
 				int photoW = bmOptions.outWidth;
 				int photoH = bmOptions.outHeight;
 
-				int targetW = 500; //TODO find better way to do this.
+				int targetW = 200; //TODO find better way to do this.
 				int targetH = 3;
 				//scale image
 				int scalefactor = Math.min(photoW/targetW, photoH/targetH);
@@ -166,9 +168,10 @@ public class UserHomepage extends ActionBarActivity {
 		@Override
 		protected Boolean doInBackground(String... params)
 		{
-			//Comm IComm;
+			Comm IComm = new Comm();
 			//Get Recipes of the User
-			return (false);
+			UserRecipeList = IComm.searchRecipesByUID(0);
+			return (UserRecipeList.size() > 0);
 		}
 
 
@@ -179,9 +182,12 @@ public class UserHomepage extends ActionBarActivity {
 			{
 				//log error
 				//Make empty list
+				//Display "User has no recipes"
 			}
 			//Goto function that populate page with recipes;
 		}
 
 	}
 }
+
+
