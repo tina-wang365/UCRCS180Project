@@ -71,5 +71,6 @@
     <string name="title_activity_image_comp">ImageComp</string>
     <string name="title_activity_camera">Camera</string>
     <string name="title_activity_cam">Cam</string>
+    <string name="title_activity_preferences">PreferencesActivity</string>
 
 </resources>

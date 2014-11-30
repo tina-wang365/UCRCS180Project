@@ -43,11 +43,6 @@ public class ImageComp extends ActionBarActivity {
 		ImageView iv_image1 = (ImageView) findViewById(R.id.image1);
 		iv_image1.setImageBitmap(image1);
 
-		Intent intent_camera = new Intent();
-		intent_camera.setType("image/*");
-		intent_camera.setAction(Intent.ACTION_GET_CONTENT);
-		intent_camera.addCategory(Intent.CATEGORY_OPENABLE);
-		startActivityForResult(intent_camera, REQUEST_CODE);
 	}
 
 	@Override
