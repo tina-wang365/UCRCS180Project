@@ -9,17 +9,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class UserHomepage extends ActionBarActivity {
 
 	//User CurrentUser;
 	//User UserBeingViewed
+
+	private static final int LENGTH_SHORT = 2000;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +55,13 @@ public class UserHomepage extends ActionBarActivity {
 
 	public void FollowUser(View iView)
 	{
-		//Add current user to the user's (being viewed) follower list
+		int pos[] = {0 , 0};
+		Button follow = (Button) findViewById(R.id.Follow);
+		follow.getLocationOnScreen(pos);
+
+		Toast followToast = Toast.makeText(getApplicationContext(), "You are now following the user", LENGTH_SHORT);
+		followToast.setGravity(Gravity.TOP, 0, pos[1] + 20); //gravity, x-offset, y-offset
+		followToast.show();
 	}
 
 	public void setUsername(String iName)
@@ -171,13 +182,13 @@ public class UserHomepage extends ActionBarActivity {
 			ILayout.addView(tv_descr, dParams);
 
 
-			//			TextView tv_cooktime = new TextView(this);
-			//			tv_cooktime.setText(RecipeList.get(i).getCookTime());
-			//			RelativeLayout.LayoutParams cParams =
-			//					new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-			//			cParams.addRule(RelativeLayout.BELOW, tv_descr.getId());
-			//			cParams.addRule(RelativeLayout.ALIGN_LEFT, tv_descr.getId());
-			//			ILayout.addView(tv_cooktime);
+			TextView tv_cooktime = new TextView(this);
+			tv_cooktime.setText(RecipeList.get(i).getCookTime());
+			RelativeLayout.LayoutParams cParams =
+					new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+			cParams.addRule(RelativeLayout.ALIGN_TOP, tv.getId());
+			cParams.addRule(RelativeLayout.RIGHT_OF, tv.getId());
+			ILayout.addView(tv_cooktime);
 
 			final int j = RecipeList.get(i).id; //so java doesn't complain
 
