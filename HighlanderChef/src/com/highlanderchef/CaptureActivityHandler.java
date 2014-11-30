@@ -5,7 +5,7 @@ import android.os.Message;
 
 public class CaptureActivityHandler extends Handler
 {
-	private final CaptureActivity activity;
+	private final ImageComp activity;
 
 	private State state;
 	private final CameraManager cameraManager;
@@ -16,8 +16,8 @@ public class CaptureActivityHandler extends Handler
 		DONE
 	}
 
-	CaptureActivityHandler(CaptureActivity activity,
-			CameraManager cameraManager) {
+	CaptureActivityHandler(ImageComp activity, CameraManager cameraManager)
+	{
 		this.activity = activity;
 		state = State.SUCCESS;
 
@@ -35,26 +35,13 @@ public class CaptureActivityHandler extends Handler
 
 	public void quitSynchronously() {
 		state = State.DONE;
-		cameraManager.stopPreview();
-		Message quit = Message.obtain(decodeThread.getHandler(), R.id.quit);
-		quit.sendToTarget();
-		try {
-			// Wait at most half a second; should be enough time, and onPause() will timeout quickly
-			decodeThread.join(500L);
-		} catch (InterruptedException e) {
-			// continue
-		}
-
-		// Be absolutely sure we don't send any queued up messages
-		removeMessages(R.id.decode_succeeded);
-		removeMessages(R.id.decode_failed);
 	}
 
 	private void restartPreviewAndDecode() {
 		if (state == State.SUCCESS) {
 			state = State.PREVIEW;
-			cameraManager.requestPreviewFrame(decodeThread.getHandler(), R.id.decode);
-			activity.drawViewfinder();
+			//TODO get this line working
+			//cameraManager.requestPreviewFrame(decodeThread.getHandler(), R.id.decode);
 		}
 	}
 }

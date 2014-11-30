@@ -1,8 +1,11 @@
 package com.highlanderchef;
 
+import java.io.IOException;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -10,7 +13,6 @@ import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callback{
@@ -20,19 +22,13 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 
 	private CameraManager cameraManager;
 	private CaptureActivityHandler handler;
-	private Result savedResultToShow;
-	private ViewfinderView viewfinderView;
 	private TextView statusView;
 	private View resultView;
-	private Result lastResult;
 	private boolean hasSurface;
 	private String characterSet;
-	private InactivityTimer inactivityTimer;
+	//private InactivityTimer inactivityTimer;
 
 
-	ViewfinderView getViewfinderView() {
-		return viewfinderView;
-	}
 
 	public Handler getHandler() {
 		return handler;
@@ -50,11 +46,11 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 		Intent intent = getIntent();
 		image1 = (Bitmap)intent.getParcelableExtra("image");
 
-		ImageView iv_image1 = (ImageView) findViewById(R.id.image1);
-		iv_image1.setImageBitmap(image1);
+		//ImageView iv_image1 = (ImageView) findViewById(R.id.image1);
+		//iv_image1.setImageBitmap(image1);
 
 		hasSurface = false;
-		inactivityTimer = new InactivityTimer(this);
+		//inactivityTimer = new InactivityTimer(this);
 
 
 	}
@@ -70,16 +66,13 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 		// off screen.
 		cameraManager = new CameraManager(getApplication());
 
-		viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
-		viewfinderView.setCameraManager(cameraManager);
 
-		resultView = findViewById(R.id.result_view);
-		statusView = (TextView) findViewById(R.id.status_view);
+		//resultView = findViewById(R.id.result_view);
+		//statusView = (TextView) findViewById(R.id.status_view);
 
 		handler = null;
-		lastResult = null;
 
-		resetStatusView();
+		//resetStatusView();
 
 		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
 		SurfaceHolder surfaceHolder = surfaceView.getHolder();
@@ -92,7 +85,7 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 			surfaceHolder.addCallback(this);
 		}
 
-		inactivityTimer.onResume();
+		//inactivityTimer.onResume();
 
 		Intent intent = getIntent();
 	}
@@ -104,7 +97,7 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 			handler.quitSynchronously();
 			handler = null;
 		}
-		inactivityTimer.onPause();
+		//inactivityTimer.onPause();
 		cameraManager.closeDriver();
 		if (!hasSurface) {
 			SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
@@ -116,7 +109,7 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 	@Override
 	protected void onDestroy()
 	{
-		inactivityTimer.shutdown();
+		//inactivityTimer.shutdown();
 		super.onDestroy();
 	}
 
@@ -124,15 +117,15 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_BACK:
-			if (source == IntentSource.NATIVE_APP_INTENT) {
+			/*if (source == IntentSource.NATIVE_APP_INTENT) {
 				setResult(RESULT_CANCELED);
 				finish();
 				return true;
-			}
-			if ((source == IntentSource.NONE || source == IntentSource.ZXING_LINK) && lastResult != null) {
+			}*/
+			/*if ((source == IntentSource.NONE || source == IntentSource.ZXING_LINK) && lastResult != null) {
 				restartPreviewAfterDelay(0L);
 				return true;
-			}
+			}*/
 			break;
 		case KeyEvent.KEYCODE_FOCUS:
 		case KeyEvent.KEYCODE_CAMERA:
@@ -150,17 +143,12 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 	}
 
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-
-	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent)
 	{
 		if (resultCode == RESULT_OK) {
-			if (requestCode == HISTORY_REQUEST_CODE) {
+			/*if (requestCode == HISTORY_REQUEST_CODE) {
 				int itemNumber = intent.getIntExtra(Intents.History.ITEM_NUMBER, -1);
 				if (itemNumber >= 0) {
 					HistoryItem historyItem = historyManager.buildHistoryItem(itemNumber);
@@ -168,8 +156,69 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 					//TODO change this to perform image comp
 					decodeOrStoreSavedBitmap(null, historyItem.getResult());
 				}
-			}
+			}*/
 		}
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder)
+	{
+		if (holder == null) {
+
+		}
+		if (!hasSurface) {
+			hasSurface = true;
+			initCamera(holder);
+		}
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder)
+	{
+		hasSurface = false;
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+	}
+
+
+	private void initCamera(SurfaceHolder surfaceHolder)
+	{
+		if (surfaceHolder == null) {
+			throw new IllegalStateException("No SurfaceHolder provided");
+		}
+		if (cameraManager.isOpen()) {
+
+			return;
+		}
+		try {
+			cameraManager.openDriver(surfaceHolder);
+			// Creating the handler starts the preview, which can also throw a RuntimeException.
+			if (handler == null) {
+				handler = new CaptureActivityHandler(this, cameraManager);
+			}
+			//decodeOrStoreSavedBitmap(null, null);
+		} catch (IOException ioe) {
+		} catch (RuntimeException e) {
+		}
+	}
+
+	public void restartPreviewAfterDelay(long delayMS)
+	{
+		if (handler != null)
+		{
+			//handler.sendEmptyMessageDelayed(R.id.restart_preview, delayMS);
+		}
+		resetStatusView();
+	}
+
+	private void resetStatusView() {
+		resultView.setVisibility(View.GONE);
+		//statusView.setText(R.string.msg_default_status);
+		statusView.setVisibility(View.VISIBLE);
+		//lastResult = null;
 	}
 
 	@Override

@@ -15,7 +15,7 @@ public class CameraManager
 	private AutoFocusManager autoFocusManager;
 	private boolean initialized;
 	private boolean previewing;
-
+	Camera theCamera = camera;
 	private final PreviewCallback previewCallback;
 
 	public CameraManager(Context context)
@@ -27,7 +27,7 @@ public class CameraManager
 
 	public synchronized void openDriver(SurfaceHolder holder) throws IOException
 	{
-		Camera theCamera = camera;
+
 		if (theCamera == null)
 		{
 			theCamera = OpenCameraInterface.open();
@@ -38,6 +38,7 @@ public class CameraManager
 			camera = theCamera;
 		}
 		theCamera.setPreviewDisplay(holder);
+		theCamera.setPreviewCallback(previewCallback);
 
 		if (!initialized)
 		{
