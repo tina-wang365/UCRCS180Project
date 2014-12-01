@@ -375,6 +375,8 @@ public class Comm {
 			String name = mapper.readValue(node.path("name"), String.class);
 			System.out.println("parseRecipe for image_url " + image_url);
 			r = new Recipe(id, name, description, getImage(image_url));
+			String cooktime = mapper.readValue(node.path("cooktime"), String.class);
+			r.setCookTime(cooktime);
 
 			if (!brief) {
 				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
