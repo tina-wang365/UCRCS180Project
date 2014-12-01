@@ -44,14 +44,13 @@ public class MakeARecipe1 extends ActionBarActivity {
 		getMenuInflater().inflate(R.menu.make_arecipe1, menu);
 		return true;
 	}
-	public void AddIngrediantPressed(View view)
+
+	private Recipe getCurrentRecipeInfo()
 	{
+		Recipe returnRecipe = new Recipe();
+
 		EditText edittext_name = (EditText) findViewById(R.id.recipe_title);
 		String new_name = edittext_name.getText().toString();
-
-		//make sure the length of recipe name is not 0
-		if(new_name.length() == 0)
-			return;
 
 		EditText edittext_descr = (EditText) findViewById(R.id.recipe_description);
 		String new_descr = edittext_descr.getText().toString();
@@ -59,9 +58,26 @@ public class MakeARecipe1 extends ActionBarActivity {
 		EditText edittext_time = (EditText) findViewById(R.id.recipe_est_time);
 		String new_time = edittext_time.getText().toString();
 
-		recipe.setName(new_name);
-		recipe.setDescription(new_descr);
-		recipe.setCookTime(new_time);
+		returnRecipe.setName(new_name);
+		returnRecipe.setDescription(new_descr);
+		returnRecipe.setCookTime(new_time);
+
+		return returnRecipe;
+	}
+
+	public void SaveAsDraftPressed(View iView)
+	{
+		recipe = getCurrentRecipeInfo();
+		new UploadDraft().execute(recipe);
+		Intent intent = new Intent(this, MainMenu.class);
+		startActivity(intent);
+	}
+
+	public void AddIngrediantPressed(View view)
+	{
+		recipe = getCurrentRecipeInfo();
+		if (recipe.getName().length() <= 0)
+			return;
 
 		Intent intent = new Intent(this, MakeARecipe2.class);
 		intent.putExtra("recipe", recipe);
@@ -147,10 +163,10 @@ public class MakeARecipe1 extends ActionBarActivity {
 			ArrayList<String> level0_spinner = new ArrayList<String>();
 			Stack<String> cat_prefix = new Stack<String>();
 			categoryIDs.clear();
-			int last_level = 0;
+			int last_level = -1;
 			for(int i = 0; i < categories.size(); ++i)
 			{
-				if (last_level > categories.get(i).level) {
+				if (last_level >= categories.get(i).level) {
 					cat_prefix.pop();
 				}
 				if(categories.get(i).level == 0) {
@@ -212,5 +228,20 @@ public class MakeARecipe1 extends ActionBarActivity {
 				catOnFailure();
 			}
 		}
+	}
+}
+
+class UploadDraft extends AsyncTask<Recipe, Void, Boolean> {
+
+	@Override
+	protected Boolean doInBackground(Recipe... params) {
+		//Comm IComm = new Comm();
+		//IComm.uploadRecipe((Recipe)params[0]);
+		return true;
+	}
+
+	@Override
+	protected void onPostExecute(Boolean result) {
+		;
 	}
 }

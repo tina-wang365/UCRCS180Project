@@ -76,6 +76,13 @@ public class MakeARecipe2 extends ActionBarActivity {
 		edittext_new_ingred_amount.getText().clear();
 	}
 
+	public void SaveAsDraftPressed(View iView)
+	{
+		new UploadDraft().execute(recipe);
+		Intent intent = new Intent(this, MainMenu.class);
+		startActivity(intent);
+	}
+
 	public void addDirectionsPressed(View view)
 	{
 		Intent intent = new Intent(this, MakeARecipe3.class);
