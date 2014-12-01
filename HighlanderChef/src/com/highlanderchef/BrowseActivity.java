@@ -159,7 +159,7 @@ class ID_Maker
 	private static ID_Maker instance = null;
 	private int CurrIdNum;
 	protected ID_Maker() {
-		CurrIdNum = 0;
+		CurrIdNum = 1;
 	}
 	public static ID_Maker getInstance() {
 		if(instance == null) {

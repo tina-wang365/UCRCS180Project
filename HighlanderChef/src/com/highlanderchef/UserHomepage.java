@@ -162,10 +162,7 @@ public class UserHomepage extends ActionBarActivity {
 					new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 			ivParams.addRule(RelativeLayout.BELOW, tv.getId());
 			ivParams.addRule(RelativeLayout.ALIGN_LEFT, tv.getId());
-			if (i == 0)
-				ivParams.setMargins(0, 35, 10, 5);
-			else
-				ivParams.setMargins(0, 5, 10, 5);
+			ivParams.setMargins(0, 5, 10, 5);
 			iv.setLayoutParams(ivParams);
 			ILayout.addView(iv);
 			lastView = iv;

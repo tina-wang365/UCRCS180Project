@@ -20,6 +20,7 @@ public class RecipeForum extends ActionBarActivity {
 
 	int TEXT_ALIGNMENT_CENTER = 4;
 	Recipe currentRecipe = null;
+	String mainColor = "#8C001A";
 	//	Comment currentComment = null;
 	int recipeID = 0;
 	private Button btnComment;
@@ -64,6 +65,7 @@ public class RecipeForum extends ActionBarActivity {
 
 	public void displayRecipeSuccess(Recipe recipe) {
 		RelativeLayout recipeForumLayout = (RelativeLayout) findViewById(R.id.relativeLayoutRecipeForum);
+		recipeForumLayout.setBackgroundColor(Color.parseColor(mainColor));
 		ID_Maker MakerInstance = ID_Maker.getInstance();
 		View lastView = null;
 
@@ -84,7 +86,7 @@ public class RecipeForum extends ActionBarActivity {
 		{
 			//set main image
 			ivmain.setImageBitmap(Bitmap.createScaledBitmap(currentRecipe.mainImage, 220, 220, false)); //false means not filter
-			ivmain.setBackgroundColor(Color.parseColor("#8C001A"));
+			ivmain.setBackgroundColor(Color.parseColor(mainColor));
 			ivmain.setLayoutParams(ivParams);
 		}
 		else {
@@ -102,7 +104,7 @@ public class RecipeForum extends ActionBarActivity {
 			System.out.println("THE IDS ARE NOT THE SAME! ID's are: " + Integer.toString(tvTitle.getId()) + ", " + Integer.toString(lastView.getId()));
 		}
 		if(recipe.name != null) {
-			tvTitle.setText("\t" + recipe.name + "\n");
+			tvTitle.setText(recipe.name + "\n");
 		}
 		else {
 			tvTitle.setText("Title: N/A\n");
@@ -111,9 +113,9 @@ public class RecipeForum extends ActionBarActivity {
 				RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		titleParams.addRule(RelativeLayout.RIGHT_OF, lastView.getId());
 		titleParams.setMargins(0, 0, 0, 0); //left, top, down, right
-		tvTitle.setTextSize(1, 15);
+		tvTitle.setTextSize(1, 17);
 		tvTitle.setLayoutParams(titleParams);
-		tvTitle.setBackgroundColor(Color.parseColor("#8C001A"));
+		tvTitle.setBackgroundColor(Color.parseColor(mainColor));
 		recipeForumLayout.addView(tvTitle);
 		lastView = tvTitle;
 
@@ -134,7 +136,8 @@ public class RecipeForum extends ActionBarActivity {
 		estimateParams.addRule(RelativeLayout.RIGHT_OF, ivmain.getId());
 		estimateParams.addRule(RelativeLayout.BELOW, tvTitle.getId());
 		estimateParams.addRule(RelativeLayout.ALIGN_LEFT, tvTitle.getId());
-
+		estimateParams.setMargins(10, 0, 0, 0);
+		tvCookTime.setBackgroundColor(Color.parseColor(mainColor));
 		tvCookTime.setLayoutParams(estimateParams);
 		recipeForumLayout.addView(tvCookTime);
 
