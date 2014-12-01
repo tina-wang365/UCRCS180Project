@@ -372,9 +372,14 @@ public class Comm {
 			Integer id = mapper.readValue(node.path("rid"),Integer.class);
 			String description = mapper.readValue(node.path("description"), String.class);
 			String image_url = mapper.readValue(node.path("img_url"), String.class);
+			if (image_url.length() == 0) {
+				image_url = "default.png";
+			}
 			String name = mapper.readValue(node.path("name"), String.class);
 			System.out.println("parseRecipe for image_url " + image_url);
 			r = new Recipe(id, name, description, getImage(image_url));
+			String cooktime = mapper.readValue(node.path("cooktime"), String.class);
+			r.setCookTime(cooktime);
 
 			if (!brief) {
 				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
@@ -412,7 +417,7 @@ public class Comm {
 		recipe.put("rid", r.id);
 		recipe.put("name", r.name);
 		recipe.put("description", r.description);
-		recipe.put("cookTime", r.cookTime);
+		recipe.put("cooktime", r.cookTime);
 		System.out.println("uploadRecipe uploading main image");
 		recipe.put("image_url", imageUpload(r.mainImage));
 		recipe.put("categories", r.categories);

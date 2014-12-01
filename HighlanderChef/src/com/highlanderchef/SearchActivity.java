@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -173,10 +174,10 @@ public class SearchActivity extends ActionBarActivity {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result == true) {
-				//Log.v("login_log","Login Success");
+				Log.v("searchActivty","Search Success");
 				SearchSuccess(ret);
 			} else {
-				//	Log.v("login_fail","Login failed");
+				Log.v("login_fail","Search Failed");
 				SearchFailure(ret);
 			}
 		}

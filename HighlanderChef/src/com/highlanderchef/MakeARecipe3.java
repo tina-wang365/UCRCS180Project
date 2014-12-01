@@ -175,6 +175,12 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 		}
 	}
+	public void SaveAsDraftPressed(View iView)
+	{
+		new UploadDraft().execute(recipe);
+		Intent intent = new Intent(this, MainMenu.class);
+		startActivity(intent);
+	}
 	public void submitRecipePressed(View view)
 	{
 		new UploadRecipeTask().execute(recipe);

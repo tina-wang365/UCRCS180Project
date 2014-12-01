@@ -58,11 +58,12 @@ public class LoginActivity extends ActionBarActivity {
 		new LoginTask().execute(strUsername, strPassword);
 	}
 
-	public void loginSuccess()
+	public void loginSuccess(int userId)
 	{
 		//TODO CHANGE MAIN MENU TO UserHomepage.class
 		Intent intent = new Intent(this, MainMenu.class);
 		//Intent intent = new Intent(this, MainMenu.class);
+
 		startActivity(intent);
 	}
 
@@ -74,6 +75,7 @@ public class LoginActivity extends ActionBarActivity {
 	}
 
 	private class LoginTask extends AsyncTask<String, Void, Boolean> {
+		int userID = 0;
 		@Override
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
@@ -86,6 +88,7 @@ public class LoginActivity extends ActionBarActivity {
 			} else if(ret == 500) {
 				errorMessage = "Server Error!";
 			}
+			userID = c.getUserID();
 
 			return (ret == Comm.SUCCESS);
 		}
@@ -94,7 +97,7 @@ public class LoginActivity extends ActionBarActivity {
 		protected void onPostExecute(Boolean result) {
 			if (result == true) {
 				Log.v("login_log","Login Success");
-				loginSuccess();
+				loginSuccess(userID);
 			} else {
 				Log.v("login_fail","Login failed");
 				loginFail("Something bad happened");
