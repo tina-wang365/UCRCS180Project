@@ -372,6 +372,9 @@ public class Comm {
 			Integer id = mapper.readValue(node.path("rid"),Integer.class);
 			String description = mapper.readValue(node.path("description"), String.class);
 			String image_url = mapper.readValue(node.path("img_url"), String.class);
+			if (image_url.length() == 0) {
+				image_url = "default.png";
+			}
 			String name = mapper.readValue(node.path("name"), String.class);
 			System.out.println("parseRecipe for image_url " + image_url);
 			r = new Recipe(id, name, description, getImage(image_url));
