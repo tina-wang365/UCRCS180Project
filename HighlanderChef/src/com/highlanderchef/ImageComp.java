@@ -51,8 +51,6 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 
 		hasSurface = false;
 		//inactivityTimer = new InactivityTimer(this);
-
-
 	}
 
 	@Override
@@ -64,7 +62,9 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 		// want to open the camera driver and measure the screen size if we're going to show the help on
 		// first launch. That led to bugs where the scanning rectangle was the wrong size and partially
 		// off screen.
-		cameraManager = new CameraManager(getApplication());
+		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
+		SurfaceHolder surfaceHolder = surfaceView.getHolder();
+		cameraManager = new CameraManager(getApplication(), surfaceView.getHeight(), surfaceView.getWidth() );
 
 
 		//resultView = findViewById(R.id.result_view);
@@ -74,8 +74,8 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 
 		//resetStatusView();
 
-		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-		SurfaceHolder surfaceHolder = surfaceView.getHolder();
+
+
 		if (hasSurface) {
 			// The activity was paused but not stopped, so the surface still exists. Therefore
 			// surfaceCreated() won't be called, so init the camera here.

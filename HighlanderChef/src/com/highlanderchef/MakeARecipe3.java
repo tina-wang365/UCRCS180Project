@@ -244,5 +244,4 @@ public class MakeARecipe3 extends ActionBarActivity {
 			//TODO added error response
 		}
 	}
-
 }

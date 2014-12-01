@@ -18,11 +18,11 @@ public class CameraManager
 	Camera theCamera = camera;
 	private final PreviewCallback previewCallback;
 
-	public CameraManager(Context context)
+	public CameraManager(Context context, int height, int width)
 	{
 		this.context = context;
 		this.configManager = new CameraConfigurationManager(context);
-		previewCallback = new PreviewCallback(configManager);
+		previewCallback = new PreviewCallback(configManager, height, width);
 	}
 
 	public synchronized void openDriver(SurfaceHolder holder) throws IOException
