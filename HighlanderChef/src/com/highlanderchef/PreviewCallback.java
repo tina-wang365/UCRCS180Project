@@ -2,7 +2,6 @@ package com.highlanderchef;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -35,16 +34,19 @@ final public class PreviewCallback implements Camera.PreviewCallback
 
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {
-		Point cameraResolution = configManager.getCameraResolution();
+		/*Point cameraResolution = configManager.getCameraResolution();
 		Handler thePreviewHandler = previewHandler;
-		previewHandler = null;
+		if (cameraResolution != null && thePreviewHandler != null) {
+			Message message = thePreviewHandler.obtainMessage(previewMessage, cameraResolution.x,
+					cameraResolution.y, data);
+			message.sendToTarget();
+			previewHandler = null;*/
 		if(!halfassmutex)
 		{
 			halfassmutex = true;
 			/*int nrOfPixels = data.length / 3; // Three bytes per pixel.
 			int pixels[] = new int[nrOfPixels];
-			for(int i = 0; i < nrOfPixels; i++)
-			{
+			for(int i = 0; i < nrOfPixels; i++) {
 				int r = data[3*i];
 				int g = data[3*i + 1];
 				int b = data[3*i + 2];
@@ -53,10 +55,11 @@ final public class PreviewCallback implements Camera.PreviewCallback
 
 
 			Bitmap image_captured = BitmapFactory.decodeByteArray(data, 0, data.length);
-			//Bitmap image_captured = Bitmap.createBitmap(pixels,  cameraResolution.x, cameraResolution.y, Bitmap.Config.ARGB_8888);
+
+
+			//Bitmap image_captured = Bitmap.createBitmap(pixels,  width, height, Bitmap.Config.ARGB_8888);
 			new CompareAnImage().execute(image_captured);
 		}
-
 	}
 
 	class CompareAnImage extends AsyncTask<Bitmap, Void, Boolean> {
