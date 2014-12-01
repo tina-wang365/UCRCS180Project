@@ -417,7 +417,7 @@ public class Comm {
 		recipe.put("rid", r.id);
 		recipe.put("name", r.name);
 		recipe.put("description", r.description);
-		recipe.put("cookTime", r.cookTime);
+		recipe.put("cooktime", r.cookTime);
 		System.out.println("uploadRecipe uploading main image");
 		recipe.put("image_url", imageUpload(r.mainImage));
 		recipe.put("categories", r.categories);
