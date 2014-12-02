@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class User {
 	private static volatile int id;
-	private static volatile String email = "";
+	private static volatile String username = "";
 
 	/*
 	 * rids of my current recipes,
@@ -20,17 +20,17 @@ public class User {
 	private static ArrayList<Integer> following;
 
 	public User() {
-		email = "";
+		username = "";
 		favorites = new ArrayList<Integer>();
 		followers = new ArrayList<Integer>();
 		following = new ArrayList<Integer>();
 		recipes = new ArrayList<Integer>();
 		drafts = new ArrayList<Integer>();
 	}
-	public User(int id, String email, ArrayList<Integer> favorites, ArrayList<Integer> followers, ArrayList<Integer> following, ArrayList<Integer> recipes, ArrayList<Integer> drafts)
+	public User(int id, String username, ArrayList<Integer> favorites, ArrayList<Integer> followers, ArrayList<Integer> following, ArrayList<Integer> recipes, ArrayList<Integer> drafts)
 	{
 		this.id = id;
-		this.email = email;
+		this.username = username;
 		this.favorites = favorites;
 		this.followers = followers;
 		this.following = following;
@@ -40,8 +40,8 @@ public class User {
 	public int getID() {
 		return id;
 	}
-	public String getEmail() {
-		return email;
+	public String getUsername() {
+		return username;
 	}
 	public ArrayList<Integer> getFavorites() {
 		return favorites;
@@ -58,8 +58,8 @@ public class User {
 	public void setID(int id) {
 		this.id = id;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	public void setFavorites(ArrayList<Integer> favorites) {
 		this.favorites = favorites;

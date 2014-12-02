@@ -36,12 +36,7 @@ public class Comm {
 	private static volatile int id;
 	private static volatile String email = "";
 	private static volatile String authToken = "";
-	//MILESTONE1
-	private static ArrayList<Recipe> favorites;
-	private static ArrayList<Integer> followers; //users that are following THIS user
-	private static ArrayList<Integer> following; //users that THIS user are following
-	private static Boolean update;
-
+	private static volatile User user;
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
@@ -67,6 +62,10 @@ public class Comm {
 		System.out.println("Creating new Comm");
 		lastJSON = "";
 		initMapper();
+	}
+
+	public static User getUser() {
+		return user;
 	}
 
 	public int getUserID() {
