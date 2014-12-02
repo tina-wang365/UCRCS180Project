@@ -31,6 +31,18 @@ public class User {
 		recipes = new ArrayList<Integer>();
 		drafts = new ArrayList<Integer>();
 	}
+
+	public User(int uid, String username) {
+		id = 0;
+		username = "";
+		favorites = new ArrayList<Integer>();
+		notifications = new ArrayList<Integer>();
+		followers = new ArrayList<Integer>();
+		following = new ArrayList<Integer>();
+		recipes = new ArrayList<Integer>();
+		drafts = new ArrayList<Integer>();
+	}
+
 	public User(int id, String username, ArrayList<Integer> favorites, ArrayList<Integer> notifications, ArrayList<Integer> followers, ArrayList<Integer> following, ArrayList<Integer> recipes, ArrayList<Integer> drafts)
 	{
 		this.id = id;
