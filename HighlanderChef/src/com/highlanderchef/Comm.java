@@ -340,13 +340,12 @@ public class Comm {
 
 	private void parseComments(Recipe r, JsonNode node) {
 		try {
-			System.out.print("node: ");
+			System.out.print("comments node: ");
 			prettyPrint(node);
 			Float rRating = mapper.readValue(node.path("rating"), Float.class);
 			r.rating = rRating.floatValue();
 			Iterator<JsonNode> ite = node.path("comments").getElements();
-			while(ite.hasNext())
-			{
+			while(ite.hasNext()) {
 				JsonNode cnode = ite.next();
 				System.out.print("cnode: ");
 				prettyPrint(cnode);
@@ -357,6 +356,42 @@ public class Comm {
 			}
 		} catch (Exception e) {
 			System.out.println("parseRecipe had an exception parsing comments");
+			e.printStackTrace();
+		}
+	}
+
+	private void parseQuestions(Recipe r, JsonNode node) {
+		try {
+			System.out.print("question node: ");
+			prettyPrint(node);
+
+			Iterator<JsonNode> ite = node.path("questions").getElements();
+			while(ite.hasNext()) {
+				JsonNode qnode = ite.next();
+				System.out.print("qnode: ");
+				prettyPrint(qnode);
+
+				Integer quid = mapper.readValue(qnode.path("uid"), Integer.class);
+				String qusername = mapper.readValue(qnode.path("username"), String.class);
+				String qtext = mapper.readValue(qnode.path("question"), String.class);
+
+				ArrayList<Question> replies = new ArrayList<Question>();
+				Iterator<JsonNode> iter = node.path("replies").getElements();
+				while (iter.hasNext()) {
+					JsonNode rnode = iter.next();
+					System.out.print("rnode: ");
+					prettyPrint(rnode);
+					Integer uid = mapper.readValue(rnode.path("uid"), Integer.class);
+					String username = mapper.readValue(rnode.path("username"), String.class);
+					String text = mapper.readValue(rnode.path("reply"), String.class);
+
+					replies.add(new Question(uid, username, text));
+				}
+
+				r.questions.add(new Question(quid, qusername, qtext, replies));
+			}
+		} catch (Exception e) {
+			System.out.println("parseQuestions had an exception parsing questions");
 			e.printStackTrace();
 		}
 	}
@@ -390,6 +425,8 @@ public class Comm {
 				r.parseCategoriesFromJson(categoriesJson);
 				JsonNode commentsNode = node.path("comments");
 				parseComments(r, commentsNode);
+				JsonNode questionsNode = node.path("questions");
+				parseQuestions(r, questionsNode);
 			}
 
 			return r;

@@ -24,6 +24,7 @@ public class Recipe implements Serializable{
 	public ArrayList<Ingredient> ingredients;
 	public ArrayList<Direction> directions;
 	public ArrayList<Comment> comments;
+	public ArrayList<Question> questions;
 
 	//add categories, description, img_url, name, rid
 
