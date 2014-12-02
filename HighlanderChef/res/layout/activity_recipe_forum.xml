@@ -12,12 +12,14 @@
 	 	android:id="@+id/ScrollView1"
 	 	android:layout_width="match_parent"
 	  	android:layout_height="wrap_content" >
-	  	
-        <RelativeLayout
-            android:id="@+id/relativeLayoutRecipeForum"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-        </RelativeLayout>
+
+		 <LinearLayout        
+				android:id="@+id/linearLayoutResults"
+		     	android:layout_width="match_parent"
+		      	android:layout_height="wrap_content"
+		      	android:orientation="vertical" > 
+		 </LinearLayout>
+
+	
 	</ScrollView>
 </LinearLayout>
