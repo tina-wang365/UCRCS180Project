@@ -88,6 +88,25 @@ public class Recipe implements Serializable{
 			e.printStackTrace();
 		}
 	}
+	public void parseCommentsFromJson(String json) {
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			JsonNode node = mapper.readTree(json);
+			Iterator<JsonNode> ite = node.getElements();
+			while(ite.hasNext()) {
+				JsonNode cat = ite.next();
+				String cmt = cat.get("comment").asText();
+				String usrnm = cat.get("username").asText();
+				Integer rid = cat.get("recipeID").asInt();
+				Integer rat = cat.get("rating").asInt();
+				Comment c = new Comment(rid, rat, cmt, usrnm);
+				comments.add(c);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void setIngredients(ArrayList<Ingredient> i)
 	{

@@ -497,6 +497,27 @@ public class Comm {
 		}
 	}
 
+	public int savingDraft(Recipe r) {
+		HashMap<String, String> req = new HashMap();
+		req.put("id", Integer.toString(r.id));
+		req.put("name", r.name);
+		req.put("description", r.description);
+		req.put("cooktime", r.cookTime);
+		req.put("bitmap", r.mainImage.toString()); //can i do this? no errors
+		req.put("mainimagepath", r.mainImagepath);
+		int ret = apiRequest("save draft", req);
+		if(ret == 0) {
+			if(lastStatus == 1) {
+				return SUCCESS;
+			} else {
+				return API_FAIL;
+			}
+		} else {
+			return ret;
+		}
+	}
+
+
 	/*
 	 * getCategories returns a pre-sorted list of categories.
 	 *   ie Each top level category is followed by its children,
