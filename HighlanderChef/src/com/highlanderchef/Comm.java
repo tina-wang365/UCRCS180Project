@@ -495,7 +495,7 @@ public class Comm {
 	}
 
 	public int saveDraft(Recipe r) {
-		HashMap<String, String> req = new HashMap();
+		HashMap<String, Object> req = new HashMap();
 		req.put("uid", Integer.toString(id));
 		HashMap<String, Object> recipe = new HashMap<>();
 		recipe.put("rid", Integer.toString(r.id));
