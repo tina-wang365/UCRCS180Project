@@ -436,9 +436,6 @@ public class Comm {
 		apiRequest("uploadrecipe", req);
 
 		if (lastStatus == 1) {
-			//MILESTONE1
-			req.put("update", true);
-			this.update = true; //i think its supposed to be this one
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -530,6 +527,14 @@ public class Comm {
 		} else {
 			return ret;
 		}
+	}
+
+	public Recipe getDraft(int draftID) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("did", Integer.toString(draftID));
+		apiRequest("getdraft", req);
+
+		return parseRecipe(rootNode.path("recipe"));
 	}
 
 
