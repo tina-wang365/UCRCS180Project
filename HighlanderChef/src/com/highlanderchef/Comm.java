@@ -573,6 +573,27 @@ public class Comm {
 		}
 	}
 
+	// get the list of draft ids for the current user
+	public ArrayList<Integer> getDraftList() {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(id));
+		apiRequest("getdraftlist", req);
+
+		if (lastStatus == 1) {
+			ArrayList<Integer> draftList = new ArrayList<Integer>();
+			Iterator<JsonNode> ite = rootNode.path("drafts").getElements();
+			while (ite.hasNext()) {
+				JsonNode r = ite.next();
+				Integer did = r.getIntValue();
+				draftList.add(did);
+			}
+
+			return draftList;
+		} else {
+			return null;
+		}
+	}
+
 	public Recipe getDraft(int draftID) {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("did", Integer.toString(draftID));

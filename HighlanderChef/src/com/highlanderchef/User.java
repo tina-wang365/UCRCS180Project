@@ -5,21 +5,29 @@ import java.util.ArrayList;
 public class User {
 	private static volatile int id;
 	private static volatile String email = "";
-	private static ArrayList<Recipe> favorites;
-	private static ArrayList<Integer> followers; //holds id of followers
-	private static ArrayList<Integer> following; //holds id of following
-	private static ArrayList<Integer> recipes;   //holds id of recipes this user had made
-	private static Recipe draft;
+
+	/*
+	 * rids of my current recipes,
+	 * draft ids of my drafts,
+	 * rids of my favorite recipes,
+	 * rids of favorite recipes,
+	 * uids of followers and following
+	 */
+	private static ArrayList<Integer> recipes;
+	private static ArrayList<Integer> drafts;
+	private static ArrayList<Integer> favorites;
+	private static ArrayList<Integer> followers;
+	private static ArrayList<Integer> following;
 
 	public User() {
 		email = "";
-		favorites = new ArrayList<Recipe>();
+		favorites = new ArrayList<Integer>();
 		followers = new ArrayList<Integer>();
 		following = new ArrayList<Integer>();
 		recipes = new ArrayList<Integer>();
-		draft = new Recipe();
+		drafts = new ArrayList<Integer>();
 	}
-	public User(int id, String email, ArrayList<Recipe> favorites, ArrayList<Integer> followers, ArrayList<Integer> following, ArrayList<Integer> recipes, Recipe draft)
+	public User(int id, String email, ArrayList<Integer> favorites, ArrayList<Integer> followers, ArrayList<Integer> following, ArrayList<Integer> recipes, ArrayList<Integer> drafts)
 	{
 		this.id = id;
 		this.email = email;
@@ -27,7 +35,7 @@ public class User {
 		this.followers = followers;
 		this.following = following;
 		this.recipes = recipes;
-		this.draft = draft;
+		this.drafts = drafts;
 	}
 	public int getID() {
 		return id;
@@ -35,7 +43,7 @@ public class User {
 	public String getEmail() {
 		return email;
 	}
-	public ArrayList<Recipe> getFavorites() {
+	public ArrayList<Integer> getFavorites() {
 		return favorites;
 	}
 	public ArrayList<Integer> getFollowers() {
@@ -53,7 +61,7 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public void setFavorites(ArrayList<Recipe> favorites) {
+	public void setFavorites(ArrayList<Integer> favorites) {
 		this.favorites = favorites;
 	}
 	public void setFollowers(ArrayList<Integer> followers) {
@@ -73,9 +81,5 @@ public class User {
 	public void addRecipe(int rid) {
 		recipes.add(id);
 	}
-	public void deleteDraft() { //based on specs there can only be one draft. either finish that draft or delete it
-		draft = new Recipe();
-	}
-
 
 }
