@@ -3,35 +3,40 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 public class User {
-	private static volatile int id;
-	private static volatile String username = "";
+	private volatile int id;
+	private volatile String username = "";
 
 	/*
 	 * rids of my current recipes,
 	 * draft ids of my drafts,
 	 * rids of my favorite recipes,
+	 * rids of any notifications,
 	 * rids of favorite recipes,
 	 * uids of followers and following
 	 */
-	private static ArrayList<Integer> recipes;
-	private static ArrayList<Integer> drafts;
-	private static ArrayList<Integer> favorites;
-	private static ArrayList<Integer> followers;
-	private static ArrayList<Integer> following;
+	private ArrayList<Integer> recipes;
+	private ArrayList<Integer> drafts;
+	private ArrayList<Integer> favorites;
+	public ArrayList<Integer> notifications;
+	private ArrayList<Integer> followers;
+	private ArrayList<Integer> following;
 
 	public User() {
+		id = 0;
 		username = "";
 		favorites = new ArrayList<Integer>();
+		notifications = new ArrayList<Integer>();
 		followers = new ArrayList<Integer>();
 		following = new ArrayList<Integer>();
 		recipes = new ArrayList<Integer>();
 		drafts = new ArrayList<Integer>();
 	}
-	public User(int id, String username, ArrayList<Integer> favorites, ArrayList<Integer> followers, ArrayList<Integer> following, ArrayList<Integer> recipes, ArrayList<Integer> drafts)
+	public User(int id, String username, ArrayList<Integer> favorites, ArrayList<Integer> notifications, ArrayList<Integer> followers, ArrayList<Integer> following, ArrayList<Integer> recipes, ArrayList<Integer> drafts)
 	{
 		this.id = id;
 		this.username = username;
 		this.favorites = favorites;
+		this.notifications = notifications;
 		this.followers = followers;
 		this.following = following;
 		this.recipes = recipes;
