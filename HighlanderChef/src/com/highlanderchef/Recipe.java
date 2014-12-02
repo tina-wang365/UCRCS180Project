@@ -38,6 +38,7 @@ public class Recipe implements Serializable{
 		ingredients = new ArrayList<Ingredient>();
 		directions = new ArrayList<Direction>();
 		comments = new ArrayList<Comment>();
+		questions = new ArrayList<Question>();
 	}
 	public Recipe()
 	{
@@ -45,6 +46,7 @@ public class Recipe implements Serializable{
 		ingredients = new ArrayList<Ingredient>();
 		directions = new ArrayList<Direction>();
 		comments = new ArrayList<Comment>();
+		questions = new ArrayList<Question>();
 		this.mainImage = null;
 	}
 
