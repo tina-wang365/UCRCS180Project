@@ -64,6 +64,9 @@ public class RecipeForum extends ActionBarActivity {
 
 	public void displayRecipeSuccess(Recipe recipe) {
 		ll = (LinearLayout) findViewById(R.id.linearLayoutResults);
+		if (ll == null) {
+			System.out.println("ll is null in RA");
+		}
 		final LinearLayout.LayoutParams params =
 				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT);
