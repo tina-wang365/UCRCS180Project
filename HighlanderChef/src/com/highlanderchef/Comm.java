@@ -340,13 +340,12 @@ public class Comm {
 
 	private void parseComments(Recipe r, JsonNode node) {
 		try {
-			System.out.print("node: ");
+			System.out.print("comments node: ");
 			prettyPrint(node);
 			Float rRating = mapper.readValue(node.path("rating"), Float.class);
 			r.rating = rRating.floatValue();
 			Iterator<JsonNode> ite = node.path("comments").getElements();
-			while(ite.hasNext())
-			{
+			while(ite.hasNext()) {
 				JsonNode cnode = ite.next();
 				System.out.print("cnode: ");
 				prettyPrint(cnode);
@@ -357,6 +356,42 @@ public class Comm {
 			}
 		} catch (Exception e) {
 			System.out.println("parseRecipe had an exception parsing comments");
+			e.printStackTrace();
+		}
+	}
+
+	private void parseQuestions(Recipe r, JsonNode node) {
+		try {
+			System.out.print("question node: ");
+			prettyPrint(node);
+
+			Iterator<JsonNode> ite = node.path("questions").getElements();
+			while(ite.hasNext()) {
+				JsonNode qnode = ite.next();
+				System.out.print("qnode: ");
+				prettyPrint(qnode);
+
+				Integer quid = mapper.readValue(qnode.path("uid"), Integer.class);
+				String qusername = mapper.readValue(qnode.path("username"), String.class);
+				String qtext = mapper.readValue(qnode.path("question"), String.class);
+
+				ArrayList<Question> replies = new ArrayList<Question>();
+				Iterator<JsonNode> iter = node.path("replies").getElements();
+				while (iter.hasNext()) {
+					JsonNode rnode = iter.next();
+					System.out.print("rnode: ");
+					prettyPrint(rnode);
+					Integer uid = mapper.readValue(rnode.path("uid"), Integer.class);
+					String username = mapper.readValue(rnode.path("username"), String.class);
+					String text = mapper.readValue(rnode.path("reply"), String.class);
+
+					replies.add(new Question(uid, username, text));
+				}
+
+				r.questions.add(new Question(quid, qusername, qtext, replies));
+			}
+		} catch (Exception e) {
+			System.out.println("parseQuestions had an exception parsing questions");
 			e.printStackTrace();
 		}
 	}
@@ -390,6 +425,8 @@ public class Comm {
 				r.parseCategoriesFromJson(categoriesJson);
 				JsonNode commentsNode = node.path("comments");
 				parseComments(r, commentsNode);
+				JsonNode questionsNode = node.path("questions");
+				parseQuestions(r, questionsNode);
 			}
 
 			return r;
@@ -436,9 +473,6 @@ public class Comm {
 		apiRequest("uploadrecipe", req);
 
 		if (lastStatus == 1) {
-			//MILESTONE1
-			req.put("update", true);
-			this.update = true; //i think its supposed to be this one
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -497,15 +531,30 @@ public class Comm {
 		}
 	}
 
-	public int savingDraft(Recipe r) {
-		HashMap<String, String> req = new HashMap();
-		req.put("id", Integer.toString(r.id));
-		req.put("name", r.name);
-		req.put("description", r.description);
-		req.put("cooktime", r.cookTime);
-		req.put("bitmap", r.mainImage.toString()); //can i do this? no errors
-		req.put("mainimagepath", r.mainImagepath);
-		int ret = apiRequest("save draft", req);
+	public int saveDraft(Recipe r) {
+		HashMap<String, Object> req = new HashMap();
+		req.put("uid", Integer.toString(id));
+		HashMap<String, Object> recipe = new HashMap<>();
+		recipe.put("rid", Integer.toString(r.id));
+		recipe.put("name", r.name);
+		recipe.put("description", r.description);
+		recipe.put("cooktime", r.cookTime);
+		System.out.println("savingDraft uploading main image");
+		recipe.put("image_url", imageUpload(r.mainImage));
+
+		recipe.put("categories", r.categories);
+		recipe.put("ingredients", r.ingredients);
+
+		recipe.put("directions", r.directions);
+		try {
+			recipe.put("parseddirs", mapper.writeValueAsString(r.directions));
+		} catch (Exception e) {
+			System.out.println("parseddirs serialization failed");
+			e.printStackTrace();
+		}
+
+		req.put("recipe", recipe);
+		int ret = apiRequest("savedraft", req);
 		if(ret == 0) {
 			if(lastStatus == 1) {
 				return SUCCESS;
@@ -515,6 +564,14 @@ public class Comm {
 		} else {
 			return ret;
 		}
+	}
+
+	public Recipe getDraft(int draftID) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("did", Integer.toString(draftID));
+		apiRequest("getdraft", req);
+
+		return parseRecipe(rootNode.path("recipe"));
 	}
 
 
