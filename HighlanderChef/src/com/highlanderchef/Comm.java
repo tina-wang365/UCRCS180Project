@@ -497,15 +497,30 @@ public class Comm {
 		}
 	}
 
-	public int savingDraft(Recipe r) {
+	public int saveDraft(Recipe r) {
 		HashMap<String, String> req = new HashMap();
-		req.put("id", Integer.toString(r.id));
-		req.put("name", r.name);
-		req.put("description", r.description);
-		req.put("cooktime", r.cookTime);
-		req.put("bitmap", r.mainImage.toString()); //can i do this? no errors
-		req.put("mainimagepath", r.mainImagepath);
-		int ret = apiRequest("save draft", req);
+		req.put("uid", Integer.toString(id));
+		HashMap<String, Object> recipe = new HashMap<>();
+		recipe.put("rid", Integer.toString(r.id));
+		recipe.put("name", r.name);
+		recipe.put("description", r.description);
+		recipe.put("cooktime", r.cookTime);
+		System.out.println("savingDraft uploading main image");
+		recipe.put("image_url", imageUpload(r.mainImage));
+
+		recipe.put("categories", r.categories);
+		recipe.put("ingredients", r.ingredients);
+
+		recipe.put("directions", r.directions);
+		try {
+			recipe.put("parseddirs", mapper.writeValueAsString(r.directions));
+		} catch (Exception e) {
+			System.out.println("parseddirs serialization failed");
+			e.printStackTrace();
+		}
+
+		req.put("recipe", recipe);
+		int ret = apiRequest("savedraft", req);
 		if(ret == 0) {
 			if(lastStatus == 1) {
 				return SUCCESS;
