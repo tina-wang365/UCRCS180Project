@@ -1,26 +1,41 @@
 package com.highlanderchef;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 public class MakeARecipe1 extends ActionBarActivity {
 	Recipe recipe = new Recipe();
+	ArrayList<Category> categories;
+	ArrayList<Integer> categoryIDs;
+	int curSelCat = 0;
+	String errorMessage = "";
+	Spinner spinner;
+	Bundle b;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_make_a_recipe1);
+		categoryIDs = new ArrayList<>();
+		new GetCategoriesTask().execute(1);
 	}
 
 	@Override
@@ -29,14 +44,13 @@ public class MakeARecipe1 extends ActionBarActivity {
 		getMenuInflater().inflate(R.menu.make_arecipe1, menu);
 		return true;
 	}
-	public void AddIngrediantPressed(View view)
+
+	private Recipe getCurrentRecipeInfo()
 	{
+		Recipe returnRecipe = new Recipe();
+
 		EditText edittext_name = (EditText) findViewById(R.id.recipe_title);
 		String new_name = edittext_name.getText().toString();
-
-		//make sure the length of recipe name is not 0
-		if(new_name.length() == 0)
-			return;
 
 		EditText edittext_descr = (EditText) findViewById(R.id.recipe_description);
 		String new_descr = edittext_descr.getText().toString();
@@ -44,9 +58,26 @@ public class MakeARecipe1 extends ActionBarActivity {
 		EditText edittext_time = (EditText) findViewById(R.id.recipe_est_time);
 		String new_time = edittext_time.getText().toString();
 
-		recipe.setName(new_name);
-		recipe.setDescription(new_descr);
-		recipe.setCookTime(new_time);
+		returnRecipe.setName(new_name);
+		returnRecipe.setDescription(new_descr);
+		returnRecipe.setCookTime(new_time);
+
+		return returnRecipe;
+	}
+
+	public void SaveAsDraftPressed(View iView)
+	{
+		recipe = getCurrentRecipeInfo();
+		new UploadDraft().execute(recipe);
+		Intent intent = new Intent(this, MainMenu.class);
+		startActivity(intent);
+	}
+
+	public void AddIngrediantPressed(View view)
+	{
+		recipe = getCurrentRecipeInfo();
+		if (recipe.getName().length() <= 0)
+			return;
 
 		Intent intent = new Intent(this, MakeARecipe2.class);
 		intent.putExtra("recipe", recipe);
@@ -65,6 +96,8 @@ public class MakeARecipe1 extends ActionBarActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null)
 		{
+			recipe.categories.clear();
+			recipe.categories.add(categoryIDs.get(curSelCat));
 			Uri selectedImage = data.getData();
 			String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
@@ -121,5 +154,94 @@ public class MakeARecipe1 extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	public void catOnSuccess()
+	{
+		if(categories.size() > 0)
+		{
+			ArrayList<String> level0_spinner = new ArrayList<String>();
+			Stack<String> cat_prefix = new Stack<String>();
+			categoryIDs.clear();
+			int last_level = -1;
+			for(int i = 0; i < categories.size(); ++i)
+			{
+				if (last_level >= categories.get(i).level) {
+					cat_prefix.pop();
+				}
+				if(categories.get(i).level == 0) {
+					cat_prefix.push(categories.get(i).name);
+				} else {
+					cat_prefix.push(cat_prefix.peek() + " > " + categories.get(i).name);
+				}
+
+				if (i == (categories.size() - 1)) {
+					level0_spinner.add(cat_prefix.peek());
+					categoryIDs.add(new Integer(categories.get(i).id));
+				} else if (categories.get(i + 1).level <= categories.get(i).level) {
+					level0_spinner.add(cat_prefix.peek());
+					categoryIDs.add(new Integer(categories.get(i).id));
+				}
+
+				last_level = categories.get(i).level;
+			}
+			spinner = (Spinner) findViewById(R.id.spinner);
+			ArrayAdapter<String> adapter_state = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, level0_spinner);
+			adapter_state.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			spinner.setAdapter(adapter_state);
+			//spinner.setOnItemSelectedListener(this);
+
+		}
+	}
+
+	public void onItemSelected(AdapterView<?> parent, View view, int position,
+			long id) {
+		spinner.setSelection(position);
+		String selState = (String) spinner.getSelectedItem();
+		curSelCat = spinner.getSelectedItemPosition();
+
+	}
+	public void catOnFailure()
+	{
+
+	}
+
+	private class GetCategoriesTask extends AsyncTask<Object, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(Object... params) {
+			Comm c = new Comm();
+			categories = c.getCategories();
+			if(categories != null) {
+				errorMessage = "Error! Network Failed to connect. Check your network";
+			} else if(categories == null) {
+				errorMessage = "Sorry! There was an error making your recipe";
+			}
+			return (categories != null);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				catOnSuccess();
+			} else {
+				catOnFailure();
+			}
+		}
+	}
+}
+
+class UploadDraft extends AsyncTask<Recipe, Void, Boolean> {
+
+	@Override
+	protected Boolean doInBackground(Recipe... params) {
+		//Comm IComm = new Comm();
+		//IComm.uploadRecipe((Recipe)params[0]);
+		return true;
+	}
+
+	@Override
+	protected void onPostExecute(Boolean result) {
+		;
 	}
 }

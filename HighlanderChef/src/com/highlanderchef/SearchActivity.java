@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,8 +17,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+
+
 public class SearchActivity extends ActionBarActivity {
 	private final String errorMessage = "";
+	private final String SearchByString = "Search By String";
+	private final String SearchByCategory = "Search By Category";
+	private final String SearchByMyUID = "Search By UID";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +32,16 @@ public class SearchActivity extends ActionBarActivity {
 
 		Intent intent = getIntent();
 		String query = intent.getStringExtra("search_query");
+		String category = intent.getStringExtra("category_query");
 
-		new SearchTask().execute(query);
 
+		if (query != null) {
+			new SearchTask().execute(SearchByString, query);
+		} else if(category != null) {
+			new SearchTask().execute(SearchByCategory, category);
+		} else {
+			new SearchTask().execute(SearchByMyUID);
+		}
 
 		// TODO: now loading...
 	}
@@ -54,18 +67,12 @@ public class SearchActivity extends ActionBarActivity {
 
 	public void SearchSuccess(ArrayList<Recipe> recipies)
 	{
-
-		if(recipies.size() == 0) {
-			//TODO create textview in xml for errors, linear layout cant display messages
-			TextView searchNoResults = (TextView) findViewById(R.id.linearLayoutResults);//darren
-			searchNoResults.setText("No Matches found");
-			searchNoResults.setVisibility(View.VISIBLE);
-		}
+		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		for(int i = 0; i < recipies.size(); ++i)
 		{
 			if(recipies.get(i) == null )
 				continue;
-			LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
+			//LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 			//code for dividers
 			if(i >= 1)
 			{
@@ -75,7 +82,6 @@ public class SearchActivity extends ActionBarActivity {
 				BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 				bmOptions.inJustDecodeBounds = true;
 				BitmapFactory.decodeResource(getResources(), R.drawable.divider, bmOptions);
-
 				//Get the dimensions of the bitmap
 				int photoW = bmOptions.outWidth;
 				int photoH = bmOptions.outHeight;
@@ -132,9 +138,13 @@ public class SearchActivity extends ActionBarActivity {
 
 	public void SearchFailure(ArrayList<Recipe> recipies)
 	{
-		TextView searchNoResults = (TextView) findViewById(R.id.linearLayoutResults);//darren
-		searchNoResults.setText("No Recipes Found!");
-		searchNoResults.setVisibility(View.VISIBLE);
+		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
+		TextView tv_descr = new TextView(this);
+		tv_descr.setText("No Recipes Found!");
+		rl.addView(tv_descr);
+		//TextView searchNoResults = (TextView) findViewById(R.id.linearLayoutResults);//darren
+		//searchNoResults.setText("No Recipes Found!");
+		rl.setVisibility(View.VISIBLE);
 	}
 
 
@@ -150,22 +160,30 @@ public class SearchActivity extends ActionBarActivity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
-			ret = c.searchRecipes(params[0]);
+			if (params[0] == SearchByString) {
+				ret = c.searchRecipes(params[1]);
+			} else if (params[0] == SearchByCategory) {
+				ret = c.searchRecipesByCategory(Integer.parseInt(params[1]));
+			} else if (params[0] == SearchByMyUID) {
+				ret = c.searchRecipesByUID(c.getUserID());
+			}
 			return (ret.size() > 0);
 		}
+
 
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result == true) {
-				//Log.v("login_log","Login Success");
+				Log.v("searchActivty","Search Success");
 				SearchSuccess(ret);
 			} else {
-				//	Log.v("login_fail","Login failed");
+				Log.v("login_fail","Search Failed");
 				SearchFailure(ret);
 			}
 		}
 
 	}
+
 
 
 }

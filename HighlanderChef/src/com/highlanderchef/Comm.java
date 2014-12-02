@@ -24,6 +24,7 @@ public class Comm {
 	private static String serverRoot = "http://96.126.122.162:9222/chef/";
 	private static String serverImgRoot = "http://96.126.122.162:9223/";
 	private static boolean runningAndroid = true;
+	private static final int commVersion = 1;
 
 	private static ObjectMapper mapper;
 
@@ -35,11 +36,18 @@ public class Comm {
 	private static volatile int id;
 	private static volatile String email = "";
 	private static volatile String authToken = "";
+	//MILESTONE1
+	private static ArrayList<Recipe> favorites;
+	private static ArrayList<Integer> followers; //users that are following THIS user
+	private static ArrayList<Integer> following; //users that THIS user are following
+	private static Boolean update;
+
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
 	public static final int API_FAIL = -50;
 	public static final int NETWORK_FAIL = -60;
+	public static final int AUTH_FAIL = -70;
 
 
 	private void registerMapperSerializers() {
@@ -65,7 +73,7 @@ public class Comm {
 		return id;
 	}
 
-	public String getEmail() {
+	public static String getEmail() {
 		return email;
 	}
 
@@ -75,6 +83,14 @@ public class Comm {
 
 	public String getLastJSON() {
 		return lastJSON;
+	}
+	//MILESTONE1
+	public ArrayList<Recipe> getFavorites() {
+		return favorites;
+	}
+	//MILESTONE1
+	public ArrayList<Integer> getFollowers() {
+		return followers;
 	}
 	public static void prettyPrint(String s) {
 		try {
@@ -90,6 +106,23 @@ public class Comm {
 			System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
 		} catch (Exception e) {
 			System.out.println("EXCEPTION in prettyPrint");
+		}
+	}
+	//MILESTONE1
+	public static void sendNotificationToFollowers() {
+		if(update) {
+			for(int i = 0; i < followers.size(); i++) {
+				//send notification that you have uploaded a new recipe
+				//set update to false
+			}
+		}
+	}
+	//MILESTONE1
+	public static void checkNotification() {
+		for(int i = 0; i < following.size(); i++) {
+			//if(following[i].update == true) { //conflict here. list "following" should be object "users" and not just an integer of their id
+			//update list and show the recipe they have just uploaded
+			//}
 		}
 	}
 
@@ -195,13 +228,28 @@ public class Comm {
 		return ls;
 	}
 
+	public ArrayList<Recipe> searchRecipesByUID(int userID) {
+		HashMap<String, Integer> req = new HashMap<>();
+		req.put("uid", userID);
+		apiRequest("searchuid", req);
+
+		ArrayList<Recipe> ls = new ArrayList<>();
+		Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+		while(ite.hasNext())
+		{
+			JsonNode r = ite.next();
+			ls.add(parseRecipe(r, true));
+		}
+		return ls;
+	}
+
 	private Bitmap getImage(String relUrl) {
 		System.out.println("getImage(" + serverImgRoot + relUrl);
 		if (relUrl == null) {
 			System.out.println("tried to get a null-url image");
 			return null;
 		}
-		byte[] imgData;
+
 		try {
 			URL url = new URL(serverImgRoot + relUrl);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -290,6 +338,29 @@ public class Comm {
 		}
 	}
 
+	private void parseComments(Recipe r, JsonNode node) {
+		try {
+			System.out.print("node: ");
+			prettyPrint(node);
+			Float rRating = mapper.readValue(node.path("rating"), Float.class);
+			r.rating = rRating.floatValue();
+			Iterator<JsonNode> ite = node.path("comments").getElements();
+			while(ite.hasNext())
+			{
+				JsonNode cnode = ite.next();
+				System.out.print("cnode: ");
+				prettyPrint(cnode);
+				Integer rating = mapper.readValue(cnode.path("rating"), Integer.class);
+				String comment = mapper.readValue(cnode.path("comment"), String.class);
+				String username = mapper.readValue(cnode.path("username"), String.class);
+				r.comments.add(new Comment(id, rating.intValue(), comment, username));
+			}
+		} catch (Exception e) {
+			System.out.println("parseRecipe had an exception parsing comments");
+			e.printStackTrace();
+		}
+	}
+
 	private Recipe parseRecipe(JsonNode node) {
 		return parseRecipe(node, false);
 	}
@@ -301,9 +372,14 @@ public class Comm {
 			Integer id = mapper.readValue(node.path("rid"),Integer.class);
 			String description = mapper.readValue(node.path("description"), String.class);
 			String image_url = mapper.readValue(node.path("img_url"), String.class);
+			if (image_url.length() == 0) {
+				image_url = "default.png";
+			}
 			String name = mapper.readValue(node.path("name"), String.class);
 			System.out.println("parseRecipe for image_url " + image_url);
 			r = new Recipe(id, name, description, getImage(image_url));
+			String cooktime = mapper.readValue(node.path("cooktime"), String.class);
+			r.setCookTime(cooktime);
 
 			if (!brief) {
 				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
@@ -312,6 +388,8 @@ public class Comm {
 				parseDirections(r, directionsJson);
 				String categoriesJson = mapper.readValue(node.path("categories"), String.class);
 				r.parseCategoriesFromJson(categoriesJson);
+				JsonNode commentsNode = node.path("comments");
+				parseComments(r, commentsNode);
 			}
 
 			return r;
@@ -339,7 +417,7 @@ public class Comm {
 		recipe.put("rid", r.id);
 		recipe.put("name", r.name);
 		recipe.put("description", r.description);
-		recipe.put("cookTime", r.cookTime);
+		recipe.put("cooktime", r.cookTime);
 		System.out.println("uploadRecipe uploading main image");
 		recipe.put("image_url", imageUpload(r.mainImage));
 		recipe.put("categories", r.categories);
@@ -358,6 +436,9 @@ public class Comm {
 		apiRequest("uploadrecipe", req);
 
 		if (lastStatus == 1) {
+			//MILESTONE1
+			req.put("update", true);
+			this.update = true; //i think its supposed to be this one
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -415,6 +496,42 @@ public class Comm {
 			return ret;
 		}
 	}
+
+	public int saveDraft(Recipe r) {
+		HashMap<String, String> req = new HashMap();
+		req.put("uid", Integer.toString(id));
+		HashMap<String, Object> recipe = new HashMap<>();
+		recipe.put("rid", Integer.toString(r.id));
+		recipe.put("name", r.name);
+		recipe.put("description", r.description);
+		recipe.put("cooktime", r.cookTime);
+		System.out.println("savingDraft uploading main image");
+		recipe.put("image_url", imageUpload(r.mainImage));
+
+		recipe.put("categories", r.categories);
+		recipe.put("ingredients", r.ingredients);
+
+		recipe.put("directions", r.directions);
+		try {
+			recipe.put("parseddirs", mapper.writeValueAsString(r.directions));
+		} catch (Exception e) {
+			System.out.println("parseddirs serialization failed");
+			e.printStackTrace();
+		}
+
+		req.put("recipe", recipe);
+		int ret = apiRequest("savedraft", req);
+		if(ret == 0) {
+			if(lastStatus == 1) {
+				return SUCCESS;
+			} else {
+				return API_FAIL;
+			}
+		} else {
+			return ret;
+		}
+	}
+
 
 	/*
 	 * getCategories returns a pre-sorted list of categories.
@@ -476,6 +593,8 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			connection.setRequestProperty("uid", Integer.toString(Comm.id));
+			connection.setRequestProperty("token", Comm.authToken);
 			OutputStream os = connection.getOutputStream();
 			os.write(payload);
 			os.close();
@@ -518,6 +637,9 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			connection.setRequestProperty("uid", Integer.toString(Comm.id));
+			connection.setRequestProperty("token", Comm.authToken);
+			connection.setRequestProperty("commversion", Integer.toString(Comm.commVersion));
 			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
 			writer.write(payload);
 			writer.close();
@@ -534,7 +656,11 @@ public class Comm {
 			try {
 				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
 				lastStatus = status;
-				return SUCCESS;
+				if (lastStatus == -1) {
+					return AUTH_FAIL;
+				} else {
+					return SUCCESS;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("failed in apiRequest : fail to readValue from \"status\" ");

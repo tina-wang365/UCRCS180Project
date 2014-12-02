@@ -24,6 +24,8 @@ public class SignupActivity extends ActionBarActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.signup, menu);
+		TextView invalidSignUp = (TextView) findViewById(R.id.invalidAccount);
+		invalidSignUp.setVisibility(View.INVISIBLE);
 		return true;
 	}
 

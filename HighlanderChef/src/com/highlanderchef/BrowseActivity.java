@@ -74,7 +74,9 @@ public class BrowseActivity extends Activity {
 				if (iChildren.isEmpty())
 				{
 					//Checkbox is a leaf so open new activity
-					Intent intent = new Intent(BrowseActivity.this, BrowseResults.class);
+					Intent intent = new Intent(BrowseActivity.this, SearchActivity.class);
+					intent.putExtra("category_query", Integer.toString(iCheckBox.cData.id));
+					intent.putExtra("CategoryID", iCheckBox.cData.id);
 					startActivity(intent);
 				}
 
@@ -157,7 +159,7 @@ class ID_Maker
 	private static ID_Maker instance = null;
 	private int CurrIdNum;
 	protected ID_Maker() {
-		CurrIdNum = 0;
+		CurrIdNum = 1;
 	}
 	public static ID_Maker getInstance() {
 		if(instance == null) {

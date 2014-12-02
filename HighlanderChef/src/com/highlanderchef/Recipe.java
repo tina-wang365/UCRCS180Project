@@ -12,15 +12,18 @@ import android.graphics.Bitmap;
 
 public class Recipe implements Serializable{
 	public int id;
-	String name;
-	String description;
-	String cookTime;
-	Bitmap mainImage;
-	String mainImagepath;
+	public String name;
+	public String description;
+	public String cookTime;
+	public Bitmap mainImage;
+	public String mainImagepath;
 
-	ArrayList<Integer> categories;
-	ArrayList<Ingredient> ingredients;
-	ArrayList<Direction> directions;
+	public float rating;
+
+	public ArrayList<Integer> categories;
+	public ArrayList<Ingredient> ingredients;
+	public ArrayList<Direction> directions;
+	public ArrayList<Comment> comments;
 
 	//add categories, description, img_url, name, rid
 
@@ -33,12 +36,14 @@ public class Recipe implements Serializable{
 		categories = new ArrayList<Integer>();
 		ingredients = new ArrayList<Ingredient>();
 		directions = new ArrayList<Direction>();
+		comments = new ArrayList<Comment>();
 	}
 	public Recipe()
 	{
 		categories = new ArrayList<Integer>();
 		ingredients = new ArrayList<Ingredient>();
 		directions = new ArrayList<Direction>();
+		comments = new ArrayList<Comment>();
 		this.mainImage = null;
 	}
 
@@ -83,6 +88,25 @@ public class Recipe implements Serializable{
 			e.printStackTrace();
 		}
 	}
+	public void parseCommentsFromJson(String json) {
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			JsonNode node = mapper.readTree(json);
+			Iterator<JsonNode> ite = node.getElements();
+			while(ite.hasNext()) {
+				JsonNode cat = ite.next();
+				String cmt = cat.get("comment").asText();
+				String usrnm = cat.get("username").asText();
+				Integer rid = cat.get("recipeID").asInt();
+				Integer rat = cat.get("rating").asInt();
+				Comment c = new Comment(rid, rat, cmt, usrnm);
+				comments.add(c);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void setIngredients(ArrayList<Ingredient> i)
 	{
@@ -111,6 +135,7 @@ public class Recipe implements Serializable{
 	public void AddADirection(String dir, ArrayList<Bitmap> bmp)
 	{
 		this.directions.add(new Direction(dir, bmp ));
+		bmp.clear();
 	}
 	public void AddADirection(String dir)
 	{

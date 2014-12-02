@@ -24,6 +24,7 @@ public class LoginActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_login);
 		TextView invalidlogin = (TextView) findViewById(R.id.invalidlogin);
 		invalidlogin.setVisibility(View.INVISIBLE);
+
 	}
 
 	@Override
@@ -57,9 +58,12 @@ public class LoginActivity extends ActionBarActivity {
 		new LoginTask().execute(strUsername, strPassword);
 	}
 
-	public void loginSuccess()
+	public void loginSuccess(int userId)
 	{
-		Intent intent = new Intent(this, MainMenu.class);
+		//TODO CHANGE MAIN MENU TO UserHomepage.class
+		Intent intent = new Intent(this, UserHomepage.class);
+		//Intent intent = new Intent(this, MainMenu.class);
+
 		startActivity(intent);
 	}
 
@@ -71,6 +75,7 @@ public class LoginActivity extends ActionBarActivity {
 	}
 
 	private class LoginTask extends AsyncTask<String, Void, Boolean> {
+		int userID = 0;
 		@Override
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
@@ -79,8 +84,11 @@ public class LoginActivity extends ActionBarActivity {
 			if(ret == Comm.NETWORK_FAIL) {
 				errorMessage = "Error! Check your connection";
 			} else if(ret == Comm.API_FAIL){
-				errorMessage = "Error! API Fail";
+				errorMessage = "Error! Wrong username or password";
+			} else if(ret == 500) {
+				errorMessage = "Server Error!";
 			}
+			userID = c.getUserID();
 
 			return (ret == Comm.SUCCESS);
 		}
@@ -89,7 +97,7 @@ public class LoginActivity extends ActionBarActivity {
 		protected void onPostExecute(Boolean result) {
 			if (result == true) {
 				Log.v("login_log","Login Success");
-				loginSuccess();
+				loginSuccess(userID);
 			} else {
 				Log.v("login_fail","Login failed");
 				loginFail("Something bad happened");

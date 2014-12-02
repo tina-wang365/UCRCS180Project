@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="9"
         android:targetSdkVersion="19" />
 
     <instrumentation
@@ -13,8 +13,17 @@
         android:label="tests for HighlanderChef"
         android:targetPackage="com.highlanderchef" />
 
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -85,8 +94,28 @@
         </activity>
         <activity
             android:name=".SearchActivity"
-            android:screenOrientation="portrait" 
-            android:label="@string/title_activity_search" >
+            android:label="@string/title_activity_search"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".UserHomepage"
+            android:label="@string/title_activity_user_homepage" >
+        </activity>
+        <activity
+            android:name=".ImageComp"
+            android:label="@string/title_activity_image_comp" >
+        </activity>
+        <activity
+            android:name=".Camera"
+            android:label="@string/title_activity_camera" >
+        </activity>
+        <activity
+            android:name=".Cam"
+            android:label="@string/title_activity_cam" >
+        </activity>
+        <activity
+            android:name=".PreferencesActivity"
+            android:label="@string/title_activity_preferences" >
         </activity>
     </application>
 
