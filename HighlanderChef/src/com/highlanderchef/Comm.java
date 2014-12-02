@@ -73,6 +73,10 @@ public class Comm {
 		return id;
 	}
 
+	public static int staticGetUserID() {
+		return id;
+	}
+
 	public static String getEmail() {
 		return email;
 	}
@@ -388,6 +392,9 @@ public class Comm {
 					replies.add(new Question(uid, username, text));
 				}
 
+				if (r.questions == null) {
+					r.questions = new ArrayList<Question>();
+				}
 				r.questions.add(new Question(quid, qusername, qtext, replies));
 			}
 		} catch (Exception e) {
