@@ -33,10 +33,8 @@ public class Comm {
 	private JsonNode rootNode;
 
 	// User account info
-	private static volatile int id;
-	private static volatile String email = "";
-	private static volatile String authToken = "";
 	private static volatile User user;
+	private static volatile String authToken = "";
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
@@ -69,15 +67,15 @@ public class Comm {
 	}
 
 	public int getUserID() {
-		return id;
+		return user.id;
 	}
 
 	public static int staticGetUserID() {
-		return id;
+		return user.id;
 	}
 
 	public static String getEmail() {
-		return email;
+		return user.username;
 	}
 
 	public String getAuthToken() {
@@ -160,9 +158,6 @@ public class Comm {
 				if (lastStatus == 1) {
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
-					this.email = email;
-					Integer userId = mapper.readValue(rootNode.path("id"), Integer.class);
-					this.id = userId.intValue();
 
 					User u = new User();
 					JsonNode un = rootNode.path("user");
