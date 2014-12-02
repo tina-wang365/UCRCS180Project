@@ -3,8 +3,8 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 public class User {
-	private volatile int id;
-	private volatile String username = "";
+	public volatile int id;
+	public volatile String username = "";
 
 	/*
 	 * rids of my current recipes,
@@ -13,13 +13,15 @@ public class User {
 	 * rids of any notifications,
 	 * rids of favorite recipes,
 	 * uids of followers and following
+	 *
+	 * If this is for another user, we only fill out recipes
 	 */
-	private ArrayList<Integer> recipes;
-	private ArrayList<Integer> drafts;
-	private ArrayList<Integer> favorites;
+	public ArrayList<Integer> recipes;
+	public ArrayList<Integer> drafts;
+	public ArrayList<Integer> favorites;
 	public ArrayList<Integer> notifications;
-	private ArrayList<Integer> followers;
-	private ArrayList<Integer> following;
+	public ArrayList<Integer> followers;
+	public ArrayList<Integer> following;
 
 	public User() {
 		id = 0;
@@ -32,14 +34,14 @@ public class User {
 		drafts = new ArrayList<Integer>();
 	}
 
-	public User(int uid, String username) {
-		id = 0;
-		username = "";
+	public User(int uid, String username, ArrayList<Integer> recipes) {
+		this.id = uid;
+		this.username = username;
+		this.recipes = recipes;
 		favorites = new ArrayList<Integer>();
 		notifications = new ArrayList<Integer>();
 		followers = new ArrayList<Integer>();
 		following = new ArrayList<Integer>();
-		recipes = new ArrayList<Integer>();
 		drafts = new ArrayList<Integer>();
 	}
 

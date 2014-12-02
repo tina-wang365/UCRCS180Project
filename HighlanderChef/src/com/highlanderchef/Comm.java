@@ -87,14 +87,7 @@ public class Comm {
 	public String getLastJSON() {
 		return lastJSON;
 	}
-	//MILESTONE1
-	public ArrayList<Recipe> getFavorites() {
-		return favorites;
-	}
-	//MILESTONE1
-	public ArrayList<Integer> getFollowers() {
-		return followers;
-	}
+
 	public static void prettyPrint(String s) {
 		try {
 			Object json = mapper.readValue(s, Object.class);
@@ -109,23 +102,6 @@ public class Comm {
 			System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
 		} catch (Exception e) {
 			System.out.println("EXCEPTION in prettyPrint");
-		}
-	}
-	//MILESTONE1
-	public static void sendNotificationToFollowers() {
-		if(update) {
-			for(int i = 0; i < followers.size(); i++) {
-				//send notification that you have uploaded a new recipe
-				//set update to false
-			}
-		}
-	}
-	//MILESTONE1
-	public static void checkNotification() {
-		for(int i = 0; i < following.size(); i++) {
-			//if(following[i].update == true) { //conflict here. list "following" should be object "users" and not just an integer of their id
-			//update list and show the recipe they have just uploaded
-			//}
 		}
 	}
 
@@ -181,6 +157,42 @@ public class Comm {
 					this.email = email;
 					Integer userId = mapper.readValue(rootNode.path("id"), Integer.class);
 					this.id = userId.intValue();
+
+					User u = new User();
+					JsonNode un = rootNode.path("user");
+					Iterator<JsonNode> ite;
+
+					ite = un.path("recipes").getElements();
+					while (ite.hasNext()) {
+						u.recipes.add(ite.next().getIntValue());
+					}
+
+					ite = un.path("drafts").getElements();
+					while (ite.hasNext()) {
+						u.drafts.add(ite.next().getIntValue());
+					}
+
+					ite = un.path("followers").getElements();
+					while (ite.hasNext()) {
+						u.followers.add(ite.next().getIntValue());
+					}
+
+					ite = un.path("following").getElements();
+					while (ite.hasNext()) {
+						u.following.add(ite.next().getIntValue());
+					}
+
+					ite = un.path("favorites").getElements();
+					while (ite.hasNext()) {
+						u.favorites.add(ite.next().getIntValue());
+					}
+
+					ite = un.path("notifications").getElements();
+					while (ite.hasNext()) {
+						u.notifications.add(ite.next().getIntValue());
+					}
+
+					this.user = u;
 					return SUCCESS;
 				} else {
 					return API_FAIL;
@@ -573,7 +585,10 @@ public class Comm {
 	}
 
 	// get the list of draft ids for the current user
+	//   I guess we don't need this, because we are storing that in our User object
 	public ArrayList<Integer> getDraftList() {
+		return user.drafts;
+		/*
 		HashMap<String, String> req = new HashMap<>();
 		req.put("uid", Integer.toString(id));
 		apiRequest("getdraftlist", req);
@@ -591,6 +606,7 @@ public class Comm {
 		} else {
 			return null;
 		}
+		*/
 	}
 
 	public Recipe getDraft(int draftID) {
