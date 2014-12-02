@@ -25,7 +25,6 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 	private TextView statusView;
 	private View resultView;
 	private boolean hasSurface;
-	private String characterSet;
 	//private InactivityTimer inactivityTimer;
 
 

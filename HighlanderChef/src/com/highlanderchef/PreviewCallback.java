@@ -1,10 +1,16 @@
 package com.highlanderchef;
 
+import java.io.ByteArrayOutputStream;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Message;
 
 final public class PreviewCallback implements Camera.PreviewCallback
 {
@@ -17,6 +23,7 @@ final public class PreviewCallback implements Camera.PreviewCallback
 	int width;
 
 	boolean halfassmutex;
+	boolean firstframe = true;
 
 
 	PreviewCallback(CameraConfigurationManager configManager, int height, int width) {
@@ -29,19 +36,27 @@ final public class PreviewCallback implements Camera.PreviewCallback
 	void setHandler(Handler previewHandler, int previewMessage) {
 		this.previewHandler = previewHandler;
 		this.previewMessage = previewMessage;
-
 	}
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera camera) {
-		/*Point cameraResolution = configManager.getCameraResolution();
+	public void onPreviewFrame(byte[] data, Camera camera)
+	{
+		if(firstframe)
+		{
+			firstframe = false;
+			return;
+		}
+		Point cameraResolution = configManager.getCameraResolution();
 		Handler thePreviewHandler = previewHandler;
-		if (cameraResolution != null && thePreviewHandler != null) {
-			Message message = thePreviewHandler.obtainMessage(previewMessage, cameraResolution.x,
-					cameraResolution.y, data);
+		if (cameraResolution != null && thePreviewHandler != null)
+		{
+			Message message = thePreviewHandler.obtainMessage(previewMessage, cameraResolution.x, cameraResolution.y, data);
 			message.sendToTarget();
-			previewHandler = null;*/
-		if(!halfassmutex)
+			previewHandler = null;
+
+		}
+
+		if(!halfassmutex )
 		{
 			halfassmutex = true;
 			/*int nrOfPixels = data.length / 3; // Three bytes per pixel.
@@ -53,12 +68,37 @@ final public class PreviewCallback implements Camera.PreviewCallback
 				pixels[i] = Color.rgb(r,g,b);
 			}*/
 
+			/*int intByteCount = data.length;
+			int[] intColors = new int[intByteCount / 3];
+			final int intAlpha = 255;
+			if ((intByteCount / 3) != (width * height)) {
+				throw new ArrayStoreException();
+			}
+			for (int intIndex = 0; intIndex < intByteCount - 2; intIndex = intIndex + 3) {
+				intColors[intIndex / 3] = (intAlpha << 24) | (data[intIndex] << 16) | (data[intIndex + 1] << 8) | data[intIndex + 2];
+			}*/
+			//Bitmap image_captured = Bitmap.createBitmap(intColors, width, height, Bitmap.Config.ARGB_8888);
 
-			Bitmap image_captured = BitmapFactory.decodeByteArray(data, 0, data.length);
-
+			//Bitmap image_captured = BitmapFactory.decodeByteArray(data, 0, data.length);
 
 			//Bitmap image_captured = Bitmap.createBitmap(pixels,  width, height, Bitmap.Config.ARGB_8888);
+			//new CompareAnImage().execute(image_captured);
+
+
+
+			Camera.Parameters parameters = camera.getParameters();
+			int width = parameters.getPreviewSize().width;
+			int height = parameters.getPreviewSize().height;
+
+			YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+
+			byte[] bytes = out.toByteArray();
+			Bitmap image_captured = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 			new CompareAnImage().execute(image_captured);
+
 		}
 	}
 

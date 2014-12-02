@@ -27,7 +27,6 @@ public class CameraManager
 
 	public synchronized void openDriver(SurfaceHolder holder) throws IOException
 	{
-
 		if (theCamera == null)
 		{
 			theCamera = OpenCameraInterface.open();

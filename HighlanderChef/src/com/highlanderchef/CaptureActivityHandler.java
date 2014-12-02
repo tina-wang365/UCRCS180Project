@@ -1,5 +1,6 @@
 package com.highlanderchef;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
@@ -9,6 +10,7 @@ public class CaptureActivityHandler extends Handler
 
 	private State state;
 	private final CameraManager cameraManager;
+	private final CompareThread comparethread;
 
 	private enum State {
 		PREVIEW,
@@ -19,6 +21,8 @@ public class CaptureActivityHandler extends Handler
 	CaptureActivityHandler(ImageComp activity, CameraManager cameraManager)
 	{
 		this.activity = activity;
+		comparethread = new CompareThread(activity);
+		comparethread.start();
 		state = State.SUCCESS;
 
 		// Start ourselves capturing previews and decoding.
@@ -30,6 +34,7 @@ public class CaptureActivityHandler extends Handler
 	@Override
 	public void handleMessage(Message message) {
 		//TODO figure out what this does
+		Bundle bundle = message.getData();
 
 	}
 
@@ -41,7 +46,7 @@ public class CaptureActivityHandler extends Handler
 		if (state == State.SUCCESS) {
 			state = State.PREVIEW;
 			//TODO get this line working
-			//cameraManager.requestPreviewFrame(decodeThread.getHandler(), R.id.decode);
+			cameraManager.requestPreviewFrame(comparethread.getHandler(), 1);
 		}
 	}
 }
