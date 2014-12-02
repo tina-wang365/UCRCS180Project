@@ -142,6 +142,12 @@ public class Comm {
 		return apiRequest("signup", req);
 	}
 
+	public int logout() {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", user.id);
+		return apiRequest("logout", req);
+	}
+
 	public int login(String email, String password) {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("email", email);
