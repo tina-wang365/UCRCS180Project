@@ -488,7 +488,14 @@ public class Comm {
 		return parseRecipe(rootNode.path("recipe"));
 	}
 
-
+	public int clearNotifications() {
+		apiRequest("clearnotifications", null);
+		if (lastStatus == 1) {
+			return SUCCESS;
+		} else {
+			return API_FAIL;
+		}
+	}
 
 	public int uploadRecipe(Recipe r) {
 		HashMap<String, Object> req = new HashMap<>();
