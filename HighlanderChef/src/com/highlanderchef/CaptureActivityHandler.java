@@ -46,6 +46,7 @@ public class CaptureActivityHandler extends Handler
 		if (state == State.SUCCESS) {
 			state = State.PREVIEW;
 			//TODO get this line working
+			System.out.println("CAH restartPreviewAndDecode()");
 			cameraManager.requestPreviewFrame(comparethread.getHandler(), 1);
 		}
 	}

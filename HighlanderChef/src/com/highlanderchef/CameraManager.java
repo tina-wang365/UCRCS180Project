@@ -39,9 +39,9 @@ public class CameraManager
 			camera = theCamera;
 		}
 		theCamera.setPreviewDisplay(holder);
-		theCamera.addCallbackBuffer(buffer);
-		theCamera.setPreviewCallbackWithBuffer(previewCallback);
-		//theCamera.setPreviewCallback(previewCallback);
+		//theCamera.addCallbackBuffer(buffer);
+		//theCamera.setPreviewCallbackWithBuffer(previewCallback);
+		theCamera.setPreviewCallback(previewCallback);
 
 		if (!initialized)
 		{
@@ -82,6 +82,7 @@ public class CameraManager
 
 	public synchronized void closeDriver()
 	{
+		System.out.println("CameraManager.startPreview()");
 		if (camera != null) {
 			camera.release();
 			camera = null;
@@ -89,10 +90,9 @@ public class CameraManager
 	}
 
 	public synchronized void startPreview() {
+		System.out.println("CameraManager.startPreview()");
 		Camera theCamera = camera;
 		if (theCamera != null && !previewing) {
-			theCamera.addCallbackBuffer(buffer);
-			theCamera.setPreviewCallbackWithBuffer(previewCallback);
 			theCamera.startPreview();
 			previewing = true;
 			autoFocusManager = new AutoFocusManager(context, camera);
@@ -101,6 +101,7 @@ public class CameraManager
 
 	public synchronized void stopPreview()
 	{
+		System.out.println("CameraManager.stopPreview()");
 		if (autoFocusManager != null) {
 			autoFocusManager.stop();
 			autoFocusManager = null;
@@ -127,6 +128,7 @@ public class CameraManager
 	}
 
 	public synchronized void requestPreviewFrame(Handler handler, int message) {
+		System.out.println("CameraManager.requestPreviewFrame()");
 		Camera theCamera = camera;
 		if (theCamera != null && previewing) {
 			previewCallback.setHandler(handler, message);
