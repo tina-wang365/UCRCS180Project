@@ -3,9 +3,11 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class Utility
 {
@@ -20,6 +22,25 @@ public class Utility
 	{
 		if (iSpinner != null)
 			((ViewGroup) iSpinner.getParent()).removeView(iSpinner);
+	}
+	static public void displayErrorToasts(Context context, Integer errorValue, Integer duration) {
+
+		Toast toastErrorMessage;
+		switch(errorValue) {
+		case -1:
+			toastErrorMessage = Toast.makeText(context, "Sorry! We could not load the recipe you want to view. Check your connection!", duration);
+			toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
+			toastErrorMessage.show();
+			break;
+		case -2:
+			toastErrorMessage = Toast.makeText(context, "Sorry! We could not load the recipe you want to view. Check your connection!", duration);
+			toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
+			toastErrorMessage.show();
+			break;
+		default:
+			break;
+
+		}
 	}
 }
 
