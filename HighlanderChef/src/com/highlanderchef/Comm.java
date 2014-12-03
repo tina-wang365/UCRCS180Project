@@ -63,6 +63,7 @@ public class Comm {
 	}
 
 	public static User getUser() {
+		System.out.println("Comm.getUser() => " + user);
 		return user;
 	}
 
@@ -71,10 +72,12 @@ public class Comm {
 	}
 
 	public static int staticGetUserID() {
+		System.out.println("Comm.getEmail() => " + user.id);
 		return user.id;
 	}
 
 	public static String getEmail() {
+		System.out.println("Comm.getEmail() => " + user.username);
 		return user.username;
 	}
 
@@ -161,6 +164,8 @@ public class Comm {
 
 					User u = new User();
 					JsonNode un = rootNode.path("user");
+					u.id = mapper.readValue(un.path("id"), Integer.class);
+					u.username = mapper.readValue(un.path("username"), String.class);
 					Iterator<JsonNode> ite;
 
 					ite = un.path("recipes").getElements();
