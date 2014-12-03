@@ -25,4 +25,8 @@ public class Question {
 			this.replies = replies;
 		}
 	}
+
+	public void editQuestion(String text) {
+		this.text = text;
+	}
 }

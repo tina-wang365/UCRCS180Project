@@ -148,10 +148,12 @@ public class RecipeForum extends ActionBarActivity {
 				textViewIngredients.setLayoutParams(params);
 				ll.addView(textViewDirections);
 				formatOfDirection = "";
-
+				LinearLayout iLinearLayout = new LinearLayout(this);
+				iLinearLayout.setOrientation(LinearLayout.HORIZONTAL); //resume here
 				for(int j = 0; j < recipe.directions.get(i).images.size(); ++j)
 				{
 					//TODO set images horizontal    .setLayoutDirection()
+
 					ImageView iv_dir_image = new ImageView(this);
 					iv_dir_image.setImageBitmap(recipe.directions.get(i).images.get(j));
 					iv_dir_image.setLayoutParams(params);
