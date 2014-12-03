@@ -640,7 +640,8 @@ public class Comm {
 	// get the list of draft ids for the current user
 	//   I guess we don't need this, because we are storing that in our User object
 	public ArrayList<Integer> getDraftList() {
-		return user.drafts;
+		//return user.drafts;
+		return this.user.drafts;
 	}
 
 	public Recipe getDraft(int draftID) {
