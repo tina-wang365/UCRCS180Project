@@ -18,6 +18,8 @@ public class CameraManager
 	Camera theCamera = camera;
 	private final PreviewCallback previewCallback;
 
+	public byte[] buffer;//for previewcallback
+
 	public CameraManager(Context context, int height, int width)
 	{
 		this.context = context;
@@ -37,7 +39,9 @@ public class CameraManager
 			camera = theCamera;
 		}
 		theCamera.setPreviewDisplay(holder);
-		theCamera.setPreviewCallback(previewCallback);
+		theCamera.addCallbackBuffer(buffer);
+		theCamera.setPreviewCallbackWithBuffer(previewCallback);
+		//theCamera.setPreviewCallback(previewCallback);
 
 		if (!initialized)
 		{
@@ -87,6 +91,8 @@ public class CameraManager
 	public synchronized void startPreview() {
 		Camera theCamera = camera;
 		if (theCamera != null && !previewing) {
+			theCamera.addCallbackBuffer(buffer);
+			theCamera.setPreviewCallbackWithBuffer(previewCallback);
 			theCamera.startPreview();
 			previewing = true;
 			autoFocusManager = new AutoFocusManager(context, camera);

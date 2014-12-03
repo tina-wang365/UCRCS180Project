@@ -23,7 +23,7 @@ final public class PreviewCallback implements Camera.PreviewCallback
 	int width;
 
 	boolean halfassmutex;
-	boolean firstframe = true;
+	boolean firstframe;
 
 
 	PreviewCallback(CameraConfigurationManager configManager, int height, int width) {
@@ -31,6 +31,7 @@ final public class PreviewCallback implements Camera.PreviewCallback
 		this.height = height;
 		this.width = width;
 		halfassmutex = false;
+		firstframe = true;
 	}
 
 	void setHandler(Handler previewHandler, int previewMessage) {
@@ -53,7 +54,6 @@ final public class PreviewCallback implements Camera.PreviewCallback
 			Message message = thePreviewHandler.obtainMessage(previewMessage, cameraResolution.x, cameraResolution.y, data);
 			message.sendToTarget();
 			previewHandler = null;
-
 		}
 
 		if(!halfassmutex )
