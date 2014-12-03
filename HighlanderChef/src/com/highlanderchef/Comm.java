@@ -142,7 +142,7 @@ public class Comm {
 
 	public int logout() {
 		HashMap<String, String> req = new HashMap<>();
-		req.put("uid", user.id);
+		req.put("uid", Integer.toString(user.id));
 		return apiRequest("logout", req);
 	}
 
@@ -368,7 +368,7 @@ public class Comm {
 				Integer rating = mapper.readValue(cnode.path("rating"), Integer.class);
 				String comment = mapper.readValue(cnode.path("comment"), String.class);
 				String username = mapper.readValue(cnode.path("username"), String.class);
-				r.comments.add(new Comment(id, rating.intValue(), comment, username));
+				r.comments.add(new Comment(r.id, rating.intValue(), comment, username));
 			}
 		} catch (Exception e) {
 			System.out.println("parseRecipe had an exception parsing comments");
@@ -468,7 +468,7 @@ public class Comm {
 
 	public int uploadRecipe(Recipe r) {
 		HashMap<String, Object> req = new HashMap<>();
-		req.put("uid", Integer.toString(id));
+		req.put("uid", Integer.toString(user.id));
 		HashMap<String, Object> recipe = new HashMap<>();
 		recipe.put("rid", r.id);
 		recipe.put("name", r.name);
@@ -500,7 +500,7 @@ public class Comm {
 
 	public int postQuestion(int recipeId, String question) {
 		HashMap<String, String> req = new HashMap<>();
-		req.put("uid", Integer.toString(id));
+		req.put("uid", Integer.toString(user.id));
 		req.put("rid", Integer.toString(recipeId));
 		req.put("question", question);
 		int ret = apiRequest("postquestion", req);
@@ -517,7 +517,7 @@ public class Comm {
 
 	public int postReply(int questionId, String reply) {
 		HashMap<String, String> req = new HashMap<>();
-		req.put("uid", Integer.toString(id));
+		req.put("uid", Integer.toString(user.id));
 		req.put("qid", Integer.toString(questionId));
 		req.put("reply", reply);
 		int ret = apiRequest("postquestion", req);
@@ -532,9 +532,20 @@ public class Comm {
 		}
 	}
 
+	public int follow(int uid) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(uid));
+		apiRequest("follow", req);
+		if (lastStatus == 1) {
+			return SUCCESS;
+		} else {
+			return API_FAIL;
+		}
+	}
+
 	public int postComment(Comment c) {
 		HashMap<String, String> req = new HashMap<>();
-		req.put("uid", Integer.toString(id));
+		req.put("uid", Integer.toString(user.id));
 		req.put("rid", Integer.toString(c.recipeID));
 		req.put("rating", Integer.toString(c.rating));
 		req.put("comment", c.comment);
@@ -552,7 +563,7 @@ public class Comm {
 
 	public int saveDraft(Recipe r) {
 		HashMap<String, Object> req = new HashMap();
-		req.put("uid", Integer.toString(id));
+		req.put("uid", Integer.toString(user.id));
 		HashMap<String, Object> recipe = new HashMap<>();
 		recipe.put("rid", Integer.toString(r.id));
 		recipe.put("name", r.name);
@@ -679,7 +690,7 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-			connection.setRequestProperty("uid", Integer.toString(Comm.id));
+			connection.setRequestProperty("uid", Integer.toString(Comm.user.id));
 			connection.setRequestProperty("token", Comm.authToken);
 			OutputStream os = connection.getOutputStream();
 			os.write(payload);
@@ -723,7 +734,7 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-			connection.setRequestProperty("uid", Integer.toString(Comm.id));
+			connection.setRequestProperty("uid", Integer.toString(Comm.user.id));
 			connection.setRequestProperty("token", Comm.authToken);
 			connection.setRequestProperty("commversion", Integer.toString(Comm.commVersion));
 			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
