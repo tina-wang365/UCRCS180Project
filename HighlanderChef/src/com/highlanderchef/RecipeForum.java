@@ -19,13 +19,16 @@ import android.widget.TextView;
 
 public class RecipeForum extends ActionBarActivity {
 
+	private final int LENGTH_SHORT = 2000;
+	private final int LENGTH_LONG = 7000;
 	Recipe currentRecipe = null;
 	//	Comment currentComment = null;
 	int recipeID = 0;
 	private Button btnComment;
 	private RatingBar ratingBar;
 	boolean ratingBarPressed = false;
-	//User ownerOfRecipe = new User();
+	User ownerOfRecipe = new User();
+	User currentlyLoggedIn = new User();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -204,19 +207,23 @@ public class RecipeForum extends ActionBarActivity {
 		/*
 		bPostQuestion.setOnClickListener(new View.OnClickListener(){
 
+
+			/*
 			//public Question(int uid, String username, String text) {
 			@Override
 			public void onClick(View v)
 			{
 				EditText et2 = (EditText) findViewById(1111);
 				final String comment_text = et2.getText().toString();
-				//Question = new Question(recipe.id, ratingBar.getRating(), comment_text, Comm.getEmail());
+				//Question = new Question(recipe.id, ratingBar.getRating(), comment_text, Comm.getEmail());\
+				/
+				//Question = new Question(Comm.getEmail()
 				addComment(new_comment);
 				et2.getText().clear();
 			}
-		});
+		});*/
 		ll.addView(bPostQuestion);
-		 */
+
 
 		//comments edit text field
 		EditText et_comment = new EditText(this);
@@ -246,6 +253,7 @@ public class RecipeForum extends ActionBarActivity {
 				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT);
 		b_comment.setLayoutParams(params_com);
+		final TextView liveComment = new TextView(this);
 		b_comment.setOnClickListener(new View.OnClickListener(){
 
 			@Override
@@ -256,6 +264,22 @@ public class RecipeForum extends ActionBarActivity {
 				Comment new_comment = new Comment(id, ratingBar.getRating(), comment_text, Comm.getEmail());
 				addComment(new_comment);
 				et2.getText().clear();
+
+				if(Comm.getEmail() != null) {
+					System.out.println("username = " + Comm.getEmail());
+				}
+				else {
+					System.out.println("username is null!");
+				}
+
+
+				liveComment.setText(new_comment.username + "\t\t\"" +
+						new_comment.rating + " stars\"\n" +
+						new_comment.comment + "\n\n\n");
+				liveComment.setLayoutParams(params);
+				liveComment.setBackgroundColor(Color.WHITE);
+				ll.addView(liveComment);
+
 			}
 		});
 		ll.addView(b_comment);
@@ -294,7 +318,6 @@ public class RecipeForum extends ActionBarActivity {
 		tv_comment.setText(comment.username + "\t\t\"" +
 				comment.rating + " stars\"\n" +
 				comment.comment + "\n\n\n");
-		tv_comment.setBackgroundColor(Color.RED);
 
 
 		final LinearLayout.LayoutParams params =
@@ -303,6 +326,7 @@ public class RecipeForum extends ActionBarActivity {
 
 		tv_comment.setLayoutParams(params);
 		LinearLayout ll = (LinearLayout) findViewById(R.id.rflayout);
+		System.out.println("RF addComment to layout");
 		ll.addView(tv_comment);
 
 		new postCommentTask().execute(comment);
@@ -310,10 +334,12 @@ public class RecipeForum extends ActionBarActivity {
 
 
 	public void displayRecipeFailure(String text) {
-		//TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
-		//failedToDisplayRecipe.setVisibility(View.VISIBLE);
-	}
+		//return to search activity.
+		Intent intent = new Intent(this, MainMenu.class);
+		intent.putExtra("errorDisplayRecipe", -1);
+		startActivity(intent);
 
+	}
 
 
 	public void postCommentSuccess() {
@@ -321,9 +347,35 @@ public class RecipeForum extends ActionBarActivity {
 	}
 
 	public void postCommentFailure() {
+		Utility.displayErrorToasts(getApplicationContext(), -2, LENGTH_LONG);
 
 	}
 
+	private class getOwnerOfRecipe extends AsyncTask<Integer, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			Comm c = new Comm();
+			int userId = params[0];
+			//currently doesn't do anything with the user who owns the recipe.
+			//TODO: Need to change c.getUser to c.getUser(uid), when Matt finishes that part.
+			User ret = c.getUser(); //this gets the user who is currently logged in.
+			//Recipe ret = c.getRecipe(params[0]);
+
+			return (ret != null);
+		}
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				Log.v("getOwnerOfRecipeSuccess","Success: User of recipe Received");
+
+
+			} else {
+				Log.v("getOwnerOfRecipeFailure","Failure: Did not receive User of recipe");
+
+			}
+		}
+
+	}
 
 	private class getRecipeTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
