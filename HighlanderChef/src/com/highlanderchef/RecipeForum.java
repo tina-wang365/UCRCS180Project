@@ -2,6 +2,7 @@ package com.highlanderchef;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -23,7 +24,8 @@ public class RecipeForum extends ActionBarActivity {
 	int recipeID = 0;
 	private Button btnComment;
 	private RatingBar ratingBar;
-
+	boolean ratingBarPressed = false;
+	//User ownerOfRecipe = new User();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +104,7 @@ public class RecipeForum extends ActionBarActivity {
 		{
 			//set main image
 			ImageView ivmain = new ImageView(this);
-			ivmain.setImageBitmap(currentRecipe.mainImage);
+			ivmain.setImageBitmap(recipe.mainImage);
 			ivmain.setLayoutParams(params);
 			ll.addView(ivmain);
 		}
@@ -177,7 +179,46 @@ public class RecipeForum extends ActionBarActivity {
 			formatOfDirection = "Direction List size = 0";
 		}
 
-		//commetns edit text field
+
+		ID_Maker MakerInstance = new ID_Maker();
+
+		//Set title of forum board
+		TextView tvQuestionBoardTitle = new TextView(this);
+		tvQuestionBoardTitle.setId(MakerInstance.useCurrID());
+		tvQuestionBoardTitle.setText("Highlander Chef Forum");
+		ll.addView(tvQuestionBoardTitle);
+
+		//postQuestion text field
+		EditText etPostQuestion = new EditText(this);
+		etPostQuestion.setHint("Add a question");
+		etPostQuestion.setId(MakerInstance.useCurrID());
+		etPostQuestion.setLayoutParams(params);
+		ll.addView(etPostQuestion);
+
+		Button bPostQuestion = new Button(this);
+		bPostQuestion.setText("Post Question");
+		final LinearLayout.LayoutParams paramsPostQuestion =
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
+		bPostQuestion.setLayoutParams(paramsPostQuestion);
+		/*
+		bPostQuestion.setOnClickListener(new View.OnClickListener(){
+
+			//public Question(int uid, String username, String text) {
+			@Override
+			public void onClick(View v)
+			{
+				EditText et2 = (EditText) findViewById(1111);
+				final String comment_text = et2.getText().toString();
+				//Question = new Question(recipe.id, ratingBar.getRating(), comment_text, Comm.getEmail());
+				addComment(new_comment);
+				et2.getText().clear();
+			}
+		});
+		ll.addView(bPostQuestion);
+		 */
+
+		//comments edit text field
 		EditText et_comment = new EditText(this);
 		et_comment.setHint("Add a comment");
 		et_comment.setId(1111);
@@ -194,7 +235,7 @@ public class RecipeForum extends ActionBarActivity {
 		ratingBar.setStepSize((float) 0.5);
 		ratingBar.setMax(5);
 		ratingBar.setId(1);
-		ratingBar.setRating(2.0f);
+		ratingBar.setRating(2.5f);
 		ratingBar.setNumStars(5);
 		ll.addView(ratingBar, params_rb);
 
@@ -227,6 +268,7 @@ public class RecipeForum extends ActionBarActivity {
 					recipe.comments.get(i).rating + " stars\"\n" +
 					recipe.comments.get(i).comment + "\n\n\n");
 			tv_comment.setLayoutParams(params);
+			tv_comment.setBackgroundColor(Color.WHITE);
 			ll.addView(tv_comment);
 		}
 	}
@@ -240,9 +282,11 @@ public class RecipeForum extends ActionBarActivity {
 
 	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 		// TODO Auto-generated method stub
+
 		TextView rate_val = new TextView(this);
 		rate_val.setText(Float.toString(ratingBar.getRating()));
-		//tv_comment.rating = ratingBar.getRating();
+		ratingBarPressed = true;
+
 	}
 	public void addComment(Comment comment)
 	{
@@ -250,15 +294,20 @@ public class RecipeForum extends ActionBarActivity {
 		tv_comment.setText(comment.username + "\t\t\"" +
 				comment.rating + " stars\"\n" +
 				comment.comment + "\n\n\n");
+		tv_comment.setBackgroundColor(Color.RED);
+
+
 		final LinearLayout.LayoutParams params =
 				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT);
+
 		tv_comment.setLayoutParams(params);
 		LinearLayout ll = (LinearLayout) findViewById(R.id.rflayout);
 		ll.addView(tv_comment);
 
 		new postCommentTask().execute(comment);
 	}
+
 
 	public void displayRecipeFailure(String text) {
 		//TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
@@ -274,6 +323,7 @@ public class RecipeForum extends ActionBarActivity {
 	public void postCommentFailure() {
 
 	}
+
 
 	private class getRecipeTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
