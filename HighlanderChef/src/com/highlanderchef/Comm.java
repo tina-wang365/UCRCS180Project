@@ -509,7 +509,6 @@ public class Comm {
 		recipe.put("image_url", imageUpload(r.mainImage));
 		recipe.put("categories", r.categories);
 		recipe.put("ingredients", r.ingredients);
-
 		recipe.put("directions", r.directions);
 		try {
 			recipe.put("parseddirs", mapper.writeValueAsString(r.directions));
@@ -642,25 +641,6 @@ public class Comm {
 	//   I guess we don't need this, because we are storing that in our User object
 	public ArrayList<Integer> getDraftList() {
 		return user.drafts;
-		/*
-		HashMap<String, String> req = new HashMap<>();
-		req.put("uid", Integer.toString(id));
-		apiRequest("getdraftlist", req);
-
-		if (lastStatus == 1) {
-			ArrayList<Integer> draftList = new ArrayList<Integer>();
-			Iterator<JsonNode> ite = rootNode.path("drafts").getElements();
-			while (ite.hasNext()) {
-				JsonNode r = ite.next();
-				Integer did = r.getIntValue();
-				draftList.add(did);
-			}
-
-			return draftList;
-		} else {
-			return null;
-		}
-		 */
 	}
 
 	public Recipe getDraft(int draftID) {
