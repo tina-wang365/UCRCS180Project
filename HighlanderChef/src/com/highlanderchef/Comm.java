@@ -544,6 +544,17 @@ public class Comm {
 		}
 	}
 
+	public int addFavorite(int recipeID) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("rid", Integer.toString(recipeID));
+		apiRequest("addfavorite", req);
+		if (lastStatus == 1) {
+			return SUCCESS;
+		} else {
+			return API_FAIL;
+		}
+	}
+
 	public int postComment(Comment c) {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("uid", Integer.toString(user.id));
