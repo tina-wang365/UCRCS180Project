@@ -42,8 +42,10 @@ final public class PreviewCallback implements Camera.PreviewCallback
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera)
 	{
+		System.out.println("PreviewCallback.onPreviewFrame(...)");
 		if(firstframe)
 		{
+			System.out.println("PreviewCallback.onPreviewFrame got firstframe (bailing out)");
 			firstframe = false;
 			return;
 		}
@@ -59,6 +61,7 @@ final public class PreviewCallback implements Camera.PreviewCallback
 		if(!halfassmutex )
 		{
 			halfassmutex = true;
+			System.out.println("PreviewCallback.onPreviewFrame set mutex");
 			/*int nrOfPixels = data.length / 3; // Three bytes per pixel.
 			int pixels[] = new int[nrOfPixels];
 			for(int i = 0; i < nrOfPixels; i++) {
@@ -99,6 +102,8 @@ final public class PreviewCallback implements Camera.PreviewCallback
 			Bitmap image_captured = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 			new CompareAnImage().execute(image_captured);
 
+		} else {
+			System.out.println("PreviewCallback.onPreviewFrame skipping because mutex");
 		}
 	}
 
@@ -123,11 +128,13 @@ final public class PreviewCallback implements Camera.PreviewCallback
 	public void onSuccess()
 	{
 		halfassmutex = false;
+		System.out.println("PreviewCallback.onSuccess unset mutex");
 	}
 
 	public void onFailure()
 	{
 		halfassmutex = false;
+		System.out.println("PreviewCallback.onFailure unset mutex");
 	}
 }
 
