@@ -5,14 +5,18 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainMenu extends ActionBarActivity {
+
+	private static final int LENGTH_LONG = 3500;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -22,16 +26,18 @@ public class MainMenu extends ActionBarActivity {
 
 		Intent intent = getIntent();
 		String con_msg = (String)intent.getSerializableExtra("Recipe Confirmation");
-		TextView tv_con_msg = (TextView) findViewById(R.id.confirmationMessage);
 		if(con_msg == null)
 		{
-
-			tv_con_msg.setVisibility(View.INVISIBLE);
+			;
 		}
 		else
 		{
-			//TODO test this
-			tv_con_msg.setText(con_msg);
+			int pos[] = {0 , 0};
+			pos[0] = this.getResources().getDisplayMetrics().widthPixels;
+			pos[1] = this.getResources().getDisplayMetrics().heightPixels / 4;
+			Toast followToast = Toast.makeText(getApplicationContext(), "Recipe added successfully", LENGTH_LONG);
+			followToast.setGravity(Gravity.TOP, 0, pos[1]); //gravity, x-offset, y-offset
+			followToast.show();
 		}
 	}
 

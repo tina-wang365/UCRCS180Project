@@ -3,7 +3,6 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 //import android.view.ViewGroup;
 
@@ -21,6 +21,7 @@ public class BrowseActivity extends Activity {
 	public static final int LEFTPADDING = 32;
 	private ArrayList<LeveledCheckBox> CheckBoxList;
 	private LinearLayout iLinearLayout;
+	private ProgressBar cSpinner;
 
 	//functions
 	@Override
@@ -31,7 +32,6 @@ public class BrowseActivity extends Activity {
 		iLinearLayout = new LinearLayout(this);
 		iLinearLayout.setOrientation(LinearLayout.VERTICAL);
 		iScrollView.addView(iLinearLayout);
-
 		//Get categories' names
 		new CategoryTask().execute();
 		this.setContentView(iScrollView);
@@ -153,77 +153,3 @@ public class BrowseActivity extends Activity {
 
 	}
 }
-
-class ID_Maker
-{
-	private static ID_Maker instance = null;
-	private int CurrIdNum;
-	protected ID_Maker() {
-		CurrIdNum = 1;
-	}
-	public static ID_Maker getInstance() {
-		if(instance == null) {
-			instance = new ID_Maker();
-		}
-		return instance;
-	}
-	public int useCurrID()
-	{
-		int returnValue = CurrIdNum;
-		CurrIdNum = CurrIdNum + 1;
-		return returnValue;
-	}
-}
-
-class LeveledCheckBox extends CheckBox
-{
-	private final int cLevel;
-	private final ArrayList<LeveledCheckBox> cChildren;
-	Category cData;
-	public LeveledCheckBox(Context iContext, int iLevel, Category iData)
-	{
-		super(iContext);
-		cChildren = new ArrayList<LeveledCheckBox>();
-		cLevel = iLevel;
-		cData = iData;
-	}
-	public int getLevel()
-	{
-		return cLevel;
-	}
-	public void addChild(LeveledCheckBox iCheckBox)
-	{
-		cChildren.add(iCheckBox);
-	}
-	public void removeChildren()
-	{
-		cChildren.clear();
-	}
-	public ArrayList<LeveledCheckBox> getCheck()
-	{
-		return null;
-	}
-	public int getDeepestLevel()
-	{
-		if (cChildren.isEmpty())
-			return cLevel;
-		else
-		{
-			int biggest = 0;
-			for (int i = 0; i < cChildren.size() ; i++)
-				if (cChildren.get(i).getDeepestLevel() > biggest)
-					biggest = cChildren.get(i).getDeepestLevel();
-			return biggest;
-		}
-	}
-	@Override
-	public void bringToFront()
-	{
-		super.bringToFront();
-		for (int i = 0; i < cChildren.size(); i++)
-		{
-			cChildren.get(i).bringToFront();
-		}
-	}
-}
-
