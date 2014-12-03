@@ -1,229 +1,81 @@
 package com.highlanderchef;
 
-import java.io.IOException;
-
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.TextView;
+import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 
-public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callback{
+public class ImageComp extends ActionBarActivity
+{
 
-	int recipeID = 0;
-	Bitmap image1;
+	private CameraPreview camPreview;
+	private FrameLayout mainLayout;
 
-	private CameraManager cameraManager;
-	private CaptureActivityHandler handler;
-	private TextView statusView;
-	private View resultView;
-	private boolean hasSurface;
-	//private InactivityTimer inactivityTimer;
-
-
-
-	public Handler getHandler() {
-		return handler;
-	}
-
-	CameraManager getCameraManager() {
-		return cameraManager;
-	}
+	private final Handler mHandler = new Handler(Looper.getMainLooper());
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
+		//Set this SPK Full screen
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//Set this APK no title
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_image_comp);
 
-		Intent intent = getIntent();
-		image1 = (Bitmap)intent.getParcelableExtra("image");
+		SurfaceView camView = new SurfaceView(this);
+		SurfaceHolder camHolder = camView.getHolder();
+		camPreview = new CameraPreview(640, 480);
 
-		//ImageView iv_image1 = (ImageView) findViewById(R.id.image1);
-		//iv_image1.setImageBitmap(image1);
+		camHolder.addCallback(camPreview);
+		camHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-		hasSurface = false;
-		//inactivityTimer = new InactivityTimer(this);
+		mainLayout = (FrameLayout) findViewById(R.id.camera_preview);
+		mainLayout.addView(camView, new LayoutParams(640, 480));
 	}
 
 	@Override
-	protected void onResume()
+	public boolean onTouchEvent(MotionEvent event)
 	{
-		super.onResume();
-
-		// CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
-		// want to open the camera driver and measure the screen size if we're going to show the help on
-		// first launch. That led to bugs where the scanning rectangle was the wrong size and partially
-		// off screen.
-		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-		SurfaceHolder surfaceHolder = surfaceView.getHolder();
-		cameraManager = new CameraManager(getApplication(), surfaceView.getHeight(), surfaceView.getWidth() );
-
-
-		//resultView = findViewById(R.id.result_view);
-		//statusView = (TextView) findViewById(R.id.status_view);
-
-		handler = null;
-
-		//resetStatusView();
-
-
-
-		if (hasSurface) {
-			// The activity was paused but not stopped, so the surface still exists. Therefore
-			// surfaceCreated() won't be called, so init the camera here.
-			initCamera(surfaceHolder);
-		} else {
-			// Install the callback and wait for surfaceCreated() to init the camera.
-			surfaceHolder.addCallback(this);
-		}
-
-		//inactivityTimer.onResume();
-
-		Intent intent = getIntent();
-	}
-
-	@Override
-	protected void onPause()
-	{
-		if (handler != null) {
-			handler.quitSynchronously();
-			handler = null;
-		}
-		//inactivityTimer.onPause();
-		cameraManager.closeDriver();
-		if (!hasSurface) {
-			SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-			SurfaceHolder surfaceHolder = surfaceView.getHolder();
-			surfaceHolder.removeCallback(this);
-		}
-		super.onPause();
-	}
-	@Override
-	protected void onDestroy()
-	{
-		//inactivityTimer.shutdown();
-		super.onDestroy();
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-		case KeyEvent.KEYCODE_BACK:
-			/*if (source == IntentSource.NATIVE_APP_INTENT) {
-				setResult(RESULT_CANCELED);
-				finish();
-				return true;
-			}*/
-			/*if ((source == IntentSource.NONE || source == IntentSource.ZXING_LINK) && lastResult != null) {
-				restartPreviewAfterDelay(0L);
-				return true;
-			}*/
-			break;
-		case KeyEvent.KEYCODE_FOCUS:
-		case KeyEvent.KEYCODE_CAMERA:
-			// Handle these events so they don't launch the Camera app
-			return true;
-			// Use volume up/down to turn on light
-		case KeyEvent.KEYCODE_VOLUME_DOWN:
-			cameraManager.setTorch(false);
-			return true;
-		case KeyEvent.KEYCODE_VOLUME_UP:
-			cameraManager.setTorch(true);
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
-
-
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent)
-	{
-		if (resultCode == RESULT_OK) {
-			/*if (requestCode == HISTORY_REQUEST_CODE) {
-				int itemNumber = intent.getIntExtra(Intents.History.ITEM_NUMBER, -1);
-				if (itemNumber >= 0) {
-					HistoryItem historyItem = historyManager.buildHistoryItem(itemNumber);
-
-					//TODO change this to perform image comp
-					decodeOrStoreSavedBitmap(null, historyItem.getResult());
-				}
-			}*/
-		}
-	}
-
-	@Override
-	public void surfaceCreated(SurfaceHolder holder)
-	{
-		if (holder == null) {
-
-		}
-		if (!hasSurface) {
-			hasSurface = true;
-			initCamera(holder);
-		}
-	}
-
-	@Override
-	public void surfaceDestroyed(SurfaceHolder holder)
-	{
-		hasSurface = false;
-	}
-
-	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-	}
-
-
-	private void initCamera(SurfaceHolder surfaceHolder)
-	{
-		if (surfaceHolder == null) {
-			throw new IllegalStateException("No SurfaceHolder provided");
-		}
-		if (cameraManager.isOpen()) {
-
-			return;
-		}
-		try {
-			cameraManager.openDriver(surfaceHolder);
-			// Creating the handler starts the preview, which can also throw a RuntimeException.
-			if (handler == null) {
-				handler = new CaptureActivityHandler(this, cameraManager);
-			}
-			//decodeOrStoreSavedBitmap(null, null);
-		} catch (IOException ioe) {
-		} catch (RuntimeException e) {
-		}
-	}
-
-	public void restartPreviewAfterDelay(long delayMS)
-	{
-		if (handler != null)
+		if (event.getAction() == MotionEvent.ACTION_DOWN)
 		{
-			//handler.sendEmptyMessageDelayed(R.id.restart_preview, delayMS);
+			int X = (int)event.getX();
+			if ( X >= 640 )
+				mHandler.postDelayed(TakePicture, 300);
+			else
+				camPreview.CameraStartAutoFocus();
 		}
-		resetStatusView();
-	}
+		return true;
+	};
 
-	private void resetStatusView() {
-		resultView.setVisibility(View.GONE);
-		//statusView.setText(R.string.msg_default_status);
-		statusView.setVisibility(View.VISIBLE);
-		//lastResult = null;
-	}
-
+	private final Runnable TakePicture = new Runnable()
+	{
+		//String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
+		//String MyDirectory_path = extStorageDirectory;
+		//String PictureFileName;
+		@Override
+		public void run()
+		{
+			/*File file = new File(MyDirectory_path);
+	   if (!file.exists())
+	    file.mkdirs();
+	   PictureFileName = MyDirectory_path + "/MyPicture.jpg";
+	   camPreview.CameraTakePicture(PictureFileName);*/
+		}
+	};
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.image_comp, menu);
+		getMenuInflater().inflate(R.menu.camera, menu);
 		return true;
 	}
 
@@ -238,4 +90,7 @@ public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callba
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+
+
 }
