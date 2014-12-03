@@ -32,7 +32,7 @@ public class UserHomepage extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_homepage);
 		Intent intent = getIntent();
-		currentUserID = intent.getIntExtra("userID", 0);
+		currentUserID = intent.getIntExtra("userID", Comm.staticGetUserID());
 		new UsernameTask().execute();
 		new UserRecipes().execute(Integer.toString(currentUserID));
 	}

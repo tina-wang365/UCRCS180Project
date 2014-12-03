@@ -33,10 +33,11 @@ public class Comm {
 	private JsonNode rootNode;
 
 	// User account info
-	private static volatile int id;
-	private static volatile String email = "";
-	private static volatile String authToken = "";
 	private static volatile User user;
+	private static volatile String authToken = "";
+
+	// Image cache
+	private static volatile HashMap<String, Bitmap> imagecache;
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
@@ -52,32 +53,40 @@ public class Comm {
 	}
 
 	private void initMapper() {
-		mapper = new ObjectMapper();
-		registerMapperSerializers();
-		mapper.getJsonFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
-		mapper.getJsonFactory().configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, true);
+		if (mapper == null) {
+			mapper = new ObjectMapper();
+			registerMapperSerializers();
+			mapper.getJsonFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+			mapper.getJsonFactory().configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, true);
+		}
 	}
 
 	public Comm() {
 		System.out.println("Creating new Comm");
 		lastJSON = "";
 		initMapper();
+		if (imagecache == null) {
+			imagecache = new HashMap<>();
+		}
 	}
 
 	public static User getUser() {
+		System.out.println("Comm.getUser() => " + user);
 		return user;
 	}
 
 	public int getUserID() {
-		return id;
+		return user.id;
 	}
 
 	public static int staticGetUserID() {
-		return id;
+		System.out.println("Comm.getEmail() => " + user.id);
+		return user.id;
 	}
 
 	public static String getEmail() {
-		return email;
+		System.out.println("Comm.getEmail() => " + user.username);
+		return user.username;
 	}
 
 	public String getAuthToken() {
@@ -144,7 +153,7 @@ public class Comm {
 
 	public int logout() {
 		HashMap<String, String> req = new HashMap<>();
-		req.put("uid", user.id);
+		req.put("uid", Integer.toString(user.id));
 		return apiRequest("logout", req);
 	}
 
@@ -160,12 +169,11 @@ public class Comm {
 				if (lastStatus == 1) {
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
-					this.email = email;
-					Integer userId = mapper.readValue(rootNode.path("id"), Integer.class);
-					this.id = userId.intValue();
 
 					User u = new User();
 					JsonNode un = rootNode.path("user");
+					u.id = mapper.readValue(un.path("id"), Integer.class);
+					u.username = mapper.readValue(un.path("username"), String.class);
 					Iterator<JsonNode> ite;
 
 					ite = un.path("recipes").getElements();
@@ -204,6 +212,7 @@ public class Comm {
 					return API_FAIL;
 				}
 			} catch (Exception e) {
+				System.out.println("LOGIN FAIL: ");
 				e.printStackTrace();
 				return JSON_ERROR;
 			}
@@ -271,6 +280,11 @@ public class Comm {
 			return null;
 		}
 
+		if (imagecache.containsKey(relUrl)) {
+			System.out.println("Comm.getImage using cached bitmap");
+			return imagecache.get(relUrl);
+		}
+
 		try {
 			URL url = new URL(serverImgRoot + relUrl);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -294,6 +308,7 @@ public class Comm {
 				return null;
 			} else {
 				connection.disconnect();
+				imagecache.put(relUrl, bitmap);
 				return bitmap;
 			}
 		} catch (Exception e) {
@@ -373,7 +388,7 @@ public class Comm {
 				Integer rating = mapper.readValue(cnode.path("rating"), Integer.class);
 				String comment = mapper.readValue(cnode.path("comment"), String.class);
 				String username = mapper.readValue(cnode.path("username"), String.class);
-				r.comments.add(new Comment(id, rating.intValue(), comment, username));
+				r.comments.add(new Comment(r.id, rating.intValue(), comment, username));
 			}
 		} catch (Exception e) {
 			System.out.println("parseRecipe had an exception parsing comments");
@@ -439,6 +454,10 @@ public class Comm {
 			r = new Recipe(id, name, description, getImage(image_url));
 			String cooktime = mapper.readValue(node.path("cooktime"), String.class);
 			r.setCookTime(cooktime);
+			Integer uid = mapper.readValue(node.path("rid"), Integer.class);
+			r.uid = uid;
+			String username = mapper.readValue(node.path("username"), String.class);
+			r.username = username;
 
 			if (!brief) {
 				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
@@ -473,7 +492,7 @@ public class Comm {
 
 	public int uploadRecipe(Recipe r) {
 		HashMap<String, Object> req = new HashMap<>();
-		req.put("uid", Integer.toString(id));
+		req.put("uid", Integer.toString(user.id));
 		HashMap<String, Object> recipe = new HashMap<>();
 		recipe.put("rid", r.id);
 		recipe.put("name", r.name);
@@ -505,7 +524,7 @@ public class Comm {
 
 	public int postQuestion(int recipeId, String question) {
 		HashMap<String, String> req = new HashMap<>();
-		req.put("uid", Integer.toString(id));
+		req.put("uid", Integer.toString(user.id));
 		req.put("rid", Integer.toString(recipeId));
 		req.put("question", question);
 		int ret = apiRequest("postquestion", req);
@@ -522,7 +541,7 @@ public class Comm {
 
 	public int postReply(int questionId, String reply) {
 		HashMap<String, String> req = new HashMap<>();
-		req.put("uid", Integer.toString(id));
+		req.put("uid", Integer.toString(user.id));
 		req.put("qid", Integer.toString(questionId));
 		req.put("reply", reply);
 		int ret = apiRequest("postquestion", req);
@@ -537,9 +556,31 @@ public class Comm {
 		}
 	}
 
+	public int follow(int uid) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(uid));
+		apiRequest("follow", req);
+		if (lastStatus == 1) {
+			return SUCCESS;
+		} else {
+			return API_FAIL;
+		}
+	}
+
+	public int addFavorite(int recipeID) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("rid", Integer.toString(recipeID));
+		apiRequest("addfavorite", req);
+		if (lastStatus == 1) {
+			return SUCCESS;
+		} else {
+			return API_FAIL;
+		}
+	}
+
 	public int postComment(Comment c) {
 		HashMap<String, String> req = new HashMap<>();
-		req.put("uid", Integer.toString(id));
+		req.put("uid", Integer.toString(user.id));
 		req.put("rid", Integer.toString(c.recipeID));
 		req.put("rating", Integer.toString(c.rating));
 		req.put("comment", c.comment);
@@ -557,7 +598,7 @@ public class Comm {
 
 	public int saveDraft(Recipe r) {
 		HashMap<String, Object> req = new HashMap();
-		req.put("uid", Integer.toString(id));
+		req.put("uid", Integer.toString(user.id));
 		HashMap<String, Object> recipe = new HashMap<>();
 		recipe.put("rid", Integer.toString(r.id));
 		recipe.put("name", r.name);
@@ -612,7 +653,7 @@ public class Comm {
 		} else {
 			return null;
 		}
-		*/
+		 */
 	}
 
 	public Recipe getDraft(int draftID) {
@@ -621,6 +662,18 @@ public class Comm {
 		apiRequest("getdraft", req);
 
 		return parseRecipe(rootNode.path("recipe"));
+	}
+
+	public int deleteDraft(int draftID) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("did", Integer.toString(draftID));
+		apiRequest("deletedraft", req);
+
+		if (lastStatus == 1) {
+			return SUCCESS;
+		} else {
+			return API_FAIL;
+		}
 	}
 
 
@@ -663,6 +716,9 @@ public class Comm {
 			return apiRequestPayload(relUrl, "");
 		}
 		try {
+			if (mapper == null) {
+				System.out.println("apiRequest has a null mapper");
+			}
 			return apiRequestPayload(relUrl, mapper.writeValueAsString(o));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -684,7 +740,7 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-			connection.setRequestProperty("uid", Integer.toString(Comm.id));
+			connection.setRequestProperty("uid", Integer.toString(Comm.user.id));
 			connection.setRequestProperty("token", Comm.authToken);
 			OutputStream os = connection.getOutputStream();
 			os.write(payload);
@@ -728,7 +784,9 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-			connection.setRequestProperty("uid", Integer.toString(Comm.id));
+			if (Comm.user != null) {
+				connection.setRequestProperty("uid", Integer.toString(Comm.user.id));
+			}
 			connection.setRequestProperty("token", Comm.authToken);
 			connection.setRequestProperty("commversion", Integer.toString(Comm.commVersion));
 			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
@@ -758,8 +816,8 @@ public class Comm {
 				return API_FAIL;
 			}
 		} catch (Exception e) {
+			System.out.println("apiRequestPayload caught an exception:");
 			System.out.println(e.getMessage());
-			System.out.println("failed in apiRequest: failed URL");
 			return NETWORK_FAIL;
 		}
 	}
