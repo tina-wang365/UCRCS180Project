@@ -738,7 +738,9 @@ public class Comm {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-			connection.setRequestProperty("uid", Integer.toString(Comm.user.id));
+			if (Comm.user != null) {
+				connection.setRequestProperty("uid", Integer.toString(Comm.user.id));
+			}
 			connection.setRequestProperty("token", Comm.authToken);
 			connection.setRequestProperty("commversion", Integer.toString(Comm.commVersion));
 			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
@@ -768,8 +770,8 @@ public class Comm {
 				return API_FAIL;
 			}
 		} catch (Exception e) {
+			System.out.println("apiRequestPayload caught an exception:");
 			System.out.println(e.getMessage());
-			System.out.println("failed in apiRequest: failed URL");
 			return NETWORK_FAIL;
 		}
 	}
