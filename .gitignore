@@ -33,3 +33,5 @@ proguard/
 .metadata
 HighlanderChef/.classpath
 HighlanderChef/.classpath
+
+*.pdf
