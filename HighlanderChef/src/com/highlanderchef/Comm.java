@@ -435,6 +435,10 @@ public class Comm {
 			r = new Recipe(id, name, description, getImage(image_url));
 			String cooktime = mapper.readValue(node.path("cooktime"), String.class);
 			r.setCookTime(cooktime);
+			Integer uid = mapper.readValue(node.path("rid"), Integer.class);
+			r.uid = uid;
+			String username = mapper.readValue(node.path("username"), String.class);
+			r.username = username;
 
 			if (!brief) {
 				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
