@@ -3,6 +3,8 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
@@ -20,6 +22,27 @@ public class Utility
 	{
 		if (iSpinner != null)
 			((ViewGroup) iSpinner.getParent()).removeView(iSpinner);
+	}
+	static public void UploadDraft(Recipe draft)
+	{
+		new UploadDraftTask().execute(draft);
+	}
+	static private class UploadDraftTask extends AsyncTask<Recipe, Void, Boolean>
+	{
+		User cUser = new User();
+		@Override
+		protected Boolean doInBackground(Recipe... params) {
+			cUser = Comm.getUser();
+			return (cUser.getUsername().length() > 0);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result != true) {
+				Log.e("get_user_fail","Could not get username from server.");
+			}
+		}
+
 	}
 }
 
