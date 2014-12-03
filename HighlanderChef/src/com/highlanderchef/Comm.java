@@ -199,6 +199,7 @@ public class Comm {
 					return API_FAIL;
 				}
 			} catch (Exception e) {
+				System.out.println("LOGIN FAIL: ");
 				e.printStackTrace();
 				return JSON_ERROR;
 			}
@@ -669,6 +670,9 @@ public class Comm {
 			return apiRequestPayload(relUrl, "");
 		}
 		try {
+			if (mapper == null) {
+				System.out.println("apiRequest has a null mapper");
+			}
 			return apiRequestPayload(relUrl, mapper.writeValueAsString(o));
 		} catch (Exception e) {
 			e.printStackTrace();
