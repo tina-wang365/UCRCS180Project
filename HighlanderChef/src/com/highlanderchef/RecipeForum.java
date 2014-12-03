@@ -303,6 +303,7 @@ public class RecipeForum extends ActionBarActivity {
 
 		tv_comment.setLayoutParams(params);
 		LinearLayout ll = (LinearLayout) findViewById(R.id.rflayout);
+		System.out.println("RF addComment to layout");
 		ll.addView(tv_comment);
 
 		new postCommentTask().execute(comment);
