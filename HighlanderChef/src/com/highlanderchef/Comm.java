@@ -641,6 +641,18 @@ public class Comm {
 		return parseRecipe(rootNode.path("recipe"));
 	}
 
+	public int deleteDraft(int draftID) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("did", Integer.toString(draftID));
+		apiRequest("deletedraft", req);
+
+		if (lastStatus == 1) {
+			return SUCCESS;
+		} else {
+			return API_FAIL;
+		}
+	}
+
 
 	/*
 	 * getCategories returns a pre-sorted list of categories.
