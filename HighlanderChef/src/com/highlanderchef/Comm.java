@@ -36,6 +36,9 @@ public class Comm {
 	private static volatile User user;
 	private static volatile String authToken = "";
 
+	// Image cache
+	private static volatile HashMap<String, Bitmap> imagecache;
+
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
 	public static final int API_FAIL = -50;
@@ -50,19 +53,25 @@ public class Comm {
 	}
 
 	private void initMapper() {
-		mapper = new ObjectMapper();
-		registerMapperSerializers();
-		mapper.getJsonFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
-		mapper.getJsonFactory().configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, true);
+		if (mapper == null) {
+			mapper = new ObjectMapper();
+			registerMapperSerializers();
+			mapper.getJsonFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+			mapper.getJsonFactory().configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, true);
+		}
 	}
 
 	public Comm() {
 		System.out.println("Creating new Comm");
 		lastJSON = "";
 		initMapper();
+		if (imagecache == null) {
+			imagecache = new HashMap<>();
+		}
 	}
 
 	public static User getUser() {
+		System.out.println("Comm.getUser() => " + user);
 		return user;
 	}
 
@@ -71,10 +80,12 @@ public class Comm {
 	}
 
 	public static int staticGetUserID() {
+		System.out.println("Comm.getEmail() => " + user.id);
 		return user.id;
 	}
 
 	public static String getEmail() {
+		System.out.println("Comm.getEmail() => " + user.username);
 		return user.username;
 	}
 
@@ -161,6 +172,8 @@ public class Comm {
 
 					User u = new User();
 					JsonNode un = rootNode.path("user");
+					u.id = mapper.readValue(un.path("id"), Integer.class);
+					u.username = mapper.readValue(un.path("username"), String.class);
 					Iterator<JsonNode> ite;
 
 					ite = un.path("recipes").getElements();
@@ -267,6 +280,11 @@ public class Comm {
 			return null;
 		}
 
+		if (imagecache.containsKey(relUrl)) {
+			System.out.println("Comm.getImage using cached bitmap");
+			return imagecache.get(relUrl);
+		}
+
 		try {
 			URL url = new URL(serverImgRoot + relUrl);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -290,6 +308,7 @@ public class Comm {
 				return null;
 			} else {
 				connection.disconnect();
+				imagecache.put(relUrl, bitmap);
 				return bitmap;
 			}
 		} catch (Exception e) {
@@ -469,7 +488,14 @@ public class Comm {
 		return parseRecipe(rootNode.path("recipe"));
 	}
 
-
+	public int clearNotifications() {
+		apiRequest("clearnotifications", null);
+		if (lastStatus == 1) {
+			return SUCCESS;
+		} else {
+			return API_FAIL;
+		}
+	}
 
 	public int uploadRecipe(Recipe r) {
 		HashMap<String, Object> req = new HashMap<>();
@@ -634,7 +660,7 @@ public class Comm {
 		} else {
 			return null;
 		}
-		*/
+		 */
 	}
 
 	public Recipe getDraft(int draftID) {
