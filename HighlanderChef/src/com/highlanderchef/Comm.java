@@ -36,12 +36,7 @@ public class Comm {
 	private static volatile int id;
 	private static volatile String email = "";
 	private static volatile String authToken = "";
-	//MILESTONE1
-	private static ArrayList<Recipe> favorites;
-	private static ArrayList<Integer> followers; //users that are following THIS user
-	private static ArrayList<Integer> following; //users that THIS user are following
-	private static Boolean update;
-
+	private static volatile User user;
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
@@ -69,7 +64,15 @@ public class Comm {
 		initMapper();
 	}
 
+	public static User getUser() {
+		return user;
+	}
+
 	public int getUserID() {
+		return id;
+	}
+
+	public static int staticGetUserID() {
 		return id;
 	}
 
@@ -84,14 +87,7 @@ public class Comm {
 	public String getLastJSON() {
 		return lastJSON;
 	}
-	//MILESTONE1
-	public ArrayList<Recipe> getFavorites() {
-		return favorites;
-	}
-	//MILESTONE1
-	public ArrayList<Integer> getFollowers() {
-		return followers;
-	}
+
 	public static void prettyPrint(String s) {
 		try {
 			Object json = mapper.readValue(s, Object.class);
@@ -106,23 +102,6 @@ public class Comm {
 			System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
 		} catch (Exception e) {
 			System.out.println("EXCEPTION in prettyPrint");
-		}
-	}
-	//MILESTONE1
-	public static void sendNotificationToFollowers() {
-		if(update) {
-			for(int i = 0; i < followers.size(); i++) {
-				//send notification that you have uploaded a new recipe
-				//set update to false
-			}
-		}
-	}
-	//MILESTONE1
-	public static void checkNotification() {
-		for(int i = 0; i < following.size(); i++) {
-			//if(following[i].update == true) { //conflict here. list "following" should be object "users" and not just an integer of their id
-			//update list and show the recipe they have just uploaded
-			//}
 		}
 	}
 
@@ -163,6 +142,12 @@ public class Comm {
 		return apiRequest("signup", req);
 	}
 
+	public int logout() {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", user.id);
+		return apiRequest("logout", req);
+	}
+
 	public int login(String email, String password) {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("email", email);
@@ -178,6 +163,42 @@ public class Comm {
 					this.email = email;
 					Integer userId = mapper.readValue(rootNode.path("id"), Integer.class);
 					this.id = userId.intValue();
+
+					User u = new User();
+					JsonNode un = rootNode.path("user");
+					Iterator<JsonNode> ite;
+
+					ite = un.path("recipes").getElements();
+					while (ite.hasNext()) {
+						u.recipes.add(ite.next().getIntValue());
+					}
+
+					ite = un.path("drafts").getElements();
+					while (ite.hasNext()) {
+						u.drafts.add(ite.next().getIntValue());
+					}
+
+					ite = un.path("followers").getElements();
+					while (ite.hasNext()) {
+						u.followers.add(ite.next().getIntValue());
+					}
+
+					ite = un.path("following").getElements();
+					while (ite.hasNext()) {
+						u.following.add(ite.next().getIntValue());
+					}
+
+					ite = un.path("favorites").getElements();
+					while (ite.hasNext()) {
+						u.favorites.add(ite.next().getIntValue());
+					}
+
+					ite = un.path("notifications").getElements();
+					while (ite.hasNext()) {
+						u.notifications.add(ite.next().getIntValue());
+					}
+
+					this.user = u;
 					return SUCCESS;
 				} else {
 					return API_FAIL;
@@ -340,13 +361,12 @@ public class Comm {
 
 	private void parseComments(Recipe r, JsonNode node) {
 		try {
-			System.out.print("node: ");
+			System.out.print("comments node: ");
 			prettyPrint(node);
 			Float rRating = mapper.readValue(node.path("rating"), Float.class);
 			r.rating = rRating.floatValue();
 			Iterator<JsonNode> ite = node.path("comments").getElements();
-			while(ite.hasNext())
-			{
+			while(ite.hasNext()) {
 				JsonNode cnode = ite.next();
 				System.out.print("cnode: ");
 				prettyPrint(cnode);
@@ -357,6 +377,45 @@ public class Comm {
 			}
 		} catch (Exception e) {
 			System.out.println("parseRecipe had an exception parsing comments");
+			e.printStackTrace();
+		}
+	}
+
+	private void parseQuestions(Recipe r, JsonNode node) {
+		try {
+			System.out.print("question node: ");
+			prettyPrint(node);
+
+			Iterator<JsonNode> ite = node.path("questions").getElements();
+			while(ite.hasNext()) {
+				JsonNode qnode = ite.next();
+				System.out.print("qnode: ");
+				prettyPrint(qnode);
+
+				Integer quid = mapper.readValue(qnode.path("uid"), Integer.class);
+				String qusername = mapper.readValue(qnode.path("username"), String.class);
+				String qtext = mapper.readValue(qnode.path("question"), String.class);
+
+				ArrayList<Question> replies = new ArrayList<Question>();
+				Iterator<JsonNode> iter = node.path("replies").getElements();
+				while (iter.hasNext()) {
+					JsonNode rnode = iter.next();
+					System.out.print("rnode: ");
+					prettyPrint(rnode);
+					Integer uid = mapper.readValue(rnode.path("uid"), Integer.class);
+					String username = mapper.readValue(rnode.path("username"), String.class);
+					String text = mapper.readValue(rnode.path("reply"), String.class);
+
+					replies.add(new Question(uid, username, text));
+				}
+
+				if (r.questions == null) {
+					r.questions = new ArrayList<Question>();
+				}
+				r.questions.add(new Question(quid, qusername, qtext, replies));
+			}
+		} catch (Exception e) {
+			System.out.println("parseQuestions had an exception parsing questions");
 			e.printStackTrace();
 		}
 	}
@@ -390,6 +449,8 @@ public class Comm {
 				r.parseCategoriesFromJson(categoriesJson);
 				JsonNode commentsNode = node.path("comments");
 				parseComments(r, commentsNode);
+				JsonNode questionsNode = node.path("questions");
+				parseQuestions(r, questionsNode);
 			}
 
 			return r;
@@ -436,9 +497,6 @@ public class Comm {
 		apiRequest("uploadrecipe", req);
 
 		if (lastStatus == 1) {
-			//MILESTONE1
-			req.put("update", true);
-			this.update = true; //i think its supposed to be this one
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -498,7 +556,7 @@ public class Comm {
 	}
 
 	public int saveDraft(Recipe r) {
-		HashMap<String, String> req = new HashMap();
+		HashMap<String, Object> req = new HashMap();
 		req.put("uid", Integer.toString(id));
 		HashMap<String, Object> recipe = new HashMap<>();
 		recipe.put("rid", Integer.toString(r.id));
@@ -530,6 +588,39 @@ public class Comm {
 		} else {
 			return ret;
 		}
+	}
+
+	// get the list of draft ids for the current user
+	//   I guess we don't need this, because we are storing that in our User object
+	public ArrayList<Integer> getDraftList() {
+		return user.drafts;
+		/*
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(id));
+		apiRequest("getdraftlist", req);
+
+		if (lastStatus == 1) {
+			ArrayList<Integer> draftList = new ArrayList<Integer>();
+			Iterator<JsonNode> ite = rootNode.path("drafts").getElements();
+			while (ite.hasNext()) {
+				JsonNode r = ite.next();
+				Integer did = r.getIntValue();
+				draftList.add(did);
+			}
+
+			return draftList;
+		} else {
+			return null;
+		}
+		*/
+	}
+
+	public Recipe getDraft(int draftID) {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("did", Integer.toString(draftID));
+		apiRequest("getdraft", req);
+
+		return parseRecipe(rootNode.path("recipe"));
 	}
 
 
