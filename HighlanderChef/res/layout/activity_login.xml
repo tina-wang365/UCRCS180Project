@@ -39,7 +39,6 @@
         android:text="@string/Invalidlogin" />
     
     <Button
-		android:id="@+id/angry_btn"
 		android:text="@string/login"
 		android:textColor="#FFFFFF"
 		android:textSize="30sp"

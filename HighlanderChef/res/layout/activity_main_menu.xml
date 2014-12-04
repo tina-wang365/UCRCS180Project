@@ -40,9 +40,9 @@
         android:id="@+id/editText1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:ems="10"
         android:layout_alignLeft="@+id/button3"
         android:layout_below="@+id/textView1"
-        android:ems="22"
         android:hint="@string/Search_Recipes" >
 
         <requestFocus />
