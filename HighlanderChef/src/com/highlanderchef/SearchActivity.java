@@ -24,6 +24,7 @@ public class SearchActivity extends ActionBarActivity {
 	private final String SearchByString = "Search By String";
 	private final String SearchByCategory = "Search By Category";
 	private final String SearchByMyUID = "Search By UID";
+	private final String ViewDrafts = "ViewDrafts";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,11 @@ public class SearchActivity extends ActionBarActivity {
 			new SearchTask().execute(SearchByString, query);
 		} else if(category != null) {
 			new SearchTask().execute(SearchByCategory, category);
-		} else {
+		}
+		else if (intent.getStringExtra(ViewDrafts) != null){
+			new SearchTask().execute(ViewDrafts);
+		}
+		else {
 			new SearchTask().execute(SearchByMyUID);
 		}
 
@@ -166,6 +171,10 @@ public class SearchActivity extends ActionBarActivity {
 				ret = c.searchRecipesByCategory(Integer.parseInt(params[1]));
 			} else if (params[0] == SearchByMyUID) {
 				ret = c.searchRecipesByUID(c.getUserID());
+			} else if (params[0] == ViewDrafts) {
+				ArrayList<Integer> DraftsID = c.getDraftList();
+				for (int i = 0; i < DraftsID.size(); i++)
+					ret.add(c.getDraft(DraftsID.get(i)));
 			}
 			return (ret.size() > 0);
 		}

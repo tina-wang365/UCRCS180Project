@@ -3,9 +3,9 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.view.Gravity;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 public class Utility
 {
+	private static final int TOAST_MESSAGE_LENGTH = 3500;
+
 	static public ProgressBar DisplaySpinner(Context iContext, ViewGroup iLayout)
 	{
 		ProgressBar ISpinner = new ProgressBar(iContext);
@@ -29,14 +31,19 @@ public class Utility
 	{
 		new UploadDraftTask().execute(draft);
 	}
-	static private class UploadDraftTask extends AsyncTask<Recipe, Void, Boolean>
+	static public UserTask GetLoggedInUser()
 	{
-		User cUser = new User();
-		@Override
-		protected Boolean doInBackground(Recipe... params) {
-			cUser = Comm.getUser();
-			return (cUser.getUsername().length() > 0);
-		}
+		UserTask ITask = new UserTask();
+		ITask.execute();
+		return ITask;
+	}
+	static public void displayErrorToast(Context iContext, String iMessage)
+	{
+		Toast toastErrorMessage;
+		toastErrorMessage = Toast.makeText(iContext, iMessage, TOAST_MESSAGE_LENGTH);
+		toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
+		toastErrorMessage.show();
+	}
 	static public void displayErrorToasts(Context context, Integer errorValue, Integer duration) {
 
 		Toast toastErrorMessage;
@@ -53,11 +60,42 @@ public class Utility
 			break;
 		default:
 			break;
-
+		}
+	}
+	static private class UploadDraftTask extends AsyncTask<Recipe, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Recipe... params) {
+			Comm IComm = new Comm();
+			int Status = IComm.saveDraft(params[0]);
+			return (Status == Comm.SUCCESS);
+		}
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result != true) {
-				Log.e("get_user_fail","Could not get username from server.");
+				Log.e("FailUpload","Could not upload draft to server.");
+			}
+			else {
+				Log.v("UploadSucess", "Sucessfully uploaded draft to server.");
+			}
+		}
+
+	}
+
+	static class UserTask extends AsyncTask<Void, Void, User>
+	{
+		@Override
+		protected User doInBackground(Void... params) {
+			User IUser = Comm.getUser();
+			return (IUser);
+		}
+		@Override
+		protected void onPostExecute(User result) {
+			if (result == null) {
+				Log.e("Fail_get_user","Could not obtain user from server.");
+			}
+			else {
+				Log.v("Got_user", "Sucessfully obtained user from server.");
 			}
 		}
 

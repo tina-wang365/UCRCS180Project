@@ -12,6 +12,7 @@ import android.widget.TextView;
 public class MakeARecipe2 extends ActionBarActivity {
 
 	Recipe recipe = new Recipe();
+	User currentUser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class MakeARecipe2 extends ActionBarActivity {
 		Intent intent = getIntent();
 		recipe = (Recipe)intent.getSerializableExtra("recipe");
 		tv_header.setText(header + " for " + recipe.getName());
+		Utility.GetLoggedInUser();
 	}
 
 	@Override
@@ -78,7 +80,9 @@ public class MakeARecipe2 extends ActionBarActivity {
 
 	public void SaveAsDraftPressed(View iView)
 	{
-		new UploadDraft().execute(recipe);
+		recipe.setUID(currentUser.getID());
+		recipe.setUsername(currentUser.getUsername());
+		Utility.UploadDraft(recipe);
 		Intent intent = new Intent(this, MainMenu.class);
 		startActivity(intent);
 	}

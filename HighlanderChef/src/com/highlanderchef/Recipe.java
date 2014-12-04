@@ -162,6 +162,22 @@ public class Recipe implements Serializable{
 	{
 		return this.name;
 	}
+	public void setUsername(String name)
+	{
+		this.username = name;
+	}
+	public String getUsername()
+	{
+		return this.username;
+	}
+	public void setUID(int id)
+	{
+		this.uid = id;
+	}
+	public int getUID()
+	{
+		return this.uid;
+	}
 	public void setDescription(String d)
 	{
 		this.description = d;

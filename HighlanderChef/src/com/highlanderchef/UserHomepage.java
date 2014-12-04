@@ -21,9 +21,8 @@ import android.widget.Toast;
 
 public class UserHomepage extends ActionBarActivity {
 
-	//User UserLoggedIn;
-	//User UserBeingViewed;
-	int currentUserID; //
+	User UserLoggedIn = new User();
+	User UserBeingViewed = new User();
 
 	private static final int LENGTH_SHORT = 2000;
 
@@ -32,9 +31,9 @@ public class UserHomepage extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_homepage);
 		Intent intent = getIntent();
-		currentUserID = intent.getIntExtra("userID", Comm.staticGetUserID());
-		new UsernameTask().execute();
-		new UserRecipes().execute(Integer.toString(currentUserID));
+		UserBeingViewed.setID(intent.getIntExtra("ViewUser", -1));
+		new UserTask().execute(UserBeingViewed.getID());
+		new UserRecipes().execute(UserBeingViewed.getID());
 	}
 
 	@Override
@@ -63,35 +62,32 @@ public class UserHomepage extends ActionBarActivity {
 		follow.getLocationOnScreen(pos);
 
 		Toast followToast = Toast.makeText(getApplicationContext(), "You are now following the user", LENGTH_SHORT);
-		followToast.setGravity(Gravity.TOP, 0, pos[1] + 20); //gravity, x-offset, y-offset
+		//followToast.setGravity(Gravity.TOP, 0, pos[1] + 20); //gravity, x-offset, y-offset
+		followToast.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
 		followToast.show();
 	}
 
-	public void setUsername(String iName)
+	public void setUser(User iUser)
 	{
-		((TextView) findViewById(R.id.Username)).setText(iName);
+		UserBeingViewed = iUser;
+		((TextView) findViewById(R.id.Username)).setText(UserBeingViewed.getUsername());
 	}
 
-	@SuppressWarnings("unused")
-	private class UsernameTask extends AsyncTask<String, Void, Boolean>
+	private class UserTask extends AsyncTask<Integer, Void, Boolean>
 	{
-		String cUsername = new String();
+		User cUser = new User();
 		@Override
-		protected Boolean doInBackground(String... params) {
-			cUsername = Comm.getEmail();
-			return (cUsername.length() > 0);
+		protected Boolean doInBackground(Integer... params) {
+			cUser = Comm.getUser();
+			return (cUser.getUsername().length() > 0);
 		}
-
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			if (result == true) {
-				setUsername(cUsername);
+			if (result != true) {
+				Log.e("get_user_fail","Could not get username from server.");
 			}
-			else {
-				Log.e("get_username_fail","Could not get username from server.");
-				setUsername(new String());
-			}
+			setUser(cUser);
 		}
 
 	}
@@ -219,19 +215,17 @@ public class UserHomepage extends ActionBarActivity {
 		startActivity(intent);
 	}
 
-	@SuppressWarnings("unused")
-	private class UserRecipes extends AsyncTask<String, Void, Boolean>
+	private class UserRecipes extends AsyncTask<Integer, Void, Boolean>
 	{
 		ArrayList<Recipe> UserRecipeList;
 		@Override
-		protected Boolean doInBackground(String... params)
+		protected Boolean doInBackground(Integer... params)
 		{
 			Comm IComm = new Comm();
 			//Get Recipes of the User
-			UserRecipeList = IComm.searchRecipesByUID(Integer.parseInt(params[0]));
+			UserRecipeList = IComm.searchRecipesByUID(params[0]);
 			return (UserRecipeList != null);
 		}
-
 
 		@Override
 		protected void onPostExecute(Boolean result)

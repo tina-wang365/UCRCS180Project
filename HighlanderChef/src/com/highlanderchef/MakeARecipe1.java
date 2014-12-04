@@ -2,6 +2,7 @@ package com.highlanderchef;
 
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.concurrent.ExecutionException;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +31,8 @@ public class MakeARecipe1 extends ActionBarActivity {
 	String errorMessage = "";
 	Spinner spinner;
 	Bundle b;
+	User currentUser;
+	Utility.UserTask cUserTask;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,7 @@ public class MakeARecipe1 extends ActionBarActivity {
 		setContentView(R.layout.activity_make_a_recipe1);
 		categoryIDs = new ArrayList<>();
 		new GetCategoriesTask().execute(1);
+		cUserTask = Utility.GetLoggedInUser();
 	}
 
 	@Override
@@ -58,6 +63,20 @@ public class MakeARecipe1 extends ActionBarActivity {
 		EditText edittext_time = (EditText) findViewById(R.id.recipe_est_time);
 		String new_time = edittext_time.getText().toString();
 
+		try {
+			currentUser = cUserTask.get();
+		} catch (InterruptedException e) {
+			Log.e("UserTask Failed", "UserTask interrupted");
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			Log.e("UserTask Failed", "UserTask execution failed");
+			e.printStackTrace();
+		}
+		if (currentUser == null)
+			Utility.displayErrorToast(this, "Current User is null");
+		else {
+			returnRecipe.setUID(currentUser.getID());
+			returnRecipe.setUsername(currentUser.getUsername()); }
 		returnRecipe.setName(new_name);
 		returnRecipe.setDescription(new_descr);
 		returnRecipe.setCookTime(new_time);
@@ -68,7 +87,7 @@ public class MakeARecipe1 extends ActionBarActivity {
 	public void SaveAsDraftPressed(View iView)
 	{
 		recipe = getCurrentRecipeInfo();
-		new UploadDraft().execute(recipe);
+		Utility.UploadDraft(recipe);
 		Intent intent = new Intent(this, MainMenu.class);
 		startActivity(intent);
 	}
@@ -228,20 +247,5 @@ public class MakeARecipe1 extends ActionBarActivity {
 				catOnFailure();
 			}
 		}
-	}
-}
-
-class UploadDraft extends AsyncTask<Recipe, Void, Boolean> {
-
-	@Override
-	protected Boolean doInBackground(Recipe... params) {
-		//Comm IComm = new Comm();
-		//IComm.uploadRecipe((Recipe)params[0]);
-		return true;
-	}
-
-	@Override
-	protected void onPostExecute(Boolean result) {
-		;
 	}
 }

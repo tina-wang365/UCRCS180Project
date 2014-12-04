@@ -17,6 +17,7 @@ import android.widget.Toast;
 public class MainMenu extends ActionBarActivity {
 
 	private static final int LENGTH_LONG = 3500;
+	private User currentUser = new User();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +100,24 @@ public class MainMenu extends ActionBarActivity {
 
 	}
 
-	public void setUsername(String iName)
+	public void ViewHomepage(View view)
 	{
-		String username = iName;
+		Intent intent = new Intent(this, UserHomepage.class);
+		intent.putExtra("ViewUser", currentUser.getID());
+		startActivity(intent);
+	}
+
+	public void ViewDrafts(View view)
+	{
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra("ViewDrafts", "View Drafts");
+		startActivity(intent);
+	}
+
+	public void setUser(User iUser)
+	{
+		currentUser = iUser;
+		String username = currentUser.getUsername();
 		String strWelcomeFormat = getResources().getString(R.string.Welcome_Chef);
 		String strWelcomeMsg = String.format(strWelcomeFormat,username);
 		((TextView) findViewById(R.id.textView1)).setText(strWelcomeMsg);
@@ -109,23 +125,22 @@ public class MainMenu extends ActionBarActivity {
 
 	private class UsernameTask extends AsyncTask<String, Void, Boolean>
 	{
-		String cUsername = new String();
+		User cUser = new User();
 		@Override
 		protected Boolean doInBackground(String... params) {
-			Comm iComm = new Comm();
-			cUsername = iComm.getEmail();
-			return (cUsername.length() > 0);
+			cUser = Comm.getUser();
+			return (cUser.getUsername().length() > 0);
 		}
 
 
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result == true) {
-				setUsername(cUsername);
+				setUser(cUser);
 			}
 			else {
-				Log.e("get_username_fail","Could not get username from server.");
-				setUsername(new String());
+				Log.e("getUser Failed","Could not get user from server.");
+				setUser(new User());
 			}
 		}
 
