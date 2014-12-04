@@ -78,13 +78,13 @@ public class RecipeForum extends ActionBarActivity {
 
 		//Set objects for display on activity
 		TextView textViewTitle = new TextView(this);
-		textViewTitle.setText(recipe.name + "\n");
+		textViewTitle.setText("Title: " + recipe.name + "\n");
 		textViewTitle.setLayoutParams(params);
 		ll.addView(textViewTitle);
 
 		//Set objects for display on activity
 		TextView textViewDes = new TextView(this);
-		textViewDes.setText(recipe.description + "\n");
+		textViewDes.setText("Description: " + recipe.description + "\n");
 		textViewDes.setLayoutParams(params);
 		ll.addView(textViewDes);
 
@@ -97,7 +97,7 @@ public class RecipeForum extends ActionBarActivity {
 		}
 		else {
 			System.out.println("cookTime is not empty!");
-			textViewCookTime.setText(recipe.cookTime);
+			textViewCookTime.setText("Cook Time: " + recipe.cookTime);
 		}
 
 		textViewCookTime.setLayoutParams(params);
