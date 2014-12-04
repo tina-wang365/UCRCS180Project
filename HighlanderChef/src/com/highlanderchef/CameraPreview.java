@@ -138,7 +138,7 @@ public class CameraPreview implements SurfaceHolder.Callback, Camera.PreviewCall
 
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {
-		// TODO Auto-generated method stub
+		System.out.println("onPreviewFrame(...)");
 
 	}
 
