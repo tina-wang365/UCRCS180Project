@@ -24,6 +24,10 @@ public class SearchActivity extends ActionBarActivity {
 	private final String SearchByString = "Search By String";
 	private final String SearchByCategory = "Search By Category";
 	private final String SearchByMyUID = "Search By UID";
+	private final String ViewDrafts = "ViewDrafts";
+	private final String ViewFavorites = "ViewFavorites";
+
+	private boolean ViewingDrafts = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,17 +37,20 @@ public class SearchActivity extends ActionBarActivity {
 		Intent intent = getIntent();
 		String query = intent.getStringExtra("search_query");
 		String category = intent.getStringExtra("category_query");
-
+		Utility.GetLoggedInUser();
 
 		if (query != null) {
 			new SearchTask().execute(SearchByString, query);
 		} else if(category != null) {
 			new SearchTask().execute(SearchByCategory, category);
-		} else {
+		}
+		else if (intent.getStringExtra(ViewDrafts) != null){
+			new SearchTask().execute(ViewDrafts);
+			ViewingDrafts = true;
+		}
+		else {
 			new SearchTask().execute(SearchByMyUID);
 		}
-
-		// TODO: now loading...
 	}
 
 	@Override
@@ -65,7 +72,7 @@ public class SearchActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void SearchSuccess(ArrayList<Recipe> recipies)
+	public void SearchSuccess(ArrayList<Recipe> recipies, ArrayList<Integer> dIDs)
 	{
 		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		for(int i = 0; i < recipies.size(); ++i)
@@ -119,17 +126,26 @@ public class SearchActivity extends ActionBarActivity {
 			tv_cooktime.setText(recipies.get(i).getCookTime());
 			rl.addView(tv_cooktime);
 
-			final int j = recipies.get(i).id; //so java doesn't complain
+			final int j;
 
 			Button b_view = new Button(this);
-			b_view.setText("View");
+			if (ViewingDrafts == false) {
+				b_view.setText("View");
+				j = recipies.get(i).id; //so java doesn't complain
+			}
+			else {
+				b_view.setText("Edit");
+				j = dIDs.get(i);
+			}
 
 			b_view.setOnClickListener(new View.OnClickListener(){
 				@Override
 				public void onClick(View v)
 				{
-
-					callRecipeIntent(j);
+					if (ViewingDrafts == false)
+						callRecipeIntent(j);
+					else
+						callEditIntent(j);
 				}
 			});
 			rl.addView(b_view);
@@ -154,9 +170,18 @@ public class SearchActivity extends ActionBarActivity {
 		intent.putExtra("recipeID", index);
 		startActivity(intent);
 	}
+
+	public void callEditIntent(int index)
+	{
+		Intent intent = new Intent(this, MakeARecipe1.class);
+		intent.putExtra("DraftID", index);
+		startActivity(intent);
+	}
+
 	private class SearchTask extends AsyncTask<String, Void, Boolean>
 	{
 		ArrayList<Recipe> ret = new ArrayList<Recipe>();
+		ArrayList<Integer> DraftsID = new ArrayList<Integer>();
 		@Override
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
@@ -166,6 +191,14 @@ public class SearchActivity extends ActionBarActivity {
 				ret = c.searchRecipesByCategory(Integer.parseInt(params[1]));
 			} else if (params[0] == SearchByMyUID) {
 				ret = c.searchRecipesByUID(c.getUserID());
+			} else if (params[0] == ViewDrafts) {
+				ArrayList<Integer> DraftsID = c.getDraftList();
+				for (int i = 0; i < DraftsID.size(); i++)
+					ret.add(c.getDraft(DraftsID.get(i)));
+			} else if (params[0] == ViewFavorites) {
+				//				ArrayList<Integer> FavoriteID = c.getFavorites();
+				//				for (int i = 0; i < FavoriteID.size(); i++)
+				//					ret.add(c.getDraft(FavoriteID.get(i)));
 			}
 			return (ret.size() > 0);
 		}
@@ -175,7 +208,7 @@ public class SearchActivity extends ActionBarActivity {
 		protected void onPostExecute(Boolean result) {
 			if (result == true) {
 				Log.v("searchActivty","Search Success");
-				SearchSuccess(ret);
+				SearchSuccess(ret, DraftsID);
 			} else {
 				Log.v("login_fail","Search Failed");
 				SearchFailure(ret);
