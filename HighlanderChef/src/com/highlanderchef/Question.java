@@ -29,4 +29,9 @@ public class Question {
 	public void editQuestion(String text) {
 		this.text = text;
 	}
+
+	public void setId(int useCurrID) {
+		// TODO Auto-generated method stub
+
+	}
 }

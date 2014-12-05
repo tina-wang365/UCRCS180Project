@@ -37,6 +37,10 @@ public class Utility
 			toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
 			toastErrorMessage.show();
 			break;
+		case -3:
+			toastErrorMessage = Toast.makeText(context,  "Sorry! We could not post your question!", duration);
+			toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
+			toastErrorMessage.show();
 		default:
 			break;
 
