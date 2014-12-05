@@ -42,9 +42,9 @@ public class MakeARecipe1 extends ActionBarActivity {
 		Intent intent = this.getIntent();
 		int DraftID = intent.getIntExtra("DraftID", -1);
 		if (DraftID > 0){
-			//Utility.displayErrorToast(this, "Got Draft ID: " + DraftID);
 			new GetDraft().execute(DraftID);
 		}
+		Utility.displayErrorToast(this, "Got DID: " + DraftID);
 	}
 
 	@Override
@@ -71,12 +71,6 @@ public class MakeARecipe1 extends ActionBarActivity {
 		EditText edittext_time = (EditText) findViewById(R.id.recipe_est_time);
 		String new_time = edittext_time.getText().toString();
 
-		currentUser = Utility.GetLoggedInUser();
-		if (currentUser == null)
-			Utility.displayErrorToast(this, "Current User is null");
-		else {
-			returnRecipe.setUID(currentUser.getID());
-			returnRecipe.setUsername(currentUser.getUsername()); }
 		returnRecipe.setName(new_name);
 		returnRecipe.setDescription(new_descr);
 		returnRecipe.setCookTime(new_time);
