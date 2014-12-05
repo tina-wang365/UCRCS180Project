@@ -158,42 +158,46 @@ public class Comm {
 	}
 
 	private void parseUser(JsonNode un) {
-		User u = new User();
-		u.id = mapper.readValue(un.path("id"), Integer.class);
-		u.username = mapper.readValue(un.path("username"), String.class);
-		Iterator<JsonNode> ite;
+		try {
+			User u = new User();
+			u.id = mapper.readValue(un.path("id"), Integer.class);
+			u.username = mapper.readValue(un.path("username"), String.class);
+			Iterator<JsonNode> ite;
 
-		ite = un.path("recipes").getElements();
-		while (ite.hasNext()) {
-			u.recipes.add(ite.next().getIntValue());
+			ite = un.path("recipes").getElements();
+			while (ite.hasNext()) {
+				u.recipes.add(ite.next().getIntValue());
+			}
+
+			ite = un.path("drafts").getElements();
+			while (ite.hasNext()) {
+				u.drafts.add(ite.next().getIntValue());
+			}
+
+			ite = un.path("followers").getElements();
+			while (ite.hasNext()) {
+				u.followers.add(ite.next().getIntValue());
+			}
+
+			ite = un.path("following").getElements();
+			while (ite.hasNext()) {
+				u.following.add(ite.next().getIntValue());
+			}
+
+			ite = un.path("favorites").getElements();
+			while (ite.hasNext()) {
+				u.favorites.add(ite.next().getIntValue());
+			}
+
+			ite = un.path("notifications").getElements();
+			while (ite.hasNext()) {
+				u.notifications.add(ite.next().getIntValue());
+			}
+
+			this.user = u;
+		} catch (Exception e) {
+			System.out.println("exception in Comm.parseUser: " + e.getMessage());
 		}
-
-		ite = un.path("drafts").getElements();
-		while (ite.hasNext()) {
-			u.drafts.add(ite.next().getIntValue());
-		}
-
-		ite = un.path("followers").getElements();
-		while (ite.hasNext()) {
-			u.followers.add(ite.next().getIntValue());
-		}
-
-		ite = un.path("following").getElements();
-		while (ite.hasNext()) {
-			u.following.add(ite.next().getIntValue());
-		}
-
-		ite = un.path("favorites").getElements();
-		while (ite.hasNext()) {
-			u.favorites.add(ite.next().getIntValue());
-		}
-
-		ite = un.path("notifications").getElements();
-		while (ite.hasNext()) {
-			u.notifications.add(ite.next().getIntValue());
-		}
-
-		this.user = u;
 	}
 
 	// gets new user info from the server
