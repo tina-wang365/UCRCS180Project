@@ -1,5 +1,7 @@
 package com.highlanderchef;
 
+import java.io.Serializable;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -18,7 +20,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class RecipeForum extends ActionBarActivity {
+public class RecipeForum extends ActionBarActivity implements Serializable{
 	ID_Maker MakerInstance = new ID_Maker();
 	private final int LENGTH_SHORT = 2000;
 	private final int LENGTH_LONG = 7000;
@@ -177,7 +179,7 @@ public class RecipeForum extends ActionBarActivity {
 						@Override
 						public void onClick(View v)
 						{
-							callImageCompIntent(image);
+							//callImageCompIntent(image);
 						}
 					});
 					ll.addView(image_comp);
@@ -203,7 +205,7 @@ public class RecipeForum extends ActionBarActivity {
 			@Override
 			public void onClick(View v)
 			{
-				callQuestionBoardIntent(recipeID);
+				callQuestionBoardIntent(currentRecipe);
 
 			}
 		});
@@ -284,14 +286,14 @@ public class RecipeForum extends ActionBarActivity {
 		}
 
 	}
-
+	/*
 	public void callImageCompIntent(Bitmap bmp)
 	{
 		Intent intent = new Intent(this, ImageComp.class);
 		intent.putExtra("image", bmp);
 		startActivity(intent);
 	}
-
+	 */
 	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 		// TODO Auto-generated method stub
 
@@ -319,25 +321,7 @@ public class RecipeForum extends ActionBarActivity {
 
 		new postCommentTask().execute(comment);
 	}
-	/*
-	public void addQuestion(Question newQuestion) {
-		TextView tv_question = new TextView(this);
-		tv_question.setId(MakerInstance.useCurrID());
-		tv_question.setText(newQuestion.text + "\nby " + Comm.getEmail());
 
-		final LinearLayout.LayoutParams params =
-				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT);
-
-		tv_question.setLayoutParams(params);
-		LinearLayout ll = (LinearLayout) findViewById(R.id.rflayout);
-		System.out.println("RF addQuestion to Layout");
-		questionsLayout.addView(tv_question);
-
-		//new postQuestionTask().execute(newQuestion);
-
-
-	}*/
 	public void displayRecipeFailure(String text) {
 		//return to search activity.
 		Intent intent = new Intent(this, MainMenu.class);
@@ -355,11 +339,11 @@ public class RecipeForum extends ActionBarActivity {
 		Utility.displayErrorToasts(getApplicationContext(), -2, LENGTH_LONG);
 
 	}
-	public void callQuestionBoardIntent(int index)
+	public void callQuestionBoardIntent(Recipe recipe)
 	{
 		Intent intent = new Intent(this, QuestionBoardActivity.class);
 		System.out.println(recipeID);
-		intent.putExtra("recipeID", index);
+		intent.putExtra("currentRecipe", recipe);
 		startActivity(intent);
 	}
 	private class getOwnerOfRecipe extends AsyncTask<Integer, Void, Boolean> {
