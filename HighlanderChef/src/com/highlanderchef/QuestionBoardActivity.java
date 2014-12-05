@@ -28,6 +28,9 @@ public class QuestionBoardActivity extends ActionBarActivity {
 	EditText etQuestionToPost = null;
 	Button btnAddQuestion = null;
 	View lastView = null;
+	TextView tv_questions;
+
+	Recipe currentRecipe;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,17 +40,47 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		etQuestionToPost = new EditText(this);
 		btnAddQuestion = new Button(this);
 		Intent intent = getIntent();
+		//new getRecipeTask().execute(recipeID);
 		if(intent != null) {
 			System.out.println("Intent is NOT null");
-			recipeID = intent.getIntExtra("recipeID", 0);
-
+			//recipeID = intent.getIntExtra("recipeID", 0);
 		}
 		else {
 			System.out.println("Intent is null!");
 		}
 
-		addAbilityToPostQuestion(etQuestionToPost, btnAddQuestion, lastView);
+		etQuestionToPost.setId(MakerInstance.useCurrID());
+		RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		rlParams.addRule(RelativeLayout.BELOW, R.id.textView2);
+		etQuestionToPost.setLayoutParams(rlParams);
+		rflayout.addView(etQuestionToPost);
 
+
+		btnAddQuestion.setId(MakerInstance.useCurrID());
+		btnAddQuestion.setText("Ask a Question");
+		rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		rlParams.addRule(RelativeLayout.BELOW, etQuestionToPost.getId());
+		btnAddQuestion.setOnClickListener(new View.OnClickListener(){
+
+			@Override
+			public void onClick(View v)
+			{
+				tv_questions.setText(tv_questions.getText() + "\n\n" + etQuestionToPost.getText());
+				Question q = new Question(Comm.staticGetUserID(), Comm.getEmail(), etQuestionToPost.getText().toString());
+				new postQuestionTask().execute(q);
+
+			}
+		});
+		btnAddQuestion.setLayoutParams(rlParams);
+		rflayout.addView(btnAddQuestion);
+
+		lastView = btnAddQuestion;
+		tv_questions = new TextView(this);
+		tv_questions.setText("");
+		rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		rlParams.addRule(RelativeLayout.BELOW, lastView.getId());
+		tv_questions.setLayoutParams(rlParams);
+		rflayout.addView(tv_questions);
 
 		//new postQuestionTask()
 	}
@@ -73,21 +106,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 
 	public void addAbilityToPostQuestion(EditText etQuestionToPost, Button btnAddQuestion, View lastView) {
 
-		etQuestionToPost.setId(MakerInstance.useCurrID());
-		RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-		rlParams.addRule(RelativeLayout.BELOW, R.id.textView2);
-		etQuestionToPost.setLayoutParams(rlParams);
-		rflayout.addView(etQuestionToPost);
 
-
-		btnAddQuestion.setId(MakerInstance.useCurrID());
-		btnAddQuestion.setText("Ask a Question");
-		rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-		rlParams.addRule(RelativeLayout.BELOW, etQuestionToPost.getId());
-		btnAddQuestion.setLayoutParams(rlParams);
-		rflayout.addView(btnAddQuestion);
-
-		lastView = btnAddQuestion;
 	}
 
 	public void displayLiveQuestion( Question newlyAddedQuestion, View lastView) {
@@ -150,6 +169,35 @@ public class QuestionBoardActivity extends ActionBarActivity {
 			}
 			else {
 				Log.v("postQuestionFailure", "Failed to post a question!");
+			}
+		}
+	}
+	private void displayRecipeSuccess()
+	{
+		String s = "";
+		for(int i = 0; i < currentRecipe.questions.size();++i)
+		{
+			s += currentRecipe.questions.get(i) + "\n\n";
+		}
+		tv_questions.setText(s);
+	}
+
+	private class getRecipeTask extends AsyncTask<Integer, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			Comm c = new Comm();
+			Recipe ret = c.getRecipe(params[0]);
+			currentRecipe = ret;
+			return (ret != null);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				Log.v("getRecipeSuccess","Success: Recipe Received");
+				displayRecipeSuccess();
+			} else {
+				Log.v("getRecipeFailure","Failure: Did not receive recipe");
 			}
 		}
 	}
