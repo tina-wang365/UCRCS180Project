@@ -145,7 +145,10 @@ public class Recipe implements Serializable{
 	public ArrayList<Question> questions;
 		 */
 	}
-
+	public void setID(int i)
+	{
+		this.id = i;
+	}
 	public void setIngredients(ArrayList<Ingredient> i)
 	{
 		this.ingredients = i;

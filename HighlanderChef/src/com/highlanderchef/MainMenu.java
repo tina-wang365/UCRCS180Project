@@ -114,6 +114,13 @@ public class MainMenu extends ActionBarActivity {
 		startActivity(intent);
 	}
 
+	public void ViewFavorites(View view)
+	{
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra("ViewFavorites", "ViewFavorites");
+		startActivity(intent);
+	}
+
 	public void setUser(User iUser)
 	{
 		currentUser = iUser;

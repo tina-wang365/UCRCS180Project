@@ -42,7 +42,7 @@ public class MakeARecipe1 extends ActionBarActivity {
 		Intent intent = this.getIntent();
 		int DraftID = intent.getIntExtra("DraftID", -1);
 		if (DraftID > 0){
-			Utility.displayErrorToast(this, "Got Draft ID: " + DraftID);
+			//Utility.displayErrorToast(this, "Got Draft ID: " + DraftID);
 			new GetDraft().execute(DraftID);
 		}
 	}
@@ -102,8 +102,15 @@ public class MakeARecipe1 extends ActionBarActivity {
 		}
 		Intent intent = new Intent(this, MakeARecipe2.class);
 		if (Draft != null)
-			intent.putExtra("IsDraft", true);
-		intent.putExtra("recipe", recipe);
+		{
+			Utility.UploadDraft(Draft);
+			intent.putExtra("DraftID", Draft.id);
+			intent.putExtra("DraftName", Draft.getName());
+		}
+		else
+		{
+			intent.putExtra("recipe", recipe);
+		}
 		startActivity(intent);
 	}
 	private static int RESULT_LOAD_IMAGE = 1;

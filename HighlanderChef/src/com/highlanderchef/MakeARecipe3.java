@@ -203,6 +203,12 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 		//TODO implement better case for failure.
 	}
+
+	private void LoadDraft(Recipe iDraft)
+	{
+
+	}
+
 	private class UploadRecipeTask extends AsyncTask<Recipe, Void, Boolean> {
 
 		@Override
@@ -250,6 +256,22 @@ public class MakeARecipe3 extends ActionBarActivity {
 		else
 		{
 			//TODO added error response
+		}
+	}
+
+	private class GetDraft extends AsyncTask<Integer, Void, Recipe> {
+
+		@Override
+		protected Recipe doInBackground(Integer... params) {
+			Comm iComm = new Comm();
+			return iComm.getDraft(params[0]);
+		}
+
+		@Override
+		protected void onPostExecute(Recipe result) {
+			if (result == null)
+				return;
+			LoadDraft(result);
 		}
 	}
 }

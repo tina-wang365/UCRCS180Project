@@ -25,6 +25,7 @@ public class SearchActivity extends ActionBarActivity {
 	private final String SearchByCategory = "Search By Category";
 	private final String SearchByMyUID = "Search By UID";
 	private final String ViewDrafts = "ViewDrafts";
+	private final String ViewFavorites = "ViewFavorites";
 
 	private boolean ViewingDrafts = false;
 	private ArrayList<Recipe> RecipeList = new ArrayList<Recipe>();
@@ -130,6 +131,7 @@ public class SearchActivity extends ActionBarActivity {
 			rl.addView(tv_cooktime);
 
 			final int j = recipies.get(i).id; //so java doesn't complain
+			Log.v("SearchActivity ID: ", Integer.toString(j));
 
 			Button b_view = new Button(this);
 			if (ViewingDrafts == false)
@@ -191,8 +193,13 @@ public class SearchActivity extends ActionBarActivity {
 				ret = c.searchRecipesByUID(c.getUserID());
 			} else if (params[0] == ViewDrafts) {
 				ArrayList<Integer> DraftsID = c.getDraftList();
-				for (int i = 0; i < DraftsID.size(); i++)
+				for (int i = 0; i < DraftsID.size(); i++){
 					ret.add(c.getDraft(DraftsID.get(i)));
+					ret.get(i).setID(DraftsID.get(i)); }
+			} else if (params[0] == ViewFavorites) {
+				//				ArrayList<Integer> FavoriteID = c.getFavorites();
+				//				for (int i = 0; i < FavoriteID.size(); i++)
+				//					ret.add(c.getDraft(FavoriteID.get(i)));
 			}
 			return (ret.size() > 0);
 		}

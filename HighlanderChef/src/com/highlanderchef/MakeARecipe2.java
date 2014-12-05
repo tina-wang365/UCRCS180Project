@@ -1,6 +1,7 @@
 package com.highlanderchef;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 public class MakeARecipe2 extends ActionBarActivity {
 
 	Recipe recipe = new Recipe();
+	boolean ViewingDraft = false;
 	User currentUser;
 
 	@Override
@@ -23,9 +25,18 @@ public class MakeARecipe2 extends ActionBarActivity {
 		String header = tv_header.getText().toString();
 
 		Intent intent = getIntent();
-		recipe = (Recipe)intent.getSerializableExtra("recipe");
-		tv_header.setText(header + " for " + recipe.getName());
-		Utility.GetLoggedInUser();
+		int DraftID = intent.getIntExtra("DraftID", -1);
+		if (DraftID < 0)
+		{
+			recipe = (Recipe)intent.getSerializableExtra("recipe");
+			tv_header.setText(header + " for " + recipe.getName());
+		}
+		else
+		{
+			new GetDraft().execute(DraftID);
+			tv_header.setText(header + " for " + intent.getStringExtra("DraftName"));
+		}
+		currentUser = Utility.GetLoggedInUser();
 	}
 
 	@Override
@@ -62,20 +73,22 @@ public class MakeARecipe2 extends ActionBarActivity {
 		if(edittext_new_ingred.length() == 0 || new_ingred_amount.length() == 0)
 		{ return; }
 
-		TextView textview_ingred_list = (TextView) findViewById(R.id.listofaddedingredients);
+		recipe.addIngredient(new Ingredient(new_ingred, new_ingred_amount));
 
-		//creates new text for ingredients list, includes newly added ingredient
+		RemakeIngredList();
+		edittext_new_ingred.getText().clear();
+		edittext_new_ingred_amount.getText().clear();
+	}
+
+	private void RemakeIngredList()
+	{
+		TextView textview_ingred_list = (TextView) findViewById(R.id.listofaddedingredients);
 		String new_ingred_list = "";
 		for(int i = 0; i < recipe.ingredientSize(); ++i)
 		{
 			new_ingred_list += recipe.getAnIngredient(i).getAmount()+ '\t' + recipe.getAnIngredient(i).getName() + '\n';
 		}
-		new_ingred_list += new_ingred_amount + '\t' + new_ingred;
-
-		recipe.addIngredient(new Ingredient(new_ingred, new_ingred_amount));
 		textview_ingred_list.setText(new_ingred_list);
-		edittext_new_ingred.getText().clear();
-		edittext_new_ingred_amount.getText().clear();
 	}
 
 	public void SaveAsDraftPressed(View iView)
@@ -90,7 +103,33 @@ public class MakeARecipe2 extends ActionBarActivity {
 	public void addDirectionsPressed(View view)
 	{
 		Intent intent = new Intent(this, MakeARecipe3.class);
-		intent.putExtra("recipe", recipe);
+		if (ViewingDraft == false)
+			intent.putExtra("recipe", recipe);
+		else
+			intent.putExtra("DraftID", recipe.id);
 		startActivity(intent);
+	}
+
+	public void LoadDraft(Recipe iDraft)
+	{
+		ViewingDraft = true;
+		recipe = iDraft;
+		RemakeIngredList();
+	}
+
+	private class GetDraft extends AsyncTask<Integer, Void, Recipe> {
+
+		@Override
+		protected Recipe doInBackground(Integer... params) {
+			Comm iComm = new Comm();
+			return iComm.getDraft(params[0]);
+		}
+
+		@Override
+		protected void onPostExecute(Recipe result) {
+			if (result == null)
+				return;
+			LoadDraft(result);
+		}
 	}
 }
