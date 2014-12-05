@@ -177,6 +177,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 	}
 	public void SaveAsDraftPressed(View iView)
 	{
+		currentUser = Comm.getUser();
 		recipe.setUID(currentUser.getID());
 		recipe.setUsername(currentUser.getUsername());
 		Utility.UploadDraft(recipe);
