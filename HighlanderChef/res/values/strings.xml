@@ -73,5 +73,6 @@
     <string name="title_activity_camera">Camera</string>
     <string name="title_activity_cam">Cam</string>
     <string name="title_activity_preferences">PreferencesActivity</string>
+    <string name="title_activity_question_board">QuestionBoardActivity</string>
 
 </resources>
