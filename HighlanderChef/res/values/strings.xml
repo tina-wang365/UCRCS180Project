@@ -46,7 +46,7 @@
     <string name="Add_an_Ingredient">Add Ingredient</string>
     <string name="Ingredient_Amount">Amount</string>
     <string name="Add_another_ingredient_button">Add Ingredient</string>
-    <string name="Add_directions_button">Add directions</string>
+    <string name="Add_directions_button">Add direction</string>
     <!-- Refer to layout/activity_recipeForum.xml -->
     <string name="SaveDraft">Save As Draft</string>
     <string name="recipeTitle">DEFAULT RECIPE TITLE</string>

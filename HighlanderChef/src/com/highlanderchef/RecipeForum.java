@@ -87,6 +87,23 @@ public class RecipeForum extends ActionBarActivity {
 		textViewTitle.setLayoutParams(params);
 		ll.addView(textViewTitle);
 
+		//button to do image comparison
+		Button addFavorite = new Button(this);
+		addFavorite.setText("Add To Favorite");
+		final LinearLayout.LayoutParams params_addf =
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
+		addFavorite.setLayoutParams(params_addf);
+		addFavorite.setOnClickListener(new View.OnClickListener(){
+
+			@Override
+			public void onClick(View v)
+			{
+				new addCommentTask().execute();
+			}
+		});
+		ll.addView(addFavorite);
+
 		//Set objects for display on activity
 		TextView textViewDes = new TextView(this);
 		textViewDes.setText("Description: " + recipe.description + "\n");
@@ -348,7 +365,7 @@ public class RecipeForum extends ActionBarActivity {
 
 
 	public void postCommentSuccess() {
-
+		//TODO
 	}
 
 	public void postCommentFailure() {
@@ -428,90 +445,39 @@ public class RecipeForum extends ActionBarActivity {
 			}
 		}
 	}
-	/*
-	private class postQuestionTask extends AsyncTask<Question, Void, Boolean> {
+
+	private void addCommentSuccess()
+	{
+		Toast followToast = Toast.makeText(getApplicationContext(), "Recipe added to favorites", LENGTH_LONG);
+		followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+		followToast.show();
+	}
+	private void addCommentFailure()
+	{
+		Toast followToast = Toast.makeText(getApplicationContext(), "Recipe failed to add to favorites", LENGTH_LONG);
+		followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+		followToast.show();
+	}
+
+	private class addCommentTask extends AsyncTask<Void, Void, Boolean>
+	{
 		@Override
-		protected Boolean doInBackground(Question... params) {
+		protected Boolean doInBackground(Void... params)
+		{
 			Comm c = new Comm();
-			System.out.println("RecipeID: " + recipeID);
-			System.out.println("Question Text: " + params[0].text);
-			int ret = c.postQuestion(recipeID, params[0].text);
+			int ret = c.addFavorite(recipeID);
 			return (ret != Comm.SUCCESS);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			if(result == true) {
-				Log.v("postQuestionSuccess", "Successfully posted a question");
-			}
-			else {
-				Log.v("postQuestionFailure", "Failed to post a question!");
+			if (result == true) {
+				Log.v("postComment", "postCommentSuccess");
+				addCommentSuccess();
+			} else {
+				Log.v("postComment", "postComentFailure");
+				addCommentFailure();
 			}
 		}
 	}
-	 */
 }
-
-/*
-//Set title of forum board
-TextView tvQuestionBoardTitle = new TextView(this);
-tvQuestionBoardTitle.setId(MakerInstance.useCurrID());
-tvQuestionBoardTitle.setText("Highlander Chef Forum");
-ll.addView(tvQuestionBoardTitle);
-
-//postQuestion text field
-final EditText etPostQuestion = new EditText(this);
-etPostQuestion.setId(MakerInstance.useCurrID());
-etPostQuestion.setHint("Add a question");
-etPostQuestion.setId(MakerInstance.useCurrID());
-etPostQuestion.setLayoutParams(params);
-
-ll.addView(etPostQuestion);
-
-
-Button bPostQuestion = new Button(this);
-bPostQuestion.setText("Post Question");
-LinearLayout.LayoutParams paramsPostQuestion =
-		new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-				LinearLayout.LayoutParams.WRAP_CONTENT);
-bPostQuestion.setLayoutParams(paramsPostQuestion);
-//Integer etPostQuestionID = etPostQuestionID.getId();
-final TextView liveQuestion = new TextView(this);
-ll.addView(bPostQuestion);
-bPostQuestion.setOnClickListener(new View.OnClickListener(){
-
-
-
-	//public Question(int uid, String username, String text) {
-	@Override
-	public void onClick(View v)
-	{
-		EditText etPostQuestion2 = (EditText) findViewById(etPostQuestion.getId());
-		final String question_text = etPostQuestion2.getText().toString();
-		// Question(int uid, String username, String text)
-		Question newQuestion = new Question(Comm.staticGetUserID(), Comm.getEmail(), question_text);
-		addQuestion(newQuestion); //TODO: Make Asynchronous class for question board
-		etPostQuestion2.getText().clear();
-		liveQuestion.setText(question_text);
-		liveQuestion.setLayoutParams(params);
-		liveQuestion.setBackgroundColor(Color.RED);
-		ll.addView(liveQuestion);
-
-
-
-	}
-});
-
-//display questions
-for(int i = 0; i < recipe.questions.size(); ++i)
-{
-	TextView tv_question = new TextView(this);
-	tv_question.setText(recipe.questions.get(i).text);
-	tv_question.setLayoutParams(params);
-	tv_question.setBackgroundColor(Color.WHITE);
-	ll.addView(tv_question);
-}
-
-
- */
-

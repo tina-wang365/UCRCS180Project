@@ -86,14 +86,12 @@ public class MakeARecipe3 extends ActionBarActivity {
 		{ return; }
 
 		//creates new text for ingredients list, includes newly added ingredient
-		LinearLayout linear_layout = (LinearLayout) findViewById(R.id.linearLayoutDirections);
+		LinearLayout linear_layout = (LinearLayout) findViewById(R.id.LinearLayout1);
 
 		++dir_added_count;
 		TextView tv = new TextView(MakeARecipe3.this);
 		tv.setText(dir_added_count + ") " + new_dir);
 		tv.setId(dir_added_count);
-
-
 
 		final RelativeLayout.LayoutParams params =
 				new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -108,8 +106,8 @@ public class MakeARecipe3 extends ActionBarActivity {
 		recipe.AddADirection(new_dir, added_images);
 		added_images.clear();
 		edittext_new_dir.getText().clear();
-		ImageView imageview = (ImageView) findViewById(R.id.added_image);
-		imageview.setImageResource(R.drawable.uploadimage);
+		//ImageView imageview = (ImageView) findViewById(R.id.added_image);
+		//imageview.setImageResource(R.drawable.uploadimage);
 	}
 
 	private static int RESULT_LOAD_IMAGE = 1;
@@ -134,7 +132,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 			picturePath = cursor.getString(columnIndex);
 			cursor.close();
 
-			LinearLayout linear_layout = (LinearLayout) findViewById(R.id.linearLayoutDirections);
+			LinearLayout linear_layout = (LinearLayout) findViewById(R.id.LinearLayout1);
 			ImageView imageView = new ImageView(this);
 
 			final RelativeLayout.LayoutParams params =

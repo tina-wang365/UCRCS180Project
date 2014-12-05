@@ -1,5 +1,11 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/ScrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+<LinearLayout 
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,10 +18,7 @@
         android:onClick="SaveAsDraftPressed"
         android:text="@string/SaveDraft" />
 
-    <ScrollView
-        android:id="@+id/ScrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -41,16 +44,8 @@
                 android:layout_alignRight="@id/button2"
                 android:layout_below="@+id/button1"
                 android:onClick="submitRecipePressed"
+                android:layout_marginTop="43dp"
                 android:text="@string/Submit_Recipe" />
-
-            <ImageView
-                android:id="@+id/added_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/button3"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="28dp"
-                android:src="@drawable/uploadimage" />
 
             <TextView
                 android:id="@+id/submit_error"
@@ -67,15 +62,6 @@
                 android:layout_below="@+id/makearecipe3header"
                 android:ems="10"
                 android:hint="@string/Enter_a_direction" />
-
-            <LinearLayout
-                android:id="@+id/linearLayoutDirections"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@+id/new_directions_header"
-                android:orientation="vertical" >
-            </LinearLayout>
 
             <Button
                 android:id="@+id/button1"
@@ -105,8 +91,19 @@
                 android:layout_alignLeft="@+id/makearecipe3header"
                 android:layout_below="@+id/addadirection"
                 android:text="@string/New_directions_header" />
+            
 
         </RelativeLayout>
-    </ScrollView>
+                   <!--  <LinearLayout
+		        android:id="@+id/linearLayoutDirections"
+		        android:layout_width="24dp"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical" >  
+    		</LinearLayout> -->
+   
+
+
 
 </LinearLayout>
+
+ </ScrollView>
