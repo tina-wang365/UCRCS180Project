@@ -36,6 +36,7 @@ public class Recipe implements Serializable{
 		this.name = name;
 		this.description = description;
 		this.mainImage = mainImage;
+		this.did = 0;
 
 		categories = new ArrayList<Integer>();
 		ingredients = new ArrayList<Ingredient>();
