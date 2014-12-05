@@ -1,5 +1,7 @@
 package com.highlanderchef;
 
+import java.util.List;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -11,6 +13,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDMatch;
 import org.opencv.core.MatOfKeyPoint;
+import org.opencv.features2d.DMatch;
 import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.FeatureDetector;
@@ -171,16 +174,22 @@ public class ImageComp extends ActionBarActivity implements CvCameraViewListener
 			MatOfDMatch matches = new MatOfDMatch();
 			matcher.match(descr1, descr2, matches);
 
-			int total_number_matches_count = 0;
-			for(int i = 0; i < matches.rows(); ++i)
+			List<DMatch> matchesList = matches.toList();
+			int good_matches = 0;
+			for(int i = 0; i < matchesList.size(); ++i)
 			{
-				for(int j = 0; j < matches.cols(); ++j )
+				if(matchesList.get(i).distance <= 100)
 				{
-					++total_number_matches_count;
+					++good_matches;
 				}
 			}
-			System.out.println("Total Number : " + total_number_matches_count);
+			System.out.println("Total Number : " + matchesList.size());
+			System.out.println("Good Matches : " + good_matches);
+
 			return true;
+
+
+
 		}
 
 		@Override
