@@ -157,6 +157,56 @@ public class Comm {
 		return apiRequest("logout", req);
 	}
 
+	private void parseUser(JsonNode un) {
+		User u = new User();
+		u.id = mapper.readValue(un.path("id"), Integer.class);
+		u.username = mapper.readValue(un.path("username"), String.class);
+		Iterator<JsonNode> ite;
+
+		ite = un.path("recipes").getElements();
+		while (ite.hasNext()) {
+			u.recipes.add(ite.next().getIntValue());
+		}
+
+		ite = un.path("drafts").getElements();
+		while (ite.hasNext()) {
+			u.drafts.add(ite.next().getIntValue());
+		}
+
+		ite = un.path("followers").getElements();
+		while (ite.hasNext()) {
+			u.followers.add(ite.next().getIntValue());
+		}
+
+		ite = un.path("following").getElements();
+		while (ite.hasNext()) {
+			u.following.add(ite.next().getIntValue());
+		}
+
+		ite = un.path("favorites").getElements();
+		while (ite.hasNext()) {
+			u.favorites.add(ite.next().getIntValue());
+		}
+
+		ite = un.path("notifications").getElements();
+		while (ite.hasNext()) {
+			u.notifications.add(ite.next().getIntValue());
+		}
+
+		this.user = u;
+	}
+
+	// gets new user info from the server
+	// including notifications, drafts, recipes, etc
+	public void updateUser() {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(user.id));
+		int ret = apiRequest("userinfo", req);
+		if (lastStatus == 1) {
+			parseUser(rootNode.path("user"));
+		}
+	}
+
 	public int login(String email, String password) {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("email", email);
@@ -170,43 +220,7 @@ public class Comm {
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
 
-					User u = new User();
-					JsonNode un = rootNode.path("user");
-					u.id = mapper.readValue(un.path("id"), Integer.class);
-					u.username = mapper.readValue(un.path("username"), String.class);
-					Iterator<JsonNode> ite;
-
-					ite = un.path("recipes").getElements();
-					while (ite.hasNext()) {
-						u.recipes.add(ite.next().getIntValue());
-					}
-
-					ite = un.path("drafts").getElements();
-					while (ite.hasNext()) {
-						u.drafts.add(ite.next().getIntValue());
-					}
-
-					ite = un.path("followers").getElements();
-					while (ite.hasNext()) {
-						u.followers.add(ite.next().getIntValue());
-					}
-
-					ite = un.path("following").getElements();
-					while (ite.hasNext()) {
-						u.following.add(ite.next().getIntValue());
-					}
-
-					ite = un.path("favorites").getElements();
-					while (ite.hasNext()) {
-						u.favorites.add(ite.next().getIntValue());
-					}
-
-					ite = un.path("notifications").getElements();
-					while (ite.hasNext()) {
-						u.notifications.add(ite.next().getIntValue());
-					}
-
-					this.user = u;
+					parseUser(rootNode.path("user"));
 					return SUCCESS;
 				} else {
 					return API_FAIL;
@@ -522,6 +536,7 @@ public class Comm {
 		apiRequest("uploadrecipe", req);
 
 		if (lastStatus == 1) {
+			updateUser();
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -628,6 +643,7 @@ public class Comm {
 		int ret = apiRequest("savedraft", req);
 		if(ret == 0) {
 			if(lastStatus == 1) {
+				updateUser();
 				return SUCCESS;
 			} else {
 				return API_FAIL;
