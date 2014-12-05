@@ -1,31 +1,44 @@
 package com.highlanderchef;
 
+import java.util.ArrayList;
+
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class QuestionBoardActivity extends ActionBarActivity {
 
+	private final int LENGTH_SHORT = 2000;
 	int recipeID = 0;
+
 	ID_Maker MakerInstance = ID_Maker.getInstance();
-	RelativeLayout rflayout = (RelativeLayout) findViewById(R.id.questionBoardLayout);
+	RelativeLayout rflayout;
 	Question newQuestion = null;
+	EditText etQuestionToPost = null;
+	Button btnAddQuestion = null;
+	View lastView = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		System.out.println("AFTER onCreate(savedInstanceState)");
 		setContentView(R.layout.activity_question_board);
-		System.out.println("AFTER setContentView");
-
+		rflayout = (RelativeLayout) findViewById(R.id.questionBoardLayout);
+		etQuestionToPost = new EditText(this);
+		btnAddQuestion = new Button(this);
 		Intent intent = getIntent();
 		if(intent != null) {
-			System.out.println("Inten is NOT null");
+			System.out.println("Intent is NOT null");
 			recipeID = intent.getIntExtra("recipeID", 0);
 
 		}
@@ -33,8 +46,9 @@ public class QuestionBoardActivity extends ActionBarActivity {
 			System.out.println("Intent is null!");
 		}
 
+		addAbilityToPostQuestion(etQuestionToPost, btnAddQuestion, lastView);
 
-		//addQuestionToView();
+
 		//new postQuestionTask()
 	}
 
@@ -57,14 +71,50 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void addQuestionToView() {
-		EditText etQuestionToPost = new EditText(this);
+	public void addAbilityToPostQuestion(EditText etQuestionToPost, Button btnAddQuestion, View lastView) {
+
 		etQuestionToPost.setId(MakerInstance.useCurrID());
 		RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		rlParams.addRule(RelativeLayout.BELOW, R.id.textView2);
 		etQuestionToPost.setLayoutParams(rlParams);
 		rflayout.addView(etQuestionToPost);
 
+
+		btnAddQuestion.setId(MakerInstance.useCurrID());
+		btnAddQuestion.setText("Ask a Question");
+		rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		rlParams.addRule(RelativeLayout.BELOW, etQuestionToPost.getId());
+		btnAddQuestion.setLayoutParams(rlParams);
+		rflayout.addView(btnAddQuestion);
+
+		lastView = btnAddQuestion;
 	}
+
+	public void displayLiveQuestion( Question newlyAddedQuestion, View lastView) {
+		TextView tvQuestion = new TextView(this);
+		newlyAddedQuestion.setId(MakerInstance.useCurrID());
+		RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		rlParams.addRule(RelativeLayout.BELOW, lastView.getId());
+		rflayout.addView(tvQuestion);
+
+	}
+	//TODO: Test display of questions first
+	//TODO: Create a function that also displays replies
+
+	void displayListOfQuestions(ArrayList<Question> questions, View lastView) {
+		for(int i = 0; i < questions.size(); ++i) {
+			TextView question = new TextView(this);
+			question.setId(MakerInstance.useCurrID());
+			lastView = question;
+			question.setText(questions.get(i).text);
+			RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+			rlParams.addRule(RelativeLayout.BELOW, lastView.getId());
+			rlParams.addRule(RelativeLayout.ALIGN_LEFT, lastView.getId());
+			question.setLayoutParams(rlParams);
+			rflayout.addView(question);
+		}
+	}
+
 
 
 	void postQuestionSuccess(Question question) {
@@ -73,12 +123,20 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		tv_question.setText(question.text);
 		rflayout.addView(tv_question);
 
+		Toast toastSuccessfullyPostQuestion = Toast.makeText(getApplicationContext(), "You have added a Question!", LENGTH_SHORT);
+		toastSuccessfullyPostQuestion.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+		toastSuccessfullyPostQuestion.show();
 	}
-	/*
+
+	void postQuestionFailure(Question question) {
+		Utility.displayErrorToasts(getApplicationContext(), -3, LENGTH_SHORT);
+	}
+
 	private class postQuestionTask extends AsyncTask<Question, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Question... params) {
 			Comm c = new Comm();
+			newQuestion = params[0];
 			int ret = c.postQuestion(recipeID, params[0].text);
 			return (ret != Comm.SUCCESS);
 		}
@@ -87,11 +145,12 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		protected void onPostExecute(Boolean result) {
 			if(result == true) {
 				Log.v("postQuestionSuccess","Successfully posted a question!");
+				postQuestionSuccess(newQuestion);
 			}
 			else {
 				Log.v("postQuestionFailure", "Failed to post a question!");
 			}
 		}
 	}
-	 */
+
 }
