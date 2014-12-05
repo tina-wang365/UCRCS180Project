@@ -29,6 +29,8 @@ public class MakeARecipe1 extends ActionBarActivity {
 	String errorMessage = "";
 	Spinner spinner;
 	Bundle b;
+	User currentUser;
+	Recipe Draft;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,13 @@ public class MakeARecipe1 extends ActionBarActivity {
 		setContentView(R.layout.activity_make_a_recipe1);
 		categoryIDs = new ArrayList<>();
 		new GetCategoriesTask().execute(1);
+		currentUser = Utility.GetLoggedInUser();
+		Intent intent = this.getIntent();
+		int DraftID = intent.getIntExtra("DraftID", -1);
+		if (DraftID > 0){
+			new GetDraft().execute(DraftID);
+		}
+		Utility.displayErrorToast(this, "Got DID: " + DraftID);
 	}
 
 	@Override
@@ -47,7 +56,11 @@ public class MakeARecipe1 extends ActionBarActivity {
 
 	private Recipe getCurrentRecipeInfo()
 	{
-		Recipe returnRecipe = new Recipe();
+		Recipe returnRecipe = null;
+		if (Draft == null)
+			returnRecipe = new Recipe();
+		else
+			returnRecipe = Draft;
 
 		EditText edittext_name = (EditText) findViewById(R.id.recipe_title);
 		String new_name = edittext_name.getText().toString();
@@ -58,6 +71,9 @@ public class MakeARecipe1 extends ActionBarActivity {
 		EditText edittext_time = (EditText) findViewById(R.id.recipe_est_time);
 		String new_time = edittext_time.getText().toString();
 
+		//		currentUser = Utility.GetLoggedInUser();
+		//		if (currentUser == null)
+		//			Utility.displayErrorToast(this, "Current User is null");
 		returnRecipe.setName(new_name);
 		returnRecipe.setDescription(new_descr);
 		returnRecipe.setCookTime(new_time);
@@ -77,10 +93,21 @@ public class MakeARecipe1 extends ActionBarActivity {
 	{
 		recipe = getCurrentRecipeInfo();
 		if (recipe.getName().length() <= 0)
+		{
+			Utility.displayErrorToast(this, "Please enter a name for the recipe");
 			return;
-
+		}
 		Intent intent = new Intent(this, MakeARecipe2.class);
-		intent.putExtra("recipe", recipe);
+		if (Draft != null)
+		{
+			Utility.UploadDraft(Draft);
+			intent.putExtra("DraftID", Draft.id);
+			intent.putExtra("DraftName", Draft.getName());
+		}
+		else
+		{
+			intent.putExtra("recipe", recipe);
+		}
 		startActivity(intent);
 	}
 	private static int RESULT_LOAD_IMAGE = 1;
@@ -206,6 +233,16 @@ public class MakeARecipe1 extends ActionBarActivity {
 
 	}
 
+	public void LoadDraft(Recipe iRecipe)
+	{
+		Draft = iRecipe;
+		((EditText) findViewById(R.id.recipe_title)).setText(Draft.getName());
+
+		((EditText) findViewById(R.id.recipe_description)).setText(Draft.getDescription());
+
+		((EditText) findViewById(R.id.recipe_est_time)).setText(Draft.getCookTime());
+	}
+
 	private class GetCategoriesTask extends AsyncTask<Object, Void, Boolean> {
 
 		@Override
@@ -227,6 +264,22 @@ public class MakeARecipe1 extends ActionBarActivity {
 			} else {
 				catOnFailure();
 			}
+		}
+	}
+
+	private class GetDraft extends AsyncTask<Integer, Void, Recipe> {
+
+		@Override
+		protected Recipe doInBackground(Integer... params) {
+			Comm iComm = new Comm();
+			return iComm.getDraft(params[0]);
+		}
+
+		@Override
+		protected void onPostExecute(Recipe result) {
+			if (result == null)
+				return;
+			LoadDraft(result);
 		}
 	}
 }

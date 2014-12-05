@@ -72,7 +72,7 @@ public class SearchActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void SearchSuccess(ArrayList<Recipe> recipies, ArrayList<Integer> dIDs)
+	public void SearchSuccess(ArrayList<Recipe> recipies)
 	{
 		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		for(int i = 0; i < recipies.size(); ++i)
@@ -135,7 +135,8 @@ public class SearchActivity extends ActionBarActivity {
 			}
 			else {
 				b_view.setText("Edit");
-				j = dIDs.get(i);
+				j = recipies.get(i).did;
+				System.out.println("DID: " + j);
 			}
 
 			b_view.setOnClickListener(new View.OnClickListener(){
@@ -181,7 +182,6 @@ public class SearchActivity extends ActionBarActivity {
 	private class SearchTask extends AsyncTask<String, Void, Boolean>
 	{
 		ArrayList<Recipe> ret = new ArrayList<Recipe>();
-		ArrayList<Integer> DraftsID = new ArrayList<Integer>();
 		@Override
 		protected Boolean doInBackground(String... params) {
 			Comm c = new Comm();
@@ -208,7 +208,7 @@ public class SearchActivity extends ActionBarActivity {
 		protected void onPostExecute(Boolean result) {
 			if (result == true) {
 				Log.v("searchActivty","Search Success");
-				SearchSuccess(ret, DraftsID);
+				SearchSuccess(ret);
 			} else {
 				Log.v("login_fail","Search Failed");
 				SearchFailure(ret);
