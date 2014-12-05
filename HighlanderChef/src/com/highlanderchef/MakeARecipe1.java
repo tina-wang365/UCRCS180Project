@@ -2,7 +2,6 @@ package com.highlanderchef;
 
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.concurrent.ExecutionException;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +30,7 @@ public class MakeARecipe1 extends ActionBarActivity {
 	Spinner spinner;
 	Bundle b;
 	User currentUser;
-	Utility.UserTask cUserTask;
+	Recipe Draft;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +38,13 @@ public class MakeARecipe1 extends ActionBarActivity {
 		setContentView(R.layout.activity_make_a_recipe1);
 		categoryIDs = new ArrayList<>();
 		new GetCategoriesTask().execute(1);
-		cUserTask = Utility.GetLoggedInUser();
+		currentUser = Utility.GetLoggedInUser();
+		Intent intent = this.getIntent();
+		//Draft = (Recipe) intent.getSerializableExtra("Draft");
+		if (Draft != null)
+		{
+			LoadDraft();
+		}
 	}
 
 	@Override
@@ -52,7 +56,11 @@ public class MakeARecipe1 extends ActionBarActivity {
 
 	private Recipe getCurrentRecipeInfo()
 	{
-		Recipe returnRecipe = new Recipe();
+		Recipe returnRecipe = null;
+		if (Draft == null)
+			returnRecipe = new Recipe();
+		else
+			returnRecipe = Draft;
 
 		EditText edittext_name = (EditText) findViewById(R.id.recipe_title);
 		String new_name = edittext_name.getText().toString();
@@ -63,15 +71,7 @@ public class MakeARecipe1 extends ActionBarActivity {
 		EditText edittext_time = (EditText) findViewById(R.id.recipe_est_time);
 		String new_time = edittext_time.getText().toString();
 
-		try {
-			currentUser = cUserTask.get();
-		} catch (InterruptedException e) {
-			Log.e("UserTask Failed", "UserTask interrupted");
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			Log.e("UserTask Failed", "UserTask execution failed");
-			e.printStackTrace();
-		}
+		currentUser = Utility.GetLoggedInUser();
 		if (currentUser == null)
 			Utility.displayErrorToast(this, "Current User is null");
 		else {
@@ -96,9 +96,13 @@ public class MakeARecipe1 extends ActionBarActivity {
 	{
 		recipe = getCurrentRecipeInfo();
 		if (recipe.getName().length() <= 0)
+		{
+			Utility.displayErrorToast(this, "Please enter a name for the recipe");
 			return;
-
+		}
 		Intent intent = new Intent(this, MakeARecipe2.class);
+		if (Draft != null)
+			intent.putExtra("IsDraft", true);
 		intent.putExtra("recipe", recipe);
 		startActivity(intent);
 	}
@@ -223,6 +227,15 @@ public class MakeARecipe1 extends ActionBarActivity {
 	public void catOnFailure()
 	{
 
+	}
+
+	public void LoadDraft()
+	{
+		((EditText) findViewById(R.id.recipe_title)).setText(Draft.getName());
+
+		((EditText) findViewById(R.id.recipe_description)).setText(Draft.getDescription());
+
+		((EditText) findViewById(R.id.recipe_est_time)).setText(Draft.getCookTime());
 	}
 
 	private class GetCategoriesTask extends AsyncTask<Object, Void, Boolean> {

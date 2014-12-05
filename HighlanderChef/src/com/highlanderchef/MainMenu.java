@@ -129,6 +129,8 @@ public class MainMenu extends ActionBarActivity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			cUser = Comm.getUser();
+			if (cUser == null)
+				return false;
 			return (cUser.getUsername().length() > 0);
 		}
 

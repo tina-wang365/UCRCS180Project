@@ -3,6 +3,7 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Gravity;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 public class Utility
 {
+	private static User CurrentUser;
 	private static final int TOAST_MESSAGE_LENGTH = 3500;
 
 	static public ProgressBar DisplaySpinner(Context iContext, ViewGroup iLayout)
@@ -31,11 +33,14 @@ public class Utility
 	{
 		new UploadDraftTask().execute(draft);
 	}
-	static public UserTask GetLoggedInUser()
+	static public User GetLoggedInUser()
 	{
-		UserTask ITask = new UserTask();
-		ITask.execute();
-		return ITask;
+		if (CurrentUser == null)
+		{
+			new UserTask().execute();
+			return new User();
+		}
+		return CurrentUser;
 	}
 	static public void displayErrorToast(Context iContext, String iMessage)
 	{
@@ -62,6 +67,15 @@ public class Utility
 			break;
 		}
 	}
+
+	static public Ingredient getFromIntent(Intent intent, String key)
+	{
+		Ingredient returnValue = new Ingredient(intent.getStringExtra(key + " name"), intent.getStringExtra(key + " amount"));
+		if (returnValue.name == null || returnValue.amount == null)
+			return null;
+		return returnValue;
+	}
+
 	static private class UploadDraftTask extends AsyncTask<Recipe, Void, Boolean>
 	{
 		@Override
@@ -82,6 +96,11 @@ public class Utility
 
 	}
 
+	static void setUser(User iUser)
+	{
+		CurrentUser = iUser;
+	}
+
 	static class UserTask extends AsyncTask<Void, Void, User>
 	{
 		@Override
@@ -96,6 +115,7 @@ public class Utility
 			}
 			else {
 				Log.v("Got_user", "Sucessfully obtained user from server.");
+				setUser(result);
 			}
 		}
 

@@ -7,10 +7,15 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 
 
 public class Recipe implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6967995128725451333L;
 	public int id;
 	public int uid;
 	public String username;
@@ -111,6 +116,34 @@ public class Recipe implements Serializable{
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public void putIntoIntent(Intent intent)
+	{
+		intent.putExtra("ID", this.id);
+		intent.putExtra("UID", this.uid);
+		intent.putExtra("Username", this.username);
+		intent.putExtra("Name", this.name);
+		intent.putExtra("Description", this.description);
+		intent.putExtra("Cook Time", this.cookTime);
+		intent.putExtra("Main Image", this.mainImage);
+		intent.putExtra("Main Image Path", this.mainImagepath);
+		intent.putExtra("Rating", this.rating);
+		intent.putExtra("Categories", this.categories.toArray());
+		for (int i = 0; i < ingredients.size(); i++)
+			ingredients.get(i).putIntoIntent(intent, "ingredient" + Integer.toString(i));
+		for (int i = 0; i < directions.size(); i++)
+			;
+		for (int i = 0; i < comments.size(); i++)
+			;
+		for (int i = 0; i < questions.size(); i++)
+			;
+		/*
+		 * public ArrayList<Integer> categories;
+	public ArrayList<Ingredient> ingredients;
+	public ArrayList<Direction> directions;
+	public ArrayList<Comment> comments;
+	public ArrayList<Question> questions;
+		 */
 	}
 
 	public void setIngredients(ArrayList<Ingredient> i)
