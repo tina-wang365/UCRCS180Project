@@ -343,7 +343,9 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	{
 		Intent intent = new Intent(this, QuestionBoardActivity.class);
 		System.out.println(recipeID);
-		intent.putExtra("currentRecipe", recipe);
+		//TODO:  I NEED TO PASS RECIPE OBJECT THOUGH.
+
+		//intent.putExtra("currentRecipe", recipe.id);
 		startActivity(intent);
 	}
 	private class getOwnerOfRecipe extends AsyncTask<Integer, Void, Boolean> {
