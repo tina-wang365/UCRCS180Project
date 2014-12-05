@@ -23,6 +23,9 @@
     <string name="Compose_Recipe">Compose Recipe</string>
     <string name="Browse_Recipes">Browse Recipes</string>
     <string name="View_My_Recipes">View My Recipes</string>
+    <string name="View_Favorites">View Favorites</string>
+    <string name="View_Drafts">View Drafts</string>
+    <string name="View_Self_Homepage">View Homepage</string>
     <string name="Search_Recipes">Search Recipes</string>
     <string name="title_activity_make_arecipe1">MakeARecipe1</string>
     <string name="title_activity_view_my_recipes">ViewMyRecipes</string>
