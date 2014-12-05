@@ -18,6 +18,7 @@ public class Recipe implements Serializable{
 	private static final long serialVersionUID = -6967995128725451333L;
 	public int id;
 	public int uid;
+	public int did;
 	public String username;
 	public String name;
 	public String description;
@@ -40,6 +41,20 @@ public class Recipe implements Serializable{
 		this.name = name;
 		this.description = description;
 		this.mainImage = mainImage;
+		this.did = 0;
+
+		categories = new ArrayList<Integer>();
+		ingredients = new ArrayList<Ingredient>();
+		directions = new ArrayList<Direction>();
+		comments = new ArrayList<Comment>();
+		questions = new ArrayList<Question>();
+	}
+	public Recipe(int id, String name, String description, Bitmap mainImage, int did) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.mainImage = mainImage;
+		this.did = did;
 
 		categories = new ArrayList<Integer>();
 		ingredients = new ArrayList<Ingredient>();
@@ -237,6 +252,10 @@ public class Recipe implements Serializable{
 	public Bitmap getMainImage()
 	{
 		return this.mainImage;
+	}
+	public int getDid()
+	{
+		return this.did;
 	}
 
 	public boolean isMainImage()
