@@ -76,6 +76,7 @@ public class MainMenu extends ActionBarActivity {
 
 	public void ViewMyRecipesPressed(View view)
 	{
+		System.out.println("MM.ViewMyRecipes()");
 		//Intent intent = new Intent(this, ViewMyRecipes.class);
 		//startActivity(intent);
 
@@ -117,6 +118,7 @@ public class MainMenu extends ActionBarActivity {
 
 	public void ViewFavorites(View view)
 	{
+		System.out.println("MM.ViewFavorites()");
 		Intent intent = new Intent(this, SearchActivity.class);
 		intent.putExtra("ViewFavorites", "ViewFavorites");
 		startActivity(intent);

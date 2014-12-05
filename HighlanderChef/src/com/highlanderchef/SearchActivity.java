@@ -197,9 +197,9 @@ public class SearchActivity extends ActionBarActivity {
 				for (int i = 0; i < DraftsID.size(); i++)
 					ret.add(c.getDraft(DraftsID.get(i)));
 			} else if (params[0] == ViewFavorites) {
-				//				ArrayList<Integer> FavoriteID = c.getFavorites();
-				//				for (int i = 0; i < FavoriteID.size(); i++)
-				//					ret.add(c.getDraft(FavoriteID.get(i)));
+				for (int i = 0; i < c.getUser().favorites.size(); i++) {
+					ret.add(c.getRecipe(c.getUser().favorites.get(i)));
+				}
 			}
 			return (ret.size() > 0);
 		}
