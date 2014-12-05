@@ -3,6 +3,7 @@ package com.highlanderchef;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -27,6 +28,11 @@ import android.view.SurfaceView;
 
 public class CameraPreview implements SurfaceHolder.Callback, Camera.PreviewCallback
 {
+	static {
+		if (!OpenCVLoader.initDebug()) {
+			// Handle initialization error
+		}
+	}
 
 	private SurfaceHolder mSurfHolder;
 	private Camera mCamera;
