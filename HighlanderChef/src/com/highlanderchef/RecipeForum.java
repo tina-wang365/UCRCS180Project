@@ -33,6 +33,8 @@ public class RecipeForum extends ActionBarActivity {
 	User ownerOfRecipe = new User();
 	User currentlyLoggedIn = new User();
 
+	public static int ImageMatch = 0;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		questionsLayout = new RelativeLayout(this);
@@ -45,6 +47,31 @@ public class RecipeForum extends ActionBarActivity {
 		recipeID = intent.getIntExtra("recipeID", 0);
 		downloadRecipe();
 	}
+
+	@Override
+	public void onWindowFocusChanged (boolean hasFocus)
+	{
+		if(hasFocus)
+		{
+			if(ImageMatch == 1)
+			{
+				//TODO ask Tina if messages are good
+				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Didn't Match ed", LENGTH_LONG);
+				followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+				followToast.show();
+				ImageMatch = 0;
+			}
+			else if(ImageMatch == 2)
+			{
+				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Matched: Goo d to move on", LENGTH_LONG);
+				followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+				followToast.show();
+				ImageMatch = 0;
+			}
+		}
+	}
+
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
