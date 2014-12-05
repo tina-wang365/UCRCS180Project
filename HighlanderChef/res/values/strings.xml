@@ -23,9 +23,6 @@
     <string name="Compose_Recipe">Compose Recipe</string>
     <string name="Browse_Recipes">Browse Recipes</string>
     <string name="View_My_Recipes">View My Recipes</string>
-    <string name="View_Drafts">View Drafts</string>
-    <string name="View_Favorites">View Favorites</string>
-    <string name="View_Self_Homepage">View Homepage</string>
     <string name="Search_Recipes">Search Recipes</string>
     <string name="title_activity_make_arecipe1">MakeARecipe1</string>
     <string name="title_activity_view_my_recipes">ViewMyRecipes</string>
@@ -46,7 +43,7 @@
     <string name="Add_an_Ingredient">Add Ingredient</string>
     <string name="Ingredient_Amount">Amount</string>
     <string name="Add_another_ingredient_button">Add Ingredient</string>
-    <string name="Add_directions_button">Add direction</string>
+    <string name="Add_directions_button">Add directions</string>
     <!-- Refer to layout/activity_recipeForum.xml -->
     <string name="SaveDraft">Save As Draft</string>
     <string name="recipeTitle">DEFAULT RECIPE TITLE</string>
@@ -76,5 +73,6 @@
     <string name="title_activity_camera">Camera</string>
     <string name="title_activity_cam">Cam</string>
     <string name="title_activity_preferences">PreferencesActivity</string>
+    <string name="title_activity_question_board">QuestionBoardActivity</string>
 
 </resources>

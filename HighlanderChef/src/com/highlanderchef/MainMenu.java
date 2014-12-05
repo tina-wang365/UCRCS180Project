@@ -1,5 +1,6 @@
 package com.highlanderchef;
 
+//import android.R;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,7 +18,6 @@ import android.widget.Toast;
 public class MainMenu extends ActionBarActivity {
 
 	private static final int LENGTH_LONG = 3500;
-	private User currentUser = new User();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,31 +100,9 @@ public class MainMenu extends ActionBarActivity {
 
 	}
 
-	public void ViewHomepage(View view)
+	public void setUsername(String iName)
 	{
-		Intent intent = new Intent(this, UserHomepage.class);
-		intent.putExtra("ViewUser", currentUser.getID());
-		startActivity(intent);
-	}
-
-	public void ViewDrafts(View view)
-	{
-		Intent intent = new Intent(this, SearchActivity.class);
-		intent.putExtra("ViewDrafts", "View Drafts");
-		startActivity(intent);
-	}
-
-	public void ViewFavorites(View view)
-	{
-		Intent intent = new Intent(this, SearchActivity.class);
-		intent.putExtra("ViewFavorites", "ViewFavorites");
-		startActivity(intent);
-	}
-
-	public void setUser(User iUser)
-	{
-		currentUser = iUser;
-		String username = currentUser.getUsername();
+		String username = iName;
 		String strWelcomeFormat = getResources().getString(R.string.Welcome_Chef);
 		String strWelcomeMsg = String.format(strWelcomeFormat,username);
 		((TextView) findViewById(R.id.textView1)).setText(strWelcomeMsg);
@@ -132,24 +110,23 @@ public class MainMenu extends ActionBarActivity {
 
 	private class UsernameTask extends AsyncTask<String, Void, Boolean>
 	{
-		User cUser = new User();
+		String cUsername = new String();
 		@Override
 		protected Boolean doInBackground(String... params) {
-			cUser = Comm.getUser();
-			if (cUser == null)
-				return false;
-			return (cUser.getUsername().length() > 0);
+			Comm iComm = new Comm();
+			cUsername = iComm.getEmail();
+			return (cUsername.length() > 0);
 		}
 
 
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result == true) {
-				setUser(cUser);
+				setUsername(cUsername);
 			}
 			else {
-				Log.e("getUser Failed","Could not get user from server.");
-				setUser(new User());
+				Log.e("get_username_fail","Could not get username from server.");
+				setUsername(new String());
 			}
 		}
 
