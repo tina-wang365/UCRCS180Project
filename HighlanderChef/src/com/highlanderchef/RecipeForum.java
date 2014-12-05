@@ -15,13 +15,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class RecipeForum extends ActionBarActivity {
-
+	ID_Maker MakerInstance = new ID_Maker();
 	private final int LENGTH_SHORT = 2000;
 	private final int LENGTH_LONG = 7000;
 	Recipe currentRecipe = null;
+	LinearLayout ll;
+	RelativeLayout questionsLayout = null;
 	//	Comment currentComment = null;
 	int recipeID = 0;
 	private Button btnComment;
@@ -32,6 +35,7 @@ public class RecipeForum extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		questionsLayout = new RelativeLayout(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recipe_forum);
 		//TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
@@ -64,9 +68,10 @@ public class RecipeForum extends ActionBarActivity {
 	public void downloadRecipe() {
 		new getRecipeTask().execute(recipeID);
 	}
-	LinearLayout ll;
 
 
+
+	@SuppressWarnings("null")
 	public void displayRecipeSuccess(Recipe recipe) {
 		ll = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		if (ll == null) {
@@ -185,46 +190,27 @@ public class RecipeForum extends ActionBarActivity {
 		}
 
 
-		ID_Maker MakerInstance = new ID_Maker();
+		Button viewForum = new Button(this);
+		viewForum.setId(MakerInstance.useCurrID());
+		viewForum.setText("View Forum");
 
-		//Set title of forum board
-		TextView tvQuestionBoardTitle = new TextView(this);
-		tvQuestionBoardTitle.setId(MakerInstance.useCurrID());
-		tvQuestionBoardTitle.setText("Highlander Chef Forum");
-		ll.addView(tvQuestionBoardTitle);
-
-		//postQuestion text field
-		EditText etPostQuestion = new EditText(this);
-		etPostQuestion.setHint("Add a question");
-		etPostQuestion.setId(MakerInstance.useCurrID());
-		etPostQuestion.setLayoutParams(params);
-		ll.addView(etPostQuestion);
-
-		Button bPostQuestion = new Button(this);
-		bPostQuestion.setText("Post Question");
 		final LinearLayout.LayoutParams paramsPostQuestion =
-				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT);
-		bPostQuestion.setLayoutParams(paramsPostQuestion);
-		/*
-		bPostQuestion.setOnClickListener(new View.OnClickListener(){
+		viewForum.setLayoutParams(paramsPostQuestion);
+		viewForum.setOnClickListener(new View.OnClickListener(){
 
-
-			/*
-			//public Question(int uid, String username, String text) {
 			@Override
 			public void onClick(View v)
 			{
-				EditText et2 = (EditText) findViewById(1111);
-				final String comment_text = et2.getText().toString();
-				//Question = new Question(recipe.id, ratingBar.getRating(), comment_text, Comm.getEmail());\
-				/
-				//Question = new Question(Comm.getEmail()
-				addComment(new_comment);
-				et2.getText().clear();
+				callQuestionBoardIntent(recipeID);
+
 			}
-		});*/
-		ll.addView(bPostQuestion);
+		});
+		ll.addView(viewForum);
+
+
+
 
 
 		//comments edit text field
@@ -281,7 +267,6 @@ public class RecipeForum extends ActionBarActivity {
 				liveComment.setLayoutParams(params);
 				liveComment.setBackgroundColor(Color.WHITE);
 				ll.addView(liveComment);
-
 			}
 		});
 		ll.addView(b_comment);
@@ -297,6 +282,7 @@ public class RecipeForum extends ActionBarActivity {
 			tv_comment.setBackgroundColor(Color.WHITE);
 			ll.addView(tv_comment);
 		}
+
 	}
 
 	public void callImageCompIntent(Bitmap bmp)
@@ -333,8 +319,25 @@ public class RecipeForum extends ActionBarActivity {
 
 		new postCommentTask().execute(comment);
 	}
+	/*
+	public void addQuestion(Question newQuestion) {
+		TextView tv_question = new TextView(this);
+		tv_question.setId(MakerInstance.useCurrID());
+		tv_question.setText(newQuestion.text + "\nby " + Comm.getEmail());
+
+		final LinearLayout.LayoutParams params =
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
+
+		tv_question.setLayoutParams(params);
+		LinearLayout ll = (LinearLayout) findViewById(R.id.rflayout);
+		System.out.println("RF addQuestion to Layout");
+		questionsLayout.addView(tv_question);
+
+		//new postQuestionTask().execute(newQuestion);
 
 
+	}*/
 	public void displayRecipeFailure(String text) {
 		//return to search activity.
 		Intent intent = new Intent(this, MainMenu.class);
@@ -352,7 +355,13 @@ public class RecipeForum extends ActionBarActivity {
 		Utility.displayErrorToasts(getApplicationContext(), -2, LENGTH_LONG);
 
 	}
-
+	public void callQuestionBoardIntent(int index)
+	{
+		Intent intent = new Intent(this, QuestionBoardActivity.class);
+		System.out.println(recipeID);
+		intent.putExtra("recipeID", index);
+		startActivity(intent);
+	}
 	private class getOwnerOfRecipe extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
@@ -419,4 +428,90 @@ public class RecipeForum extends ActionBarActivity {
 			}
 		}
 	}
+	/*
+	private class postQuestionTask extends AsyncTask<Question, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Question... params) {
+			Comm c = new Comm();
+			System.out.println("RecipeID: " + recipeID);
+			System.out.println("Question Text: " + params[0].text);
+			int ret = c.postQuestion(recipeID, params[0].text);
+			return (ret != Comm.SUCCESS);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if(result == true) {
+				Log.v("postQuestionSuccess", "Successfully posted a question");
+			}
+			else {
+				Log.v("postQuestionFailure", "Failed to post a question!");
+			}
+		}
+	}
+	 */
 }
+
+/*
+//Set title of forum board
+TextView tvQuestionBoardTitle = new TextView(this);
+tvQuestionBoardTitle.setId(MakerInstance.useCurrID());
+tvQuestionBoardTitle.setText("Highlander Chef Forum");
+ll.addView(tvQuestionBoardTitle);
+
+//postQuestion text field
+final EditText etPostQuestion = new EditText(this);
+etPostQuestion.setId(MakerInstance.useCurrID());
+etPostQuestion.setHint("Add a question");
+etPostQuestion.setId(MakerInstance.useCurrID());
+etPostQuestion.setLayoutParams(params);
+
+ll.addView(etPostQuestion);
+
+
+Button bPostQuestion = new Button(this);
+bPostQuestion.setText("Post Question");
+LinearLayout.LayoutParams paramsPostQuestion =
+		new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+				LinearLayout.LayoutParams.WRAP_CONTENT);
+bPostQuestion.setLayoutParams(paramsPostQuestion);
+//Integer etPostQuestionID = etPostQuestionID.getId();
+final TextView liveQuestion = new TextView(this);
+ll.addView(bPostQuestion);
+bPostQuestion.setOnClickListener(new View.OnClickListener(){
+
+
+
+	//public Question(int uid, String username, String text) {
+	@Override
+	public void onClick(View v)
+	{
+		EditText etPostQuestion2 = (EditText) findViewById(etPostQuestion.getId());
+		final String question_text = etPostQuestion2.getText().toString();
+		// Question(int uid, String username, String text)
+		Question newQuestion = new Question(Comm.staticGetUserID(), Comm.getEmail(), question_text);
+		addQuestion(newQuestion); //TODO: Make Asynchronous class for question board
+		etPostQuestion2.getText().clear();
+		liveQuestion.setText(question_text);
+		liveQuestion.setLayoutParams(params);
+		liveQuestion.setBackgroundColor(Color.RED);
+		ll.addView(liveQuestion);
+
+
+
+	}
+});
+
+//display questions
+for(int i = 0; i < recipe.questions.size(); ++i)
+{
+	TextView tv_question = new TextView(this);
+	tv_question.setText(recipe.questions.get(i).text);
+	tv_question.setLayoutParams(params);
+	tv_question.setBackgroundColor(Color.WHITE);
+	ll.addView(tv_question);
+}
+
+
+ */
+
