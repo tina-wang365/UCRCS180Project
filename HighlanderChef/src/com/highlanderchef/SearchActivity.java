@@ -48,7 +48,7 @@ public class SearchActivity extends ActionBarActivity {
 			ViewingDrafts = true;
 		} else if (intent.getStringExtra(ViewFavorites) != null) {
 			new SearchTask().execute(ViewFavorites);
-		else {
+		} else {
 			new SearchTask().execute(SearchByMyUID);
 		}
 	}
