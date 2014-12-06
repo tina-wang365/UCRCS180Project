@@ -24,6 +24,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	ID_Maker MakerInstance = new ID_Maker();
 	private final int LENGTH_SHORT = 2000;
 	private final int LENGTH_LONG = 7000;
+	int ownerID = -1;
 	Recipe currentRecipe = null;
 	LinearLayout ll;
 	RelativeLayout questionsLayout = null;
@@ -338,6 +339,13 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		startActivity(intent);
 	}
 	 */
+	public void viewHomePage(View view) {
+		Intent intent = new Intent(this, UserHomepage.class);
+		intent.putExtra("userID", recipeID);
+		intent.putExtra("Username", currentRecipe.username);
+		startActivity(intent);
+		//TODO: grab user homepage of the owner of the recipe
+	}
 	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 		// TODO Auto-generated method stub
 
@@ -396,12 +404,12 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		@Override
 		protected Boolean doInBackground(Integer... params) {
 			Comm c = new Comm();
-			int userId = params[0];
 			//currently doesn't do anything with the user who owns the recipe.
 			//TODO: Need to change c.getUser to c.getUser(uid), when Matt finishes that part.
-			User ret = c.getUser(); //this gets the user who is currently logged in.
+			User ret = c.getUser();
+			//this gets the user who is currently logged in.
 			//Recipe ret = c.getRecipe(params[0]);
-
+			ownerID = ret.id;
 			return (ret != null);
 		}
 		@Override
@@ -493,6 +501,37 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 			}
 		}
 	}
+
+	/*
+	private class favoriteTask extends AsyncTask<Integer, Void, Boolean>
+	{
+
+		@Override
+		protected Boolean doInBackground(Integer... params)
+		{
+			Comm IComm = new Comm();
+			//Get Recipes of the User
+			currentUserID = params[0];
+			IComm.follow(params[0]);
+			return (true);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			if (result != true)
+			{
+				Log.e("FOLLOW_USER", "Failed to follow target user");
+			}
+			else
+			{
+				Log.v("FOLLOW_USER", "Sucessfully followed target user");
+			}
+		}
+
+	}
+	 */
 }
 
 

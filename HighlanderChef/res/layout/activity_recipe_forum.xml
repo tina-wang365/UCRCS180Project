@@ -17,9 +17,25 @@
 				android:id="@+id/linearLayoutResults"
 		     	android:layout_width="match_parent"
 		      	android:layout_height="wrap_content"
-		      	android:orientation="vertical" > 
+		      	android:orientation="vertical" >
+
+		     <Button
+		         android:id="@+id/button1"
+		         android:layout_width="match_parent"
+		         android:layout_height="wrap_content"
+		         android:text="View User's Homepage"
+		         android:onClick="viewHomePage" />
+		     	<Button
+	    android:id="@+id/button2"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Favorite!" />
+ 
 		 </LinearLayout>
 
 	
 	</ScrollView>
+
+
+
 </LinearLayout>

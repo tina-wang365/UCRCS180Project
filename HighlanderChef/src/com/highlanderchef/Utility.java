@@ -115,7 +115,6 @@ public class Utility
 			}
 			else {
 				Log.v("Got_user", "Sucessfully obtained user from server.");
-				setUser(result);
 			}
 		}
 
