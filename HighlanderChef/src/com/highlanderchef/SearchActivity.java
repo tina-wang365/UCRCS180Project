@@ -43,11 +43,11 @@ public class SearchActivity extends ActionBarActivity {
 			new SearchTask().execute(SearchByString, query);
 		} else if(category != null) {
 			new SearchTask().execute(SearchByCategory, category);
-		}
-		else if (intent.getStringExtra(ViewDrafts) != null){
+		} else if (intent.getStringExtra(ViewDrafts) != null){
 			new SearchTask().execute(ViewDrafts);
 			ViewingDrafts = true;
-		}
+		} else if (intent.getStringExtra(ViewFavorites) != null) {
+			new SearchTask().execute(ViewFavorites);
 		else {
 			new SearchTask().execute(SearchByMyUID);
 		}
