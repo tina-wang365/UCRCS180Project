@@ -1,242 +1,231 @@
 package com.highlanderchef;
 
-import java.io.IOException;
+import java.util.List;
+
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfDMatch;
+import org.opencv.core.MatOfKeyPoint;
+import org.opencv.features2d.DMatch;
+import org.opencv.features2d.DescriptorExtractor;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.FeatureDetector;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.TextView;
+import android.view.WindowManager;
 
-public class ImageComp extends ActionBarActivity implements SurfaceHolder.Callback{
-
-	int recipeID = 0;
-	Bitmap image1;
-
-	private CameraManager cameraManager;
-	private CaptureActivityHandler handler;
-	private TextView statusView;
-	private View resultView;
-	private boolean hasSurface;
-	private String characterSet;
-	//private InactivityTimer inactivityTimer;
-
-
-
-	public Handler getHandler() {
-		return handler;
-	}
-
-	CameraManager getCameraManager() {
-		return cameraManager;
-	}
+public class ImageComp extends ActionBarActivity implements CvCameraViewListener2
+{
+	private CameraBridgeViewBase mOpenCvCameraView;
+	private Bitmap bm_image1;
+	boolean firstframe = true;
+	boolean halfassmutex =false;
+	private final Handler handler = new Handler();
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.activity_image_comp);
+		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.HelloOpenCvView);
+		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
+		mOpenCvCameraView.setCvCameraViewListener(this);
+
+		handler.postDelayed(runnable, 10000);
 
 		Intent intent = getIntent();
-		image1 = (Bitmap)intent.getParcelableExtra("image");
+		byte[] bytes = intent.getByteArrayExtra("image");
+		bm_image1 = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		RecipeForum.ImageMatch = 0;
+	}
 
-		//ImageView iv_image1 = (ImageView) findViewById(R.id.image1);
-		//iv_image1.setImageBitmap(image1);
+	private final Runnable runnable = new Runnable() {
+		@Override
+		public void run() {
+			RecipeForum.ImageMatch = 1;
+			finish();
+		}
+	};
 
-		hasSurface = false;
-		//inactivityTimer = new InactivityTimer(this);
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		if (mOpenCvCameraView != null)
+			mOpenCvCameraView.disableView();
 	}
 
 	@Override
-	protected void onResume()
+	public void onDestroy() {
+		super.onDestroy();
+		if (mOpenCvCameraView != null)
+			mOpenCvCameraView.disableView();
+	}
+
+	@Override
+	public void onCameraViewStarted(int width, int height) {
+	}
+
+	@Override
+	public void onCameraViewStopped() {
+	}
+
+	@Override
+	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+		if(firstframe || halfassmutex)
+		{
+			firstframe = false;
+			return inputFrame.rgba();
+		}
+
+		Mat image2 = inputFrame.rgba();
+
+		halfassmutex = true;
+		new CompareImageTask().execute(image2);
+
+		return inputFrame.rgba();
+	}
+
+	private final BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+		@Override
+		public void onManagerConnected(int status) {
+			switch (status) {
+			case LoaderCallbackInterface.SUCCESS:
+			{
+				mOpenCvCameraView.enableView();
+			} break;
+			default:
+			{
+				super.onManagerConnected(status);
+			} break;
+			}
+		}
+	};
+
+	@Override
+	public void onResume()
 	{
 		super.onResume();
-
-		// CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
-		// want to open the camera driver and measure the screen size if we're going to show the help on
-		// first launch. That led to bugs where the scanning rectangle was the wrong size and partially
-		// off screen.
-		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-		SurfaceHolder surfaceHolder = surfaceView.getHolder();
-		cameraManager = new CameraManager(getApplication(), surfaceView.getHeight(), surfaceView.getWidth() );
-
-
-		//resultView = findViewById(R.id.result_view);
-		//statusView = (TextView) findViewById(R.id.status_view);
-
-		handler = null;
-
-		//resetStatusView();
-
-
-
-		if (hasSurface) {
-			// The activity was paused but not stopped, so the surface still exists. Therefore
-			// surfaceCreated() won't be called, so init the camera here.
-			initCamera(surfaceHolder);
-		} else {
-			// Install the callback and wait for surfaceCreated() to init the camera.
-			surfaceHolder.addCallback(this);
-		}
-
-		//inactivityTimer.onResume();
-
-		Intent intent = getIntent();
+		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this, mLoaderCallback);
 	}
 
-	@Override
-	protected void onPause()
+	public void CompareSuccess()
 	{
-		if (handler != null) {
-			handler.quitSynchronously();
-			handler = null;
-		}
-		//inactivityTimer.onPause();
-		cameraManager.closeDriver();
-		if (!hasSurface) {
-			SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-			SurfaceHolder surfaceHolder = surfaceView.getHolder();
-			surfaceHolder.removeCallback(this);
-		}
-		super.onPause();
+		halfassmutex = false;
+		RecipeForum.ImageMatch = 2;
+		finish();
 	}
-	@Override
-	protected void onDestroy()
+
+	public void CompareFailure()
 	{
-		//inactivityTimer.shutdown();
-		super.onDestroy();
+		halfassmutex = false;
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-		case KeyEvent.KEYCODE_BACK:
-			/*if (source == IntentSource.NATIVE_APP_INTENT) {
-				setResult(RESULT_CANCELED);
-				finish();
-				return true;
-			}*/
-			/*if ((source == IntentSource.NONE || source == IntentSource.ZXING_LINK) && lastResult != null) {
-				restartPreviewAfterDelay(0L);
-				return true;
-			}*/
-			break;
-		case KeyEvent.KEYCODE_FOCUS:
-		case KeyEvent.KEYCODE_CAMERA:
-			// Handle these events so they don't launch the Camera app
-			return true;
-			// Use volume up/down to turn on light
-		case KeyEvent.KEYCODE_VOLUME_DOWN:
-			cameraManager.setTorch(false);
-			return true;
-		case KeyEvent.KEYCODE_VOLUME_UP:
-			cameraManager.setTorch(true);
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
-
-
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent)
-	{
-		if (resultCode == RESULT_OK) {
-			/*if (requestCode == HISTORY_REQUEST_CODE) {
-				int itemNumber = intent.getIntExtra(Intents.History.ITEM_NUMBER, -1);
-				if (itemNumber >= 0) {
-					HistoryItem historyItem = historyManager.buildHistoryItem(itemNumber);
-
-					//TODO change this to perform image comp
-					decodeOrStoreSavedBitmap(null, historyItem.getResult());
-				}
-			}*/
-		}
-	}
-
-	@Override
-	public void surfaceCreated(SurfaceHolder holder)
-	{
-		if (holder == null) {
-
-		}
-		if (!hasSurface) {
-			hasSurface = true;
-			initCamera(holder);
-		}
-	}
-
-	@Override
-	public void surfaceDestroyed(SurfaceHolder holder)
-	{
-		hasSurface = false;
-	}
-
-	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-	}
-
-
-	private void initCamera(SurfaceHolder surfaceHolder)
-	{
-		if (surfaceHolder == null) {
-			throw new IllegalStateException("No SurfaceHolder provided");
-		}
-		if (cameraManager.isOpen()) {
-
-			return;
-		}
-		try {
-			cameraManager.openDriver(surfaceHolder);
-			// Creating the handler starts the preview, which can also throw a RuntimeException.
-			if (handler == null) {
-				handler = new CaptureActivityHandler(this, cameraManager);
-			}
-			//decodeOrStoreSavedBitmap(null, null);
-		} catch (IOException ioe) {
-		} catch (RuntimeException e) {
-		}
-	}
-
-	public void restartPreviewAfterDelay(long delayMS)
-	{
-		if (handler != null)
+	private class CompareImageTask extends AsyncTask<Mat, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Mat... params)
 		{
-			//handler.sendEmptyMessageDelayed(R.id.restart_preview, delayMS);
+			try
+			{
+				Mat image1 = new Mat (bm_image1.getWidth(), bm_image1.getHeight(), CvType.CV_8UC1);
+				Utils.bitmapToMat(bm_image1, image1);
+				Mat image2 = params[0];
+
+				//Imgproc.resize(image2, image2,  new Size(image2.cols()/2, image2.rows()/2));
+
+				MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
+				MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
+				Mat descr1 = new Mat();
+				Mat descr2 = new Mat();
+
+				FeatureDetector detector = FeatureDetector.create(FeatureDetector.ORB);
+				DescriptorExtractor extractor = DescriptorExtractor.create(DescriptorExtractor.ORB);
+
+				detector.detect(image1, keypoints1);
+				detector.detect(image2, keypoints2);
+
+				int image1_matches_count = 0;
+				for(int i = 0; i < keypoints1.rows(); ++i)
+				{
+					for(int j = 0; j < keypoints1.cols(); ++j )
+					{
+						++image1_matches_count;
+					}
+				}
+				System.out.println("Number of keypoint for image1 : " + image1_matches_count);
+
+				int image2_matches_count = 0;
+				for(int i = 0; i < keypoints2.rows(); ++i)
+				{
+					for(int j = 0; j < keypoints2.cols(); ++j )
+					{
+						++image2_matches_count;
+					}
+				}
+
+				System.out.println("Number of keypoint for image2 : " + image2_matches_count);
+
+				if(image2_matches_count == 0 || image1_matches_count == 0)
+				{
+					return false;
+				}
+				extractor.compute(image1, keypoints1, descr1);
+				extractor.compute(image2, keypoints2, descr2);
+
+				//definition of descriptor matcher
+				DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
+
+				//match points of two images
+				MatOfDMatch matches = new MatOfDMatch();
+				matcher.match(descr1, descr2, matches);
+
+				List<DMatch> matchesList = matches.toList();
+				int good_matches = 0;
+				for(int i = 0; i < matchesList.size(); ++i)
+				{
+					if(matchesList.get(i).distance <= 50)
+					{
+						++good_matches;
+					}
+				}
+				float matchPercent = ((float)good_matches)/((float)matchesList.size());
+				System.out.println("Total Number : " + matchesList.size());
+				System.out.println("Good Matches : " + matchPercent + "%");
+
+				if(matchPercent >= 0.25)
+					return true;
+			}
+			catch(Exception e)
+			{
+
+			}
+			return false;
 		}
-		resetStatusView();
-	}
 
-	private void resetStatusView() {
-		resultView.setVisibility(View.GONE);
-		//statusView.setText(R.string.msg_default_status);
-		statusView.setVisibility(View.VISIBLE);
-		//lastResult = null;
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.image_comp, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				CompareSuccess();
+			} else {
+				CompareFailure();
+			}
 		}
-		return super.onOptionsItemSelected(item);
 	}
+
+
+
 }

@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class RecipeForum extends ActionBarActivity implements Serializable{
 	ID_Maker MakerInstance = new ID_Maker();
@@ -34,6 +36,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	boolean ratingBarPressed = false;
 	User ownerOfRecipe = new User();
 	User currentlyLoggedIn = new User();
+	public static int ImageMatch = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,29 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		Intent intent = getIntent();
 		recipeID = intent.getIntExtra("recipeID", 0);
 		downloadRecipe();
+	}
+
+	@Override
+	public void onWindowFocusChanged (boolean hasFocus)
+	{
+		if(hasFocus)
+		{
+			if(ImageMatch == 1)
+			{
+				//TODO ask Tina if messages are good
+				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Didn't Match ed", LENGTH_LONG);
+				followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+				followToast.show();
+				ImageMatch = 0;
+			}
+			else if(ImageMatch == 2)
+			{
+				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Matched: Goo d to move on", LENGTH_LONG);
+				followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+				followToast.show();
+				ImageMatch = 0;
+			}
+		}
 	}
 
 	@Override
@@ -179,7 +205,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 						@Override
 						public void onClick(View v)
 						{
-							//callImageCompIntent(image);
+							callImageCompIntent(image);
 						}
 					});
 					ll.addView(image_comp);
@@ -286,14 +312,12 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		}
 
 	}
-	/*
 	public void callImageCompIntent(Bitmap bmp)
 	{
 		Intent intent = new Intent(this, ImageComp.class);
 		intent.putExtra("image", bmp);
 		startActivity(intent);
 	}
-	 */
 	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 		// TODO Auto-generated method stub
 
