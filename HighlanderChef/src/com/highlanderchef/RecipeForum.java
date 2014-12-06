@@ -400,6 +400,10 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		//intent.putExtra("currentRecipe", recipe.id);
 		startActivity(intent);
 	}
+	public void addFavorite(View view) {
+		Utility.displayErrorToast(this, "Favouriting recipe!!!");
+		new favoriteTask().execute(recipeID);
+	}
 	private class getOwnerOfRecipe extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
@@ -502,7 +506,6 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		}
 	}
 
-	/*
 	private class favoriteTask extends AsyncTask<Integer, Void, Boolean>
 	{
 
@@ -510,9 +513,8 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		protected Boolean doInBackground(Integer... params)
 		{
 			Comm IComm = new Comm();
-			//Get Recipes of the User
-			currentUserID = params[0];
-			IComm.follow(params[0]);
+
+			IComm.addFavorite(params[0]);
 			return (true);
 		}
 
@@ -522,16 +524,16 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		{
 			if (result != true)
 			{
-				Log.e("FOLLOW_USER", "Failed to follow target user");
+				Log.e("addFavoriteFailed", "Failed to add favorite");
 			}
 			else
 			{
-				Log.v("FOLLOW_USER", "Sucessfully followed target user");
+				Log.v("addFavoriteSuccess", "successfully add favorite");
 			}
 		}
 
 	}
-	 */
+
 }
 
 

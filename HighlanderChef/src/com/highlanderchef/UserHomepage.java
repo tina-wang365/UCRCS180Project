@@ -266,7 +266,7 @@ public class UserHomepage extends ActionBarActivity {
 		@Override
 		protected void onPostExecute(Boolean result)
 		{
-			if (result != true)
+			if (result == false)
 			{
 				Log.e("LOAD_RECIPE", "Failed to load user's recipes");
 				UserRecipeList = new ArrayList<Recipe>();
