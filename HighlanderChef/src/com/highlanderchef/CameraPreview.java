@@ -1,9 +1,22 @@
 package com.highlanderchef;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfDMatch;
+import org.opencv.core.MatOfKeyPoint;
+import org.opencv.features2d.DescriptorExtractor;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.FeatureDetector;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
@@ -15,6 +28,11 @@ import android.view.SurfaceView;
 
 public class CameraPreview implements SurfaceHolder.Callback, Camera.PreviewCallback
 {
+	static {
+		if (!OpenCVLoader.initDebug()) {
+			// Handle initialization error
+		}
+	}
 
 	private SurfaceHolder mSurfHolder;
 	private Camera mCamera;
@@ -25,11 +43,14 @@ public class CameraPreview implements SurfaceHolder.Callback, Camera.PreviewCall
 	private final int PreviewSizeHeight;
 	private boolean TakePicture;
 
+	private final Bitmap bm_image1;
 
-	public CameraPreview(int PreviewlayoutWidth, int PreviewlayoutHeight)
+
+	public CameraPreview(int PreviewlayoutWidth, int PreviewlayoutHeight, Bitmap image1)
 	{
 		PreviewSizeWidth = PreviewlayoutWidth;
 		PreviewSizeHeight = PreviewlayoutHeight;
+		bm_image1 = image1;
 	}
 
 	@Override
@@ -99,7 +120,7 @@ public class CameraPreview implements SurfaceHolder.Callback, Camera.PreviewCall
 		{
 			if ( TakePicture )
 			{
-				NowCamera.stopPreview();//fixed for Samsung S2
+				NowCamera.stopPreview();
 				NowCamera.takePicture(shutterCallback, rawPictureCallback, jpegPictureCallback);
 				TakePicture = false;
 			}
@@ -139,7 +160,53 @@ public class CameraPreview implements SurfaceHolder.Callback, Camera.PreviewCall
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {
 		System.out.println("onPreviewFrame(...)");
+		Camera.Parameters parameters = camera.getParameters();
+		int width = parameters.getPreviewSize().width;
+		int height = parameters.getPreviewSize().height;
 
+		YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+
+		byte[] bytes = out.toByteArray();
+		Bitmap image_captured = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+		Mat image1 = new Mat (bm_image1.getWidth(), bm_image1.getHeight(), CvType.CV_8UC1);
+		Utils.matToBitmap(image1, bm_image1);
+
+		Mat image2 = new Mat (image_captured.getWidth(), image_captured.getHeight(), CvType.CV_8UC1);
+		Utils.matToBitmap(image2, image_captured);
+
+		MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
+		MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
+		Mat descr1 = new Mat();
+		Mat descr2 = new Mat();
+
+		FeatureDetector detector = FeatureDetector.create(FeatureDetector.ORB);
+		DescriptorExtractor extractor = DescriptorExtractor.create(DescriptorExtractor.ORB);
+
+		detector.detect(image1, keypoints1);
+		detector.detect(image2, keypoints2);
+
+		extractor.compute(image1, keypoints1, descr1);
+		extractor.compute(image2, keypoints2, descr2);
+
+		//definition of descriptor matcher
+		DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
+
+		//match points of two images
+		MatOfDMatch matches = new MatOfDMatch();
+		matcher.match(descr1, descr2, matches);
+
+		int total_number_matches_count = 0;
+		for(int i = 0; i < matches.rows(); ++i)
+		{
+			for(int j = 0; j < matches.cols(); ++j )
+			{
+				++total_number_matches_count;
+			}
+		}
 	}
 
 }
