@@ -159,6 +159,9 @@ public class Comm {
 
 	private void parseUser(JsonNode un) {
 		try {
+			System.out.println("Comm.parseUser()");
+			prettyPrint(un);
+
 			User u = new User();
 			u.id = mapper.readValue(un.path("id"), Integer.class);
 			u.username = mapper.readValue(un.path("username"), String.class);
@@ -396,17 +399,19 @@ public class Comm {
 		try {
 			System.out.print("comments node: ");
 			prettyPrint(node);
-			Float rRating = mapper.readValue(node.path("rating"), Float.class);
-			r.rating = rRating.floatValue();
-			Iterator<JsonNode> ite = node.path("comments").getElements();
-			while(ite.hasNext()) {
-				JsonNode cnode = ite.next();
-				System.out.print("cnode: ");
-				prettyPrint(cnode);
-				Integer rating = mapper.readValue(cnode.path("rating"), Integer.class);
-				String comment = mapper.readValue(cnode.path("comment"), String.class);
-				String username = mapper.readValue(cnode.path("username"), String.class);
-				r.comments.add(new Comment(r.id, rating.intValue(), comment, username));
+			if (!node.path("rating").isMissingNode()) {
+				Float rRating = mapper.readValue(node.path("rating"), Float.class);
+				r.rating = rRating.floatValue();
+				Iterator<JsonNode> ite = node.path("comments").getElements();
+				while(ite.hasNext()) {
+					JsonNode cnode = ite.next();
+					System.out.print("cnode: ");
+					prettyPrint(cnode);
+					Integer rating = mapper.readValue(cnode.path("rating"), Integer.class);
+					String comment = mapper.readValue(cnode.path("comment"), String.class);
+					String username = mapper.readValue(cnode.path("username"), String.class);
+					r.comments.add(new Comment(r.id, rating.intValue(), comment, username));
+				}
 			}
 		} catch (Exception e) {
 			System.out.println("parseRecipe had an exception parsing comments");
