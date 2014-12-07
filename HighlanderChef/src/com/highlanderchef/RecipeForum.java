@@ -87,23 +87,6 @@ public class RecipeForum extends ActionBarActivity {
 		textViewTitle.setLayoutParams(params);
 		ll.addView(textViewTitle);
 
-		//button to do image comparison
-		Button addFavorite = new Button(this);
-		addFavorite.setText("Add To Favorite");
-		final LinearLayout.LayoutParams params_addf =
-				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT);
-		addFavorite.setLayoutParams(params_addf);
-		addFavorite.setOnClickListener(new View.OnClickListener(){
-
-			@Override
-			public void onClick(View v)
-			{
-				new addCommentTask().execute();
-			}
-		});
-		ll.addView(addFavorite);
-
 		//Set objects for display on activity
 		TextView textViewDes = new TextView(this);
 		textViewDes.setText("Description: " + recipe.description + "\n");
@@ -365,10 +348,11 @@ public class RecipeForum extends ActionBarActivity {
 
 
 	public void postCommentSuccess() {
-		//TODO
+
 	}
 
 	public void postCommentFailure() {
+		Utility.displayErrorToasts(getApplicationContext(), -2, LENGTH_LONG);
 
 	}
 	public void callQuestionBoardIntent(int index)
@@ -444,39 +428,7 @@ public class RecipeForum extends ActionBarActivity {
 			}
 		}
 	}
-
-	private void addCommentSuccess()
-	{
-		Toast followToast = Toast.makeText(getApplicationContext(), "Recipe added to favorites", LENGTH_LONG);
-		followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
-		followToast.show();
-	}
-	private void addCommentFailure()
-	{
-		Toast followToast = Toast.makeText(getApplicationContext(), "Recipe failed to add to favorites", LENGTH_LONG);
-		followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
-		followToast.show();
-	}
-
-	private class addCommentTask extends AsyncTask<Void, Void, Boolean>
-	{
-		@Override
-		protected Boolean doInBackground(Void... params)
-		{
-			Comm c = new Comm();
-			int ret = c.addFavorite(recipeID);
-			return (ret != Comm.SUCCESS);
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-			if (result == true) {
-				Log.v("postComment", "postCommentSuccess");
-				addCommentSuccess();
-			} else {
-				Log.v("postComment", "postComentFailure");
-				addCommentFailure();
-			}
-		}
-	}
 }
+
+
+
