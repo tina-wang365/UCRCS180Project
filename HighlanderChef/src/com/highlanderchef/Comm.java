@@ -194,7 +194,7 @@ public class Comm {
 				u.notifications.add(ite.next().getIntValue());
 			}
 
-			this.user = u;
+			user = u;
 		} catch (Exception e) {
 			System.out.println("exception in Comm.parseUser: " + e.getMessage());
 		}
