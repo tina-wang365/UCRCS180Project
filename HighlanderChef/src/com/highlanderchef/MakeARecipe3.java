@@ -32,6 +32,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 	boolean newimage = false;
 	Bitmap newimagebm;
 
+	User currentUser;
 
 	ArrayList<Bitmap> added_images = new ArrayList<Bitmap>();
 	@Override
@@ -51,6 +52,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 		TextView tv_error = (TextView) findViewById(R.id.submit_error);
 		tv_error.setVisibility(View.INVISIBLE);
 		prevTextViewId = R.id.added_image;
+		Utility.GetLoggedInUser();
 	}
 
 	@Override
@@ -177,7 +179,9 @@ public class MakeARecipe3 extends ActionBarActivity {
 	}
 	public void SaveAsDraftPressed(View iView)
 	{
-		new UploadDraft().execute(recipe);
+		recipe.setUID(currentUser.getID());
+		recipe.setUsername(currentUser.getUsername());
+		Utility.UploadDraft(recipe);
 		Intent intent = new Intent(this, MainMenu.class);
 		startActivity(intent);
 	}
