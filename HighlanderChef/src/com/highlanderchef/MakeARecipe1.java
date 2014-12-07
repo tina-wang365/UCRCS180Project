@@ -222,8 +222,10 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		((EditText) findViewById(R.id.recipe_est_time)).setText(iRecipe.getCookTime());
 
 		for (int i = 0; i < categories.size(); i++) {
-			if (categories.get(i).id == recipe.categories.get(0)) {
-				spinner.setSelection(i);
+			if (recipe.categories.size() >= 1) {
+				if (categories.get(i).id == recipe.categories.get(0)) {
+					spinner.setSelection(i);
+				}
 			}
 		}
 	}
