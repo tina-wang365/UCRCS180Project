@@ -141,6 +141,8 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		Intent intent = new Intent(this, MakeARecipe2.class);
 
 		recipe.mainImage = null;
+		System.out.println("MAR1 passing bitmap " + recipe.mainImage);
+		System.out.println("MAR1 passing bitmap path " + recipe.mainImagepath);
 		intent.putExtra("recipe", recipe);
 		System.out.println("MAR1 passing recipe categories: " + recipe.categories.toString());
 		startActivity(intent);
@@ -201,7 +203,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 			}
 			else
 			{
-				//TODO added error response
+				System.out.println("Error decoding to PNG in MAR1");
 			}
 		}
 	}
