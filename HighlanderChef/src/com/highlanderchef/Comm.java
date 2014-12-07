@@ -660,6 +660,9 @@ public class Comm {
 		recipe.put("description", r.description);
 		recipe.put("cooktime", r.cookTime);
 		System.out.println("savingDraft uploading main image");
+		if (r.mainImage == null && r.mainImagepath != null && r.mainImagepath != "") {
+			r.loadImageFromPath();
+		}
 		recipe.put("image_url", imageUpload(r.mainImage));
 
 		recipe.put("categories", r.categories);

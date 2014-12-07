@@ -1,8 +1,6 @@
 package com.highlanderchef;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -28,46 +26,20 @@ public class MakeARecipe2 extends ActionBarActivity {
 
 		Intent intent = getIntent();
 		int DraftID = intent.getIntExtra("DraftID", -1);
-		if (DraftID < 0)
-		{
+		if (DraftID < 0) {
 			recipe = (Recipe)intent.getSerializableExtra("recipe");
 			System.out.println("MAR2 recipe categories: " + recipe.categories.toString());
 
-			String picturePath = recipe.mainImagepath;
-
-
 			tv_header.setText(header + " for " + recipe.getName());
-		}
-		else
-		{
-
-
+		} else {
 			new GetDraft().execute(DraftID);
 			tv_header.setText(header + " for " + intent.getStringExtra("DraftName"));
 		}
 
-		//load bitmap
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		bmOptions.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(recipe.mainImagepath, bmOptions);
+		recipe.loadImageFromPath();
 
-		// Decode the image file into a Bitmap sized to fill the View
-		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inPurgeable = true;
-
-		Bitmap bitmap = BitmapFactory.decodeFile(recipe.mainImagepath, bmOptions);
-
-		if(bitmap != null)
-		{
-			recipe.setMainImage(bitmap);
-		}
-		else
-		{
-			System.out.println("unable to decode PNG to bitmap");
-		}
-
-		System.out.println("  onCreate bitmap is " + recipe.mainImage);
-		System.out.println("  onCreate imagepath is " + recipe.mainImagepath);
+		System.out.println("MAR2 onCreate bitmap is " + recipe.mainImage);
+		System.out.println("MAR2 onCreate imagepath is " + recipe.mainImagepath);
 
 		currentUser = Comm.getUser();
 	}
