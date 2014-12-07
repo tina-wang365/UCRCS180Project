@@ -403,31 +403,6 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		new favoriteTask().execute(recipeID);
 	}
 
-	// DELETE THIS FUNCTION -- mdb
-	private class getOwnerOfRecipe extends AsyncTask<Integer, Void, Boolean> {
-		@Override
-		protected Boolean doInBackground(Integer... params) {
-			Comm c = new Comm();
-			int userId = params[0];
-
-			ownerID = currentRecipe.uid;
-
-			return (ownerID != 0);
-		}
-		@Override
-		protected void onPostExecute(Boolean result) {
-			if (result == true) {
-				Log.v("getOwnerOfRecipeSuccess","Success: User of recipe Received");
-
-
-			} else {
-				Log.v("getOwnerOfRecipeFailure","Failure: Did not receive User of recipe");
-
-			}
-		}
-
-	}
-
 	private class getRecipeTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
