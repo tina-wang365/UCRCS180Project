@@ -656,6 +656,7 @@ public class Comm {
 		recipe.put("image_url", imageUpload(r.mainImage));
 
 		recipe.put("categories", r.categories);
+		System.out.println("Comm.saveDraft got categories " + r.toString());
 		recipe.put("ingredients", r.ingredients);
 
 		recipe.put("directions", r.directions);
@@ -666,8 +667,16 @@ public class Comm {
 			e.printStackTrace();
 		}
 
+		recipe.put("did", Integer.toString(r.did));
+
 		req.put("recipe", recipe);
-		int ret = apiRequest("savedraft", req);
+		int ret;
+		if (r.did != 0 && r.did != -1) {
+
+			ret = apiRequest("updatedraft", req);
+		} else {
+			ret = apiRequest("savedraft", req);
+		}
 		if(ret == 0) {
 			if(lastStatus == 1) {
 				updateUser();
@@ -691,7 +700,10 @@ public class Comm {
 		req.put("did", Integer.toString(draftID));
 		apiRequest("getdraft", req);
 
-		return parseRecipe(rootNode.path("recipe"));
+		Recipe r = parseRecipe(rootNode.path("recipe"));
+		System.out.println("Comm.getDraft(" + draftID + ") has categories " + r.categories.toString());
+		r.did = draftID;
+		return r;
 	}
 
 	public int deleteDraft(int draftID) {
