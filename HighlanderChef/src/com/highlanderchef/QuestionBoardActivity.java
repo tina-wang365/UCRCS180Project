@@ -92,7 +92,8 @@ public class QuestionBoardActivity extends ActionBarActivity {
 
 	public void displayLiveQuestion( Question newlyAddedQuestion, View lastView) {
 		TextView tvQuestion = new TextView(this);
-		newlyAddedQuestion.setId(MakerInstance.useCurrID());
+		tvQuestion.setId(MakerInstance.useCurrID());
+		tvQuestion.setText(newlyAddedQuestion.text);
 		RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		rlParams.addRule(RelativeLayout.BELOW, lastView.getId());
 		rflayout.addView(tvQuestion);
