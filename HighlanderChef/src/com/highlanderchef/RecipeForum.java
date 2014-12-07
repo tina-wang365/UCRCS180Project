@@ -1,5 +1,6 @@
 package com.highlanderchef;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 
 import android.content.Intent;
@@ -26,7 +27,6 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	ID_Maker MakerInstance = new ID_Maker();
 	private final int LENGTH_SHORT = 2000;
 	private final int LENGTH_LONG = 7000;
-	int ownerID = -1;
 	Recipe currentRecipe = null;
 	LinearLayout ll;
 	RelativeLayout questionsLayout = null;
@@ -37,7 +37,6 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	boolean ratingBarPressed = false;
 	User ownerOfRecipe = new User();
 	User currentlyLoggedIn = new User();
-
 	public static int ImageMatch = 0;
 
 	@Override
@@ -61,14 +60,14 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 			if(ImageMatch == 1)
 			{
 				//TODO ask Tina if messages are good
-				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Didn't Match ed", LENGTH_LONG);
+				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Didn't Matched", LENGTH_LONG);
 				followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
 				followToast.show();
 				ImageMatch = 0;
 			}
 			else if(ImageMatch == 2)
 			{
-				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Matched: Goo d to move on", LENGTH_LONG);
+				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Matched: Good to move on", LENGTH_LONG);
 				followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
 				followToast.show();
 				ImageMatch = 0;
@@ -76,12 +75,11 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		}
 	}
 
-
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.recipe_forum, menu);
+
 		return true;
 	}
 
@@ -123,8 +121,8 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		Button addFavorite = new Button(this);
 		addFavorite.setText("Add To Favorite");
 		final LinearLayout.LayoutParams params_addf =
-				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT);
+			new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
 		addFavorite.setLayoutParams(params_addf);
 		addFavorite.setOnClickListener(new View.OnClickListener(){
 
@@ -135,6 +133,8 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 			}
 		});
 		ll.addView(addFavorite);
+
+
 
 		//Set objects for display on activity
 		TextView textViewDes = new TextView(this);
@@ -226,7 +226,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 						@Override
 						public void onClick(View v)
 						{
-							//callImageCompIntent(image);
+							callImageCompIntent(image);
 						}
 					});
 					ll.addView(image_comp);
@@ -333,20 +333,15 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		}
 
 	}
-	/*
 	public void callImageCompIntent(Bitmap bmp)
 	{
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		byte[] bytes = stream.toByteArray();
+
 		Intent intent = new Intent(this, ImageComp.class);
-		intent.putExtra("image", bmp);
+		intent.putExtra("image", bytes);
 		startActivity(intent);
-	}
-	 */
-	public void viewHomePage(View view) {
-		Intent intent = new Intent(this, UserHomepage.class);
-		intent.putExtra("userID", recipeID);
-		intent.putExtra("Username", currentRecipe.username);
-		startActivity(intent);
-		//TODO: grab user homepage of the owner of the recipe
 	}
 	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 		// TODO Auto-generated method stub
@@ -402,21 +397,22 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		//intent.putExtra("currentRecipe", recipe.id);
 		startActivity(intent);
 	}
+
 	public void addFavorite(View view) {
-		Utility.displayErrorToast(this, "Favouriting recipe!!!");
+		Utility.displayError(this, "Favoriting recipe!!!");
 		new favoriteTask().execute(recipeID);
 	}
+
+	// DELETE THIS FUNCTION -- mdb
 	private class getOwnerOfRecipe extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
 			Comm c = new Comm();
-			//currently doesn't do anything with the user who owns the recipe.
-			//TODO: Need to change c.getUser to c.getUser(uid), when Matt finishes that part.
-			User ret = c.getUser();
-			//this gets the user who is currently logged in.
-			//Recipe ret = c.getRecipe(params[0]);
-			ownerID = ret.id;
-			return (ret != null);
+			int userId = params[0];
+
+			ownerID = currentRecipe.uid;
+
+			return (ownerID != 0);
 		}
 		@Override
 		protected void onPostExecute(Boolean result) {
