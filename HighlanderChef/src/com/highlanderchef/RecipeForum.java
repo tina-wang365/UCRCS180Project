@@ -121,8 +121,8 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		Button addFavorite = new Button(this);
 		addFavorite.setText("Add To Favorite");
 		final LinearLayout.LayoutParams params_addf =
-			new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-					LinearLayout.LayoutParams.WRAP_CONTENT);
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
 		addFavorite.setLayoutParams(params_addf);
 		addFavorite.setOnClickListener(new View.OnClickListener(){
 
@@ -399,7 +399,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	}
 
 	public void addFavorite(View view) {
-		Utility.displayError(this, "Favoriting recipe!!!");
+		Utility.displayErrorToast(this, "Favoriting recipe!!!");
 		new favoriteTask().execute(recipeID);
 	}
 
