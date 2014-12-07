@@ -71,7 +71,7 @@ public class BrowseActivity extends Activity {
 				//find children
 				ArrayList<LeveledCheckBox> iChildren = getCategoryChildren(CheckBoxList.indexOf(iCheckBox));
 
-				if (iChildren.isEmpty())
+				if (iChildren.isEmpty() && iCheckBox.isChecked())
 				{
 					//Checkbox is a leaf so open new activity
 					Intent intent = new Intent(BrowseActivity.this, SearchActivity.class);

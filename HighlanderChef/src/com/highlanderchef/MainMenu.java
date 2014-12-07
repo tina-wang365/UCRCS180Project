@@ -83,20 +83,18 @@ public class MainMenu extends ActionBarActivity {
 
 	public void SearchPressed(View view)
 	{
+		System.out.println("MM.SearchedPressed()");
 		EditText et_search_query = (EditText) findViewById(R.id.editText1);
 		String search_query = et_search_query.getText().toString();
-
 		Intent intent = new Intent(this, SearchActivity.class);
-		intent.putExtra("search_query", (String) null);
+		intent.putExtra("search_query", search_query);
 		startActivity(intent);
-
 	}
 
 	public void ViewHomepage(View view)
 	{
 		Intent intent = new Intent(this, UserHomepage.class);
-		intent.putExtra("ViewUser", currentUser.getID());
-		intent.putExtra("Username", currentUser.getUsername());
+		Utility.FillHomepageIntent(intent, currentUser.getUsername(), currentUser.getID());
 		startActivity(intent);
 	}
 

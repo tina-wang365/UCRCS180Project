@@ -22,8 +22,8 @@ import android.widget.Toast;
 
 public class UserHomepage extends ActionBarActivity {
 
-	//User UserLoggedIn;
-	//User UserBeingViewed;
+	User UserLoggedIn;
+	User UserBeingViewed;
 	int loggedInUserID;
 	int currentUserID; //
 
@@ -34,11 +34,11 @@ public class UserHomepage extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_homepage);
 		Intent intent = getIntent();
-		currentUserID = intent.getIntExtra("ViewUser", Comm.staticGetUserID());
-		String Username = intent.getStringExtra("Username");
-		setUsername(Username);
-		new UserRecipes().execute(currentUserID);
-		if(currentUserID == Comm.getUser().id)
+		UserBeingViewed = Utility.GetHomepageIntent(intent);
+		currentUserID = UserBeingViewed.id;
+		setUsername(UserBeingViewed.username);
+
+		if(UserBeingViewed.id == Comm.getUser().id)
 		{
 			Button follow = (Button) findViewById(R.id.Follow);
 			follow.setVisibility(View.GONE);
@@ -61,43 +61,8 @@ public class UserHomepage extends ActionBarActivity {
 			clearNote.setVisibility(View.GONE);
 		}
 		//new UsernameTask().execute(currentUserID);
-
+		new UserRecipes().execute(currentUserID);
 	}
-
-	public void clearNotificationPressed(View view)
-	{
-		new ClearNotificationTask().execute();
-	}
-
-	@SuppressWarnings("unused")
-	private class ClearNotificationTask extends AsyncTask<Void, Void, Boolean>
-	{
-		int cNote;
-		@Override
-		protected Boolean doInBackground(Void... params) {
-			Comm c = new Comm();
-			cNote = c.clearNotifications();
-			return (cNote == Comm.SUCCESS);
-		}
-
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-			if (result == true) {
-				Button clearNote = (Button) findViewById(R.id.ClearNote);
-				clearNote.setText("");
-			}
-			else {
-				Toast followToast = Toast.makeText(getApplicationContext(), "Failed to clear notifications", LENGTH_SHORT);
-				followToast.setGravity(Gravity.TOP, 0, 0); //gravity, x-offset, y-offset
-				followToast.show();
-
-			}
-		}
-
-	}
-
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

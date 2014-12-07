@@ -45,7 +45,9 @@
             android:layout_alignLeft="@+id/button3"
             android:layout_below="@+id/textView1"
             android:ems="10"
-            android:hint="@string/Search_Recipes" >
+            android:hint="@string/Search_Recipes"
+            android:inputType="text"
+        	android:imeOptions="actionDone|flagForceAscii" >
 
             <requestFocus />
         </EditText>
