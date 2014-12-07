@@ -25,7 +25,6 @@ public class UserHomepage extends ActionBarActivity {
 	User UserLoggedIn;
 	User UserBeingViewed;
 	int loggedInUserID;
-	int currentUserID; //
 
 	private static final int LENGTH_SHORT = 2000;
 
@@ -35,7 +34,6 @@ public class UserHomepage extends ActionBarActivity {
 		setContentView(R.layout.activity_user_homepage);
 		Intent intent = getIntent();
 		UserBeingViewed = Utility.GetHomepageIntent(intent);
-		currentUserID = UserBeingViewed.id;
 		setUsername(UserBeingViewed.username);
 
 		if(UserBeingViewed.id == Comm.getUser().id)
@@ -61,7 +59,7 @@ public class UserHomepage extends ActionBarActivity {
 			clearNote.setVisibility(View.GONE);
 		}
 		//new UsernameTask().execute(currentUserID);
-		new UserRecipes().execute(currentUserID);
+		new UserRecipes().execute(UserBeingViewed.id);
 	}
 
 	@Override
@@ -102,7 +100,7 @@ public class UserHomepage extends ActionBarActivity {
 		ArrayList<Integer> followers = u.followers;
 
 		for(int i = 0; i < followers.size(); ++i) {
-			if(currentUserID == followers.get(i)) {
+			if(UserBeingViewed.id == followers.get(i)) {
 				following = true;
 			}
 		}
@@ -112,7 +110,7 @@ public class UserHomepage extends ActionBarActivity {
 			followToast.show();
 		}
 		else {
-			new followTask().execute(currentUserID);
+			new followTask().execute(UserBeingViewed.id);
 			Toast followToast = Toast.makeText(getApplicationContext(), "You are now following this chef", LENGTH_SHORT);
 			followToast.setGravity(Gravity.TOP, 0, pos[1] + 20); //gravity, x-offset, y-offset
 			followToast.show();
@@ -308,8 +306,6 @@ public class UserHomepage extends ActionBarActivity {
 		protected Boolean doInBackground(Integer... params)
 		{
 			Comm IComm = new Comm();
-			//Get Recipes of the User
-			currentUserID = params[0];
 			IComm.follow(params[0]);
 			return (true);
 		}
