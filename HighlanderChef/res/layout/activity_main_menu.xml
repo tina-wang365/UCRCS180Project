@@ -48,8 +48,6 @@
             android:hint="@string/Search_Recipes"
             android:inputType="text"
         	android:imeOptions="actionDone|flagForceAscii" >
-
-            <requestFocus />
         </EditText>
 
         <Button
