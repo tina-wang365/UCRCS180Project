@@ -87,6 +87,23 @@ public class RecipeForum extends ActionBarActivity {
 		textViewTitle.setLayoutParams(params);
 		ll.addView(textViewTitle);
 
+		//button to add favorite
+		Button addFavorite = new Button(this);
+		addFavorite.setText("Add To Favorite");
+		final LinearLayout.LayoutParams params_addf =
+			new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
+		addFavorite.setLayoutParams(params_addf);
+		addFavorite.setOnClickListener(new View.OnClickListener(){
+
+			@Override
+			public void onClick(View v)
+			{
+				new addCommentTask().execute();
+			}
+		});
+		ll.addView(addFavorite);
+
 		//Set objects for display on activity
 		TextView textViewDes = new TextView(this);
 		textViewDes.setText("Description: " + recipe.description + "\n");
