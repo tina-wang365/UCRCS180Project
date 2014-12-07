@@ -29,6 +29,7 @@ public class MakeARecipe2 extends ActionBarActivity {
 		if (DraftID < 0)
 		{
 			recipe = (Recipe)intent.getSerializableExtra("recipe");
+			System.out.println("MAR2 recipe categories: " + recipe.categories.toString());
 			tv_header.setText(header + " for " + recipe.getName());
 		}
 		else
