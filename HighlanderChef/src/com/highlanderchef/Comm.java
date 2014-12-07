@@ -71,7 +71,6 @@ public class Comm {
 	}
 
 	public static User getUser() {
-		System.out.println("Comm.getUser() => " + user);
 		return user;
 	}
 
@@ -203,6 +202,7 @@ public class Comm {
 			user = u;
 		} catch (Exception e) {
 			System.out.println("exception in Comm.parseUser: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -721,7 +721,6 @@ public class Comm {
 		ArrayList<Category> cats = new ArrayList<>();
 		int ret = apiRequest("categories", null);
 		if (ret == 0) {
-			prettyPrint(rootNode);
 			if (lastStatus == 1) {
 				Iterator<JsonNode> ite = rootNode.path("categories").getElements();
 				while(ite.hasNext())
