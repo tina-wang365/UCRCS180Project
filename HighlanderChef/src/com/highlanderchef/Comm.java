@@ -162,6 +162,9 @@ public class Comm {
 			User u = new User();
 			u.id = mapper.readValue(un.path("id"), Integer.class);
 			u.username = mapper.readValue(un.path("username"), String.class);
+			//debugging_system_out
+			System.out.println("u.id = " + u.id);
+			System.out.println("u.username = " + u.username);
 			Iterator<JsonNode> ite;
 
 			ite = un.path("recipes").getElements();
@@ -215,26 +218,40 @@ public class Comm {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("email", email);
 		req.put("password", password);
-
+		//debugging_system_out
+		System.out.println("completed req.put email and password. about to call aipRequest");
 		int ret = apiRequest("login", req);
 
 		if (ret == 0) {
 			try {
 				if (lastStatus == 1) {
+					//debugging_system_out
+					System.out.println("last status == 1 if statement entered");
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
-
+					//debugging_system_out
+					System.out.println("about to call parserUser");
 					parseUser(rootNode.path("user"));
+					//debugging_system_out
+					System.out.println("done parseUser");
+					System.out.println("user.id = " + user.id);
+					System.out.println("user.username = " + user.username);
 					return SUCCESS;
 				} else {
+					//debugging_system_out
+					System.out.println("returning API FAIL");
 					return API_FAIL;
 				}
 			} catch (Exception e) {
+				//debugging_system_out
+				System.out.println("return json error login fail");
 				System.out.println("LOGIN FAIL: ");
 				e.printStackTrace();
 				return JSON_ERROR;
 			}
 		} else {
+			//debugging_system_out
+			System.out.println("return ret in login");
 			return ret;
 		}
 	}
