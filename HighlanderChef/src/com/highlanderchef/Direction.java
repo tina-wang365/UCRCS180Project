@@ -3,10 +3,16 @@ package com.highlanderchef;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 
 public class Direction implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7310913146457605035L;
+
 	String text;
 
 	ArrayList<Bitmap> images;
@@ -30,6 +36,11 @@ public class Direction implements Serializable
 	public String getDirectionText()
 	{
 		return this.text;
+	}
+
+	public void putIntoIntent(Intent intent, String key)
+	{
+
 	}
 
 }
