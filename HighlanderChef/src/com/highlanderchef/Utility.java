@@ -17,6 +17,15 @@ public class Utility
 	private static User CurrentUser;
 	private static final int TOAST_MESSAGE_LENGTH = 3500;
 
+	static public void FillHomepageIntent(Intent intent, User UserToView)
+	{
+		FillHomepageIntent(intent, UserToView.getUsername(), UserToView.getID());
+	}
+	static public void FillHomepageIntent(Intent intent, String username, int userID)
+	{
+		intent.putExtra("userID", userID);
+		intent.putExtra("Username", username);
+	}
 	static public ProgressBar DisplaySpinner(Context iContext, ViewGroup iLayout)
 	{
 		ProgressBar ISpinner = new ProgressBar(iContext);

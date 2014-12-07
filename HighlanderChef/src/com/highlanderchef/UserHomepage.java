@@ -34,9 +34,15 @@ public class UserHomepage extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_homepage);
 		Intent intent = getIntent();
-		currentUserID = intent.getIntExtra("userID", Comm.staticGetUserID());
+		currentUserID = intent.getIntExtra("ViewUser", Comm.staticGetUserID());
 		String Username = intent.getStringExtra("Username");
 		setUsername(Username);
+
+		if(currentUserID == Comm.getUser().id)
+		{
+			Button follow = (Button) findViewById(R.id.Follow);
+			follow.setVisibility(View.GONE);
+		}
 		//new UsernameTask().execute(currentUserID);
 		new UserRecipes().execute(currentUserID);
 	}

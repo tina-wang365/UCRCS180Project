@@ -86,7 +86,8 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	{
 		System.out.println("MM.ViewHomepage()");
 		Intent intent = new Intent(this, UserHomepage.class);
-		intent.putExtra("ViewUser", Comm.getUser().getID());
+		intent.putExtra("userID", Comm.getUser().getID());
+		intent.putExtra("Username", ownerOfRecipe.username);
 		startActivity(intent);
 	}
 
