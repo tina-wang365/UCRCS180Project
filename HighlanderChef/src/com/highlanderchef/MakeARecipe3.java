@@ -52,7 +52,6 @@ public class MakeARecipe3 extends ActionBarActivity {
 		TextView tv_error = (TextView) findViewById(R.id.submit_error);
 		tv_error.setVisibility(View.INVISIBLE);
 		prevTextViewId = R.id.added_image;
-		Utility.GetLoggedInUser();
 	}
 
 	@Override
