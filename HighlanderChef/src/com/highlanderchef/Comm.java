@@ -372,6 +372,7 @@ public class Comm {
 				apiRequestBytePayload("imageupload", stream.toByteArray());
 				if (lastStatus == 1) {
 					String url = mapper.readValue(rootNode.path("image_url"), String.class);
+					updateUser();
 					return url;
 				} else {
 					return "";
@@ -495,7 +496,7 @@ public class Comm {
 			r = new Recipe(id, name, description, getImage(image_url));
 			String cooktime = mapper.readValue(node.path("cooktime"), String.class);
 			r.setCookTime(cooktime);
-			Integer uid = mapper.readValue(node.path("rid"), Integer.class);
+			Integer uid = mapper.readValue(node.path("uid"), Integer.class);
 			r.uid = uid;
 			String username = mapper.readValue(node.path("username"), String.class);
 			r.username = username;
@@ -532,6 +533,7 @@ public class Comm {
 	public int clearNotifications() {
 		apiRequest("clearnotifications", null);
 		if (lastStatus == 1) {
+			updateUser();
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -578,6 +580,7 @@ public class Comm {
 		int ret = apiRequest("postquestion", req);
 		if (ret == 0) {
 			if (lastStatus == 1) {
+				updateUser();
 				return SUCCESS;
 			} else {
 				return API_FAIL;
@@ -595,6 +598,7 @@ public class Comm {
 		int ret = apiRequest("postquestion", req);
 		if (ret == 0) {
 			if (lastStatus == 1) {
+				updateUser();
 				return SUCCESS;
 			} else {
 				return API_FAIL;
@@ -609,6 +613,7 @@ public class Comm {
 		req.put("uid", Integer.toString(uid));
 		apiRequest("follow", req);
 		if (lastStatus == 1) {
+			updateUser();
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -620,6 +625,7 @@ public class Comm {
 		req.put("rid", Integer.toString(recipeID));
 		apiRequest("addfavorite", req);
 		if (lastStatus == 1) {
+			updateUser();
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -635,6 +641,7 @@ public class Comm {
 		int ret = apiRequest("rate", req);
 		if (ret == 0) {
 			if (lastStatus == 1) {
+				updateUser();
 				return SUCCESS;
 			} else {
 				return API_FAIL;
@@ -712,6 +719,7 @@ public class Comm {
 		apiRequest("deletedraft", req);
 
 		if (lastStatus == 1) {
+			updateUser();
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -744,6 +752,7 @@ public class Comm {
 						return null;
 					}
 				}
+				updateUser();
 				return cats;
 			} else {
 				return null;
@@ -847,6 +856,7 @@ public class Comm {
 				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
 				lastStatus = status;
 				if (lastStatus == -1) {
+					updateUser();
 					return AUTH_FAIL;
 				} else {
 					return SUCCESS;
