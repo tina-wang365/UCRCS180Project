@@ -75,6 +75,35 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		}
 	}
 
+	public void ViewMyRecipesPressed(View view)
+	{
+		System.out.println("MM.ViewMyRecipes()");
+		//Intent intent = new Intent(this, ViewMyRecipes.class);
+		//startActivity(intent);
+	}
+
+	public void ViewHomepage(View view)
+	{
+		Intent intent = new Intent(this, UserHomepage.class);
+		intent.putExtra("ViewUser", currentUser.getID());
+		startActivity(intent);
+	}
+
+	public void ViewDrafts(View view)
+	{
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra("ViewDrafts", "View Drafts");
+		startActivity(intent);
+	}
+
+	public void ViewFavorites(View view)
+	{
+		System.out.println("MM.ViewFavorites()");
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra("ViewFavorites", "ViewFavorites");
+		startActivity(intent);
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
