@@ -62,19 +62,7 @@ public class Recipe implements Serializable{
 		comments = new ArrayList<Comment>();
 		questions = new ArrayList<Question>();
 	}
-	public Recipe(int id, String name, String description, Bitmap mainImage, int did) {
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.mainImage = mainImage;
-		this.did = did;
 
-		categories = new ArrayList<Integer>();
-		ingredients = new ArrayList<Ingredient>();
-		directions = new ArrayList<Direction>();
-		comments = new ArrayList<Comment>();
-		questions = new ArrayList<Question>();
-	}
 	public Recipe()
 	{
 		categories = new ArrayList<Integer>();
