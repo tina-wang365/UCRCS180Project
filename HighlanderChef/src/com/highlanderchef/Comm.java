@@ -413,6 +413,9 @@ public class Comm {
 	}
 
 	private void parseComments(Recipe r, JsonNode node) {
+		if (node.isMissingNode()) {
+			return;
+		}
 		try {
 			System.out.print("comments node: ");
 			prettyPrint(node);
@@ -437,6 +440,9 @@ public class Comm {
 	}
 
 	private void parseQuestions(Recipe r, JsonNode node) {
+		if (node.isMissingNode()) {
+			return;
+		}
 		try {
 			System.out.print("question node: ");
 			prettyPrint(node);
