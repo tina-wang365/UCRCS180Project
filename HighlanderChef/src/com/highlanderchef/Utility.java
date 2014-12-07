@@ -20,7 +20,7 @@ public class Utility
 	static public User GetHomepageIntent(Intent intent)
 	{
 		User returnUser = new User();
-		returnUser.id = intent.getIntExtra("ViewUser", Comm.staticGetUserID());
+		returnUser.id = intent.getIntExtra("userID", Comm.staticGetUserID());
 		returnUser.username = intent.getStringExtra("Username");
 		return returnUser;
 	}
