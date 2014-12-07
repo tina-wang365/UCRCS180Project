@@ -9,6 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 
 public class Recipe implements Serializable{
@@ -264,4 +265,29 @@ public class Recipe implements Serializable{
 		return (this.mainImage != null);
 	}
 
+	public void loadImageFromPath()
+	{
+		String picturePath = this.mainImagepath;
+
+		//load bitmap
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(picturePath, bmOptions);
+
+		// Decode the image file into a Bitmap sized to fill the View
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inPurgeable = true;
+
+		Bitmap bitmap = BitmapFactory.decodeFile(picturePath, bmOptions);
+
+		if(bitmap != null)
+		{
+			mainImage = bitmap;
+		}
+		else
+		{
+			System.out.println("Recipe.loadImageFromPath() failed");
+		}
+
+	}
 }
