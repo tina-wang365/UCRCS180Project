@@ -850,8 +850,8 @@ public class Comm {
 				return API_FAIL;
 			}
 		} catch (Exception e) {
-			System.out.println("apiRequestPayload caught an exception:");
-			System.out.println(e.getMessage());
+			System.out.println("apiRequestPayload caught an exception: " + e.getMessage());
+			e.printStackTrace();
 			return NETWORK_FAIL;
 		}
 	}

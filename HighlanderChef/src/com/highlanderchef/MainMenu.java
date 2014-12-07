@@ -77,17 +77,6 @@ public class MainMenu extends ActionBarActivity {
 	public void ViewMyRecipesPressed(View view)
 	{
 		System.out.println("MM.ViewMyRecipes()");
-		//Intent intent = new Intent(this, ViewMyRecipes.class);
-		//startActivity(intent);
-
-		/*
-		//This currently opens up the Default view recipe activity, so it can
-		//be view for testing.
-		Intent intent = new Intent(this, RecipeForum.class);
-		intent.putExtra("recipeID", 50);
-		startActivity(intent);
-		 */
-
 		Intent intent = new Intent(this, SearchActivity.class);
 		startActivity(intent);
 	}
