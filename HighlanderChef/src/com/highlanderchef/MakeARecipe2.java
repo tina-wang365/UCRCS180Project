@@ -36,6 +36,7 @@ public class MakeARecipe2 extends ActionBarActivity {
 			tv_header.setText(header + " for " + intent.getStringExtra("DraftName"));
 		}
 
+		RemakeIngredList();
 		recipe.loadImageFromPath();
 
 		System.out.println("MAR2 onCreate bitmap is " + recipe.mainImage);

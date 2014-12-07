@@ -239,20 +239,4 @@ public class MakeARecipe3 extends ActionBarActivity {
 	{
 		recipe.loadImageFromPath();
 	}
-
-	private class GetDraft extends AsyncTask<Integer, Void, Recipe> {
-
-		@Override
-		protected Recipe doInBackground(Integer... params) {
-			Comm iComm = new Comm();
-			return iComm.getDraft(params[0]);
-		}
-
-		@Override
-		protected void onPostExecute(Recipe result) {
-			if (result == null)
-				return;
-			LoadDraft(result);
-		}
-	}
 }

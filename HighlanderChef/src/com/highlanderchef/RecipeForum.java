@@ -59,8 +59,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		{
 			if(ImageMatch == 1)
 			{
-				//TODO ask Tina if messages are good
-				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Didn't Matched", LENGTH_LONG);
+				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Didn't Match", LENGTH_LONG);
 				followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
 				followToast.show();
 				ImageMatch = 0;
