@@ -185,7 +185,6 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 			System.out.println("Cook Time N/A");
 		}
 		else {
-			System.out.println("cookTime is not empty!");
 			textViewCookTime.setText("Cook Time: " + recipe.cookTime);
 		}
 
