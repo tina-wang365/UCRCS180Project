@@ -24,6 +24,10 @@ public class SearchActivity extends ActionBarActivity {
 	private final String SearchByString = "Search By String";
 	private final String SearchByCategory = "Search By Category";
 	private final String SearchByMyUID = "Search By UID";
+	private final String ViewDrafts = "ViewDrafts";
+
+	private boolean ViewingDrafts = false;
+	private ArrayList<Recipe> RecipeList = new ArrayList<Recipe>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +37,18 @@ public class SearchActivity extends ActionBarActivity {
 		Intent intent = getIntent();
 		String query = intent.getStringExtra("search_query");
 		String category = intent.getStringExtra("category_query");
-
+		Utility.GetLoggedInUser();
 
 		if (query != null) {
 			new SearchTask().execute(SearchByString, query);
 		} else if(category != null) {
 			new SearchTask().execute(SearchByCategory, category);
-		} else {
+		}
+		else if (intent.getStringExtra(ViewDrafts) != null){
+			new SearchTask().execute(ViewDrafts);
+			ViewingDrafts = true;
+		}
+		else {
 			new SearchTask().execute(SearchByMyUID);
 		}
 
@@ -67,6 +76,7 @@ public class SearchActivity extends ActionBarActivity {
 
 	public void SearchSuccess(ArrayList<Recipe> recipies)
 	{
+		RecipeList = recipies;
 		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		for(int i = 0; i < recipies.size(); ++i)
 		{
@@ -122,14 +132,19 @@ public class SearchActivity extends ActionBarActivity {
 			final int j = recipies.get(i).id; //so java doesn't complain
 
 			Button b_view = new Button(this);
-			b_view.setText("View");
+			if (ViewingDrafts == false)
+				b_view.setText("View");
+			else
+				b_view.setText("Edit");
 
 			b_view.setOnClickListener(new View.OnClickListener(){
 				@Override
 				public void onClick(View v)
 				{
-
-					callRecipeIntent(j);
+					if (ViewingDrafts == false)
+						callRecipeIntent(j);
+					else
+						callEditIntent(j);
 				}
 			});
 			rl.addView(b_view);
@@ -154,6 +169,14 @@ public class SearchActivity extends ActionBarActivity {
 		intent.putExtra("recipeID", index);
 		startActivity(intent);
 	}
+
+	public void callEditIntent(int index)
+	{
+		Intent intent = new Intent(this, MakeARecipe1.class);
+		intent.putExtra("DraftID", index);
+		startActivity(intent);
+	}
+
 	private class SearchTask extends AsyncTask<String, Void, Boolean>
 	{
 		ArrayList<Recipe> ret = new ArrayList<Recipe>();
@@ -166,6 +189,10 @@ public class SearchActivity extends ActionBarActivity {
 				ret = c.searchRecipesByCategory(Integer.parseInt(params[1]));
 			} else if (params[0] == SearchByMyUID) {
 				ret = c.searchRecipesByUID(c.getUserID());
+			} else if (params[0] == ViewDrafts) {
+				ArrayList<Integer> DraftsID = c.getDraftList();
+				for (int i = 0; i < DraftsID.size(); i++)
+					ret.add(c.getDraft(DraftsID.get(i)));
 			}
 			return (ret.size() > 0);
 		}
