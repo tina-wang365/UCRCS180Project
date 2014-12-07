@@ -369,7 +369,6 @@ public class RecipeForum extends ActionBarActivity {
 	}
 
 	public void postCommentFailure() {
-		Utility.displayErrorToasts(getApplicationContext(), -2, LENGTH_LONG);
 
 	}
 	public void callQuestionBoardIntent(int index)
