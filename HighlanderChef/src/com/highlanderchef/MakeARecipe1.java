@@ -31,7 +31,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 	Spinner spinner;
 	Bundle b;
 	User currentUser;
-	Recipe Draft;
+	int did = -1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +43,12 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		Intent intent = this.getIntent();
 		int DraftID = intent.getIntExtra("DraftID", -1);
 		if (DraftID > 0){
+			System.out.println("MAR1 with draft ID: " + DraftID);
+			Utility.displayErrorToast(this, "Got DID: " + DraftID);
 			new GetDraft().execute(DraftID);
+		} else {
+			System.out.println("MAR1 with no draft ID");
 		}
-		Utility.displayErrorToast(this, "Got DID: " + DraftID);
 	}
 
 	@Override
@@ -55,33 +58,8 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		return true;
 	}
 
-	private Recipe getCurrentRecipeInfo()
-	{
-		Recipe returnRecipe = null;
-		if (Draft == null)
-			returnRecipe = new Recipe();
-		else
-			returnRecipe = Draft;
-
-		EditText edittext_name = (EditText) findViewById(R.id.recipe_title);
-		String new_name = edittext_name.getText().toString();
-
-		EditText edittext_descr = (EditText) findViewById(R.id.recipe_description);
-		String new_descr = edittext_descr.getText().toString();
-
-		EditText edittext_time = (EditText) findViewById(R.id.recipe_est_time);
-		String new_time = edittext_time.getText().toString();
-
-		returnRecipe.setName(new_name);
-		returnRecipe.setDescription(new_descr);
-		returnRecipe.setCookTime(new_time);
-
-		return returnRecipe;
-	}
-
 	public void SaveAsDraftPressed(View iView)
 	{
-		recipe = getCurrentRecipeInfo();
 		Utility.UploadDraft(recipe);
 		Intent intent = new Intent(this, MainMenu.class);
 		startActivity(intent);
@@ -89,24 +67,15 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 
 	public void AddIngrediantPressed(View view)
 	{
-		recipe = getCurrentRecipeInfo();
 		if (recipe.getName().length() <= 0)
 		{
 			Utility.displayErrorToast(this, "Please enter a name for the recipe");
 			return;
 		}
 		Intent intent = new Intent(this, MakeARecipe2.class);
-		if (Draft != null)
-		{
-			Utility.UploadDraft(Draft);
-			intent.putExtra("DraftID", Draft.id);
-			intent.putExtra("DraftName", Draft.getName());
-		}
-		else
-		{
-			intent.putExtra("recipe", recipe);
-			System.out.println("MAR1 added recipe categories: " + recipe.categories.toString());
-		}
+
+		intent.putExtra("recipe", recipe);
+		System.out.println("MAR1 passing recipe categories: " + recipe.categories.toString());
 		startActivity(intent);
 	}
 	private static int RESULT_LOAD_IMAGE = 1;
@@ -246,12 +215,17 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 
 	public void LoadDraft(Recipe iRecipe)
 	{
-		Draft = iRecipe;
-		((EditText) findViewById(R.id.recipe_title)).setText(Draft.getName());
+		System.out.println("MAR1 LoadDraft(...)");
+		recipe = iRecipe;
+		((EditText) findViewById(R.id.recipe_title)).setText(iRecipe.getName());
+		((EditText) findViewById(R.id.recipe_description)).setText(iRecipe.getDescription());
+		((EditText) findViewById(R.id.recipe_est_time)).setText(iRecipe.getCookTime());
 
-		((EditText) findViewById(R.id.recipe_description)).setText(Draft.getDescription());
-
-		((EditText) findViewById(R.id.recipe_est_time)).setText(Draft.getCookTime());
+		for (int i = 0; i < categories.size(); i++) {
+			if (categories.get(i).id == recipe.categories.get(0)) {
+				spinner.setSelection(i);
+			}
+		}
 	}
 
 	private class GetCategoriesTask extends AsyncTask<Object, Void, Boolean> {
