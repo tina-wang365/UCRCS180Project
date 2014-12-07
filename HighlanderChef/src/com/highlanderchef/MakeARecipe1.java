@@ -12,6 +12,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +38,65 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_make_a_recipe1);
+
+		EditText t;
+		t = (EditText) findViewById(R.id.recipe_title);
+		t.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start,
+					int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start,
+					int before, int count) {
+				recipe.name = s.toString();
+			}
+		});
+
+		t = (EditText) findViewById(R.id.recipe_description);
+		t.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start,
+					int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start,
+					int before, int count) {
+				recipe.description = s.toString();
+			}
+		});
+
+		t = (EditText) findViewById(R.id.recipe_est_time);
+		t.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start,
+					int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start,
+					int before, int count) {
+				recipe.cookTime = s.toString();
+			}
+		});
+
+
 		categoryIDs = new ArrayList<>();
 		new GetCategoriesTask().execute(1);
 		currentUser = Utility.GetLoggedInUser();
