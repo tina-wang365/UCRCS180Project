@@ -74,7 +74,6 @@ public class SearchActivity extends ActionBarActivity {
 
 	public void SearchSuccess(ArrayList<Recipe> recipies)
 	{
-		RecipeList = recipies;
 		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		for(int i = 0; i < recipies.size(); ++i)
 		{
