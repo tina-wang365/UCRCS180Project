@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="34dp"
-        android:text="Large Text"
+        android:text="Forum Board"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -26,7 +26,7 @@
         android:layout_below="@+id/textView1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
-        android:text="Ask questions about here in this forum recipe!" />
+        android:text="Ask questions about this recipe in this forum" />
     
 
 
