@@ -95,8 +95,7 @@ public class MainMenu extends ActionBarActivity {
 	public void ViewHomepage(View view)
 	{
 		Intent intent = new Intent(this, UserHomepage.class);
-		intent.putExtra("ViewUser", currentUser.getID());
-		intent.putExtra("Username", currentUser.getUsername());
+		Utility.FillHomepageIntent(intent, currentUser.getUsername(), currentUser.getID());
 		startActivity(intent);
 	}
 

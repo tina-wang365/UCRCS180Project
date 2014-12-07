@@ -22,8 +22,8 @@ import android.widget.Toast;
 
 public class UserHomepage extends ActionBarActivity {
 
-	//User UserLoggedIn;
-	//User UserBeingViewed;
+	User UserLoggedIn;
+	User UserBeingViewed;
 	int loggedInUserID;
 	int currentUserID; //
 
@@ -34,11 +34,11 @@ public class UserHomepage extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_homepage);
 		Intent intent = getIntent();
-		currentUserID = intent.getIntExtra("ViewUser", Comm.staticGetUserID());
-		String Username = intent.getStringExtra("Username");
-		setUsername(Username);
+		UserBeingViewed = Utility.GetHomepageIntent(intent);
+		currentUserID = UserBeingViewed.id;
+		setUsername(UserBeingViewed.username);
 
-		if(currentUserID == Comm.getUser().id)
+		if(UserBeingViewed.id == Comm.getUser().id)
 		{
 			Button follow = (Button) findViewById(R.id.Follow);
 			follow.setVisibility(View.GONE);

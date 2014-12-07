@@ -86,8 +86,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	{
 		System.out.println("MM.ViewHomepage()");
 		Intent intent = new Intent(this, UserHomepage.class);
-		intent.putExtra("userID", Comm.getUser().getID());
-		intent.putExtra("Username", ownerOfRecipe.username);
+		Utility.FillHomepageIntent(intent, ownerOfRecipe.username, ownerOfRecipe.id);
 		startActivity(intent);
 	}
 
@@ -134,6 +133,8 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 
 	@SuppressWarnings("null")
 	public void displayRecipeSuccess(Recipe recipe) {
+		ownerOfRecipe.username = recipe.getUsername();
+		ownerOfRecipe.id = recipe.uid;
 		ll = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		if (ll == null) {
 			System.out.println("ll is null in RA");

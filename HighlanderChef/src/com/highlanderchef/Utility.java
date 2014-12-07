@@ -17,6 +17,13 @@ public class Utility
 	private static User CurrentUser;
 	private static final int TOAST_MESSAGE_LENGTH = 3500;
 
+	static public User GetHomepageIntent(Intent intent)
+	{
+		User returnUser = new User();
+		returnUser.id = intent.getIntExtra("ViewUser", Comm.staticGetUserID());
+		returnUser.username = intent.getStringExtra("Username");
+		return returnUser;
+	}
 	static public void FillHomepageIntent(Intent intent, User UserToView)
 	{
 		FillHomepageIntent(intent, UserToView.getUsername(), UserToView.getID());
