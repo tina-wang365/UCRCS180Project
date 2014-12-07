@@ -16,12 +16,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-public class MakeARecipe1 extends ActionBarActivity {
+public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedListener {
 	Recipe recipe = new Recipe();
 	ArrayList<Category> categories;
 	ArrayList<Integer> categoryIDs;
@@ -213,11 +214,18 @@ public class MakeARecipe1 extends ActionBarActivity {
 			ArrayAdapter<String> adapter_state = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, level0_spinner);
 			adapter_state.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spinner.setAdapter(adapter_state);
-			//spinner.setOnItemSelectedListener(this);
-
+			spinner.setOnItemSelectedListener(this);
 		}
 	}
 
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		// TODO Auto-generated method stub
+		System.out.println("NothingSelected");
+	}
+
+	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id)
 	{
@@ -284,4 +292,5 @@ public class MakeARecipe1 extends ActionBarActivity {
 			LoadDraft(result);
 		}
 	}
+
 }

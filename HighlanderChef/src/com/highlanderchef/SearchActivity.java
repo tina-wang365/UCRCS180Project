@@ -37,7 +37,6 @@ public class SearchActivity extends ActionBarActivity {
 		Intent intent = getIntent();
 		String query = intent.getStringExtra("search_query");
 		String category = intent.getStringExtra("category_query");
-		Utility.GetLoggedInUser();
 
 		if (query != null) {
 			new SearchTask().execute(SearchByString, query);
