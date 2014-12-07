@@ -67,6 +67,12 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 
 	public void AddIngrediantPressed(View view)
 	{
+		if (recipe == null) {
+			System.out.println("Why is recipe null?");
+		}
+		if (recipe.name == null) {
+			System.out.println("Why is recipe name null?");
+		}
 		if (recipe.getName().length() <= 0)
 		{
 			Utility.displayErrorToast(this, "Please enter a name for the recipe");
@@ -89,7 +95,6 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-
 
 		if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null)
 		{
