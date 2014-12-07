@@ -105,6 +105,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		else
 		{
 			intent.putExtra("recipe", recipe);
+			System.out.println("MAR1 added recipe categories: " + recipe.categories.toString());
 		}
 		startActivity(intent);
 	}
