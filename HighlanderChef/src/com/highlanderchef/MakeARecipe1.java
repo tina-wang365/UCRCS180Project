@@ -99,7 +99,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 
 		categoryIDs = new ArrayList<>();
 		new GetCategoriesTask().execute(1);
-		currentUser = Utility.GetLoggedInUser();
+		currentUser = Comm.getUser();
 		Intent intent = this.getIntent();
 		int DraftID = intent.getIntExtra("DraftID", -1);
 		if (DraftID > 0){

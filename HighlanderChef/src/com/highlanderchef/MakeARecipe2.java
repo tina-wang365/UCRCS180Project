@@ -42,7 +42,7 @@ public class MakeARecipe2 extends ActionBarActivity {
 		System.out.println("MAR2 onCreate bitmap is " + recipe.mainImage);
 		System.out.println("MAR2 onCreate imagepath is " + recipe.mainImagepath);
 
-		currentUser = Utility.GetLoggedInUser();
+		currentUser = Comm.getUser();
 	}
 
 	@Override

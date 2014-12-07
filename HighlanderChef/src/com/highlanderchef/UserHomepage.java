@@ -1,7 +1,6 @@
 package com.highlanderchef;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -35,7 +34,7 @@ public class UserHomepage extends ActionBarActivity {
 		Intent intent = getIntent();
 		UserBeingViewed = Utility.GetHomepageIntent(intent);
 		setUsername(UserBeingViewed.username);
-
+		new UserRecipes().execute(UserBeingViewed.id);
 		if(UserBeingViewed.id == Comm.getUser().id)
 		{
 			Button follow = (Button) findViewById(R.id.Follow);
@@ -58,8 +57,6 @@ public class UserHomepage extends ActionBarActivity {
 			Button clearNote = (Button) findViewById(R.id.ClearNote);
 			clearNote.setVisibility(View.GONE);
 		}
-		//new UsernameTask().execute(currentUserID);
-		new UserRecipes().execute(UserBeingViewed.id);
 	}
 
 	@Override
@@ -87,17 +84,7 @@ public class UserHomepage extends ActionBarActivity {
 		Button follow = (Button) findViewById(R.id.Follow);
 		follow.getLocationOnScreen(pos);
 		boolean following = false;
-		User u = new User();
-		try {
-			u = new Utility.UserTask().execute().get();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ArrayList<Integer> followers = u.followers;
+		ArrayList<Integer> followers = UserBeingViewed.followers;
 
 		for(int i = 0; i < followers.size(); ++i) {
 			if(UserBeingViewed.id == followers.get(i)) {
@@ -149,7 +136,6 @@ public class UserHomepage extends ActionBarActivity {
 
 	public void PopulateRecipeList(ArrayList<Recipe> RecipeList)
 	{
-		//debug
 		RelativeLayout ILayout = (RelativeLayout) findViewById(R.id.RelativeLayout1);
 		ID_Maker MakerInstance = ID_Maker.getInstance();
 		View lastView = null;
@@ -279,8 +265,9 @@ public class UserHomepage extends ActionBarActivity {
 		{
 			Comm IComm = new Comm();
 			//Get Recipes of the User
+			System.out.println("User ID: " + params[0]);
 			UserRecipeList = IComm.searchRecipesByUID(params[0]);
-			return (UserRecipeList != null);
+			return (UserRecipeList.size() >  0);
 		}
 
 
@@ -290,8 +277,6 @@ public class UserHomepage extends ActionBarActivity {
 			if (result == false)
 			{
 				Log.e("LOAD_RECIPE", "Failed to load user's recipes");
-				UserRecipeList = new ArrayList<Recipe>();
-				//Display "User has no recipes"
 			}
 			PopulateRecipeList(UserRecipeList);
 		}

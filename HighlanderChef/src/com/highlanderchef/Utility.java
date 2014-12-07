@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 public class Utility
 {
-	private static User CurrentUser;
 	private static final int TOAST_MESSAGE_LENGTH = 3500;
 
 	static public User GetHomepageIntent(Intent intent)
@@ -48,15 +47,6 @@ public class Utility
 	static public void UploadDraft(Recipe draft)
 	{
 		new UploadDraftTask().execute(draft);
-	}
-	static public User GetLoggedInUser()
-	{
-		if (CurrentUser == null)
-		{
-			new UserTask().execute();
-			return new User();
-		}
-		return CurrentUser;
 	}
 	static public void displayErrorToast(Context iContext, String iMessage)
 	{
@@ -107,30 +97,6 @@ public class Utility
 			}
 			else {
 				Log.v("UploadSucess", "Sucessfully uploaded draft to server.");
-			}
-		}
-
-	}
-
-	static void setUser(User iUser)
-	{
-		CurrentUser = iUser;
-	}
-
-	static class UserTask extends AsyncTask<Void, Void, User>
-	{
-		@Override
-		protected User doInBackground(Void... params) {
-			User IUser = Comm.getUser();
-			return (IUser);
-		}
-		@Override
-		protected void onPostExecute(User result) {
-			if (result == null) {
-				Log.e("Fail_get_user","Could not obtain user from server.");
-			}
-			else {
-				Log.v("Got_user", "Sucessfully obtained user from server.");
 			}
 		}
 
