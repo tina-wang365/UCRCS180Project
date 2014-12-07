@@ -140,6 +140,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		}
 		Intent intent = new Intent(this, MakeARecipe2.class);
 
+		recipe.mainImage = null;
 		intent.putExtra("recipe", recipe);
 		System.out.println("MAR1 passing recipe categories: " + recipe.categories.toString());
 		startActivity(intent);
@@ -195,6 +196,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 			if(bitmap != null)
 			{
 				imageView.setImageBitmap(bitmap);
+				recipe.mainImage = bitmap;
 				recipe.mainImagepath = picturePath;
 			}
 			else
@@ -264,6 +266,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id)
 	{
+		System.out.println("onItemSelected(" + position + ")");
 		spinner.setSelection(position);
 		String selState = (String) spinner.getSelectedItem();
 		curSelCat = spinner.getSelectedItemPosition();
@@ -289,10 +292,15 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		for (int i = 0; i < categories.size(); i++) {
 			if (recipe.categories.size() >= 1) {
 				if (categories.get(i).id == recipe.categories.get(0)) {
-					spinner.setSelection(i);
+					System.out.println("Setting category " + categories.get(i).id + " '" + categories.get(i).name + "'");
+					spinner.setSelection(i - 1);
+					break;
 				}
 			}
 		}
+
+		ImageView imageView = (ImageView) findViewById(R.id.added_image);
+		imageView.setImageBitmap(recipe.mainImage);
 	}
 
 	private class GetCategoriesTask extends AsyncTask<Object, Void, Boolean> {

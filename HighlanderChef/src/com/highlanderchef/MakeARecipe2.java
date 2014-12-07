@@ -1,6 +1,8 @@
 package com.highlanderchef;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -30,13 +32,43 @@ public class MakeARecipe2 extends ActionBarActivity {
 		{
 			recipe = (Recipe)intent.getSerializableExtra("recipe");
 			System.out.println("MAR2 recipe categories: " + recipe.categories.toString());
+
+			String picturePath = recipe.mainImagepath;
+
+
 			tv_header.setText(header + " for " + recipe.getName());
 		}
 		else
 		{
+
+
 			new GetDraft().execute(DraftID);
 			tv_header.setText(header + " for " + intent.getStringExtra("DraftName"));
 		}
+
+		//load bitmap
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(recipe.mainImagepath, bmOptions);
+
+		// Decode the image file into a Bitmap sized to fill the View
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inPurgeable = true;
+
+		Bitmap bitmap = BitmapFactory.decodeFile(recipe.mainImagepath, bmOptions);
+
+		if(bitmap != null)
+		{
+			recipe.setMainImage(bitmap);
+		}
+		else
+		{
+			System.out.println("unable to decode PNG to bitmap");
+		}
+
+		System.out.println("  onCreate bitmap is " + recipe.mainImage);
+		System.out.println("  onCreate imagepath is " + recipe.mainImagepath);
+
 		currentUser = Utility.GetLoggedInUser();
 	}
 
@@ -107,12 +139,16 @@ public class MakeARecipe2 extends ActionBarActivity {
 		if (ViewingDraft == false)
 			intent.putExtra("recipe", recipe);
 		else
-			intent.putExtra("DraftID", recipe.id);
+			intent.putExtra("DraftID", recipe.did);
+		recipe.mainImage = null;
 		startActivity(intent);
 	}
 
 	public void LoadDraft(Recipe iDraft)
 	{
+		System.out.println("MAR2.LoadDraft()");
+		System.out.println("  bitmap is " + iDraft.mainImage);
+		System.out.println("  imagepath is " + iDraft.mainImagepath);
 		ViewingDraft = true;
 		recipe = iDraft;
 		RemakeIngredList();
