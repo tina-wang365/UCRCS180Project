@@ -210,8 +210,8 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 	}
 
-	private class UploadRecipeTask extends AsyncTask<Recipe, Void, Boolean> {
-
+	private class UploadRecipeTask extends AsyncTask<Recipe, Void, Boolean>
+	{
 		@Override
 		protected Boolean doInBackground(Recipe... params) {
 			Comm c = new Comm();

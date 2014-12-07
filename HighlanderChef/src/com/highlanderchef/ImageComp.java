@@ -206,7 +206,7 @@ public class ImageComp extends ActionBarActivity implements CvCameraViewListener
 				System.out.println("Total Number : " + matchesList.size());
 				System.out.println("Good Matches : " + matchPercent + "%");
 
-				if(matchPercent >= 0.15)
+				if(matchPercent >= 0.25)
 					return true;
 			}
 			catch(Exception e)
