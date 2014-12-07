@@ -445,6 +445,41 @@ public class RecipeForum extends ActionBarActivity {
 			}
 		}
 	}
+
+	private void addCommentSuccess()
+	{
+		Toast followToast = Toast.makeText(getApplicationContext(), "Recipe added to favorites", LENGTH_LONG);
+		followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+		followToast.show();
+	}
+	private void addCommentFailure()
+	{
+		Toast followToast = Toast.makeText(getApplicationContext(), "Recipe failed to add to favorites", LENGTH_LONG);
+		followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+		followToast.show();
+	}
+
+	private class addCommentTask extends AsyncTask<Void, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Void... params)
+		{
+			Comm c = new Comm();
+			int ret = c.addFavorite(recipeID);
+			return (ret != Comm.SUCCESS);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				Log.v("postComment", "postCommentSuccess");
+				addCommentSuccess();
+			} else {
+				Log.v("postComment", "postComentFailure");
+				addCommentFailure();
+			}
+		}
+	}
 }
 
 
