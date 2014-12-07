@@ -82,8 +82,9 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		//startActivity(intent);
 	}
 
-	public void ViewHomepage(View view)
+	public void ViewHomePage(View view)
 	{
+		System.out.println("MM.ViewHomepage()");
 		Intent intent = new Intent(this, UserHomepage.class);
 		intent.putExtra("ViewUser", Comm.getUser().getID());
 		startActivity(intent);

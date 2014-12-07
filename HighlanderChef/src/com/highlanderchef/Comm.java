@@ -417,8 +417,6 @@ public class Comm {
 			return;
 		}
 		try {
-			System.out.print("comments node: ");
-			prettyPrint(node);
 			if (!node.path("rating").isMissingNode()) {
 				Float rRating = mapper.readValue(node.path("rating"), Float.class);
 				r.rating = rRating.floatValue();
@@ -444,9 +442,6 @@ public class Comm {
 			return;
 		}
 		try {
-			System.out.print("question node: ");
-			prettyPrint(node);
-
 			Iterator<JsonNode> ite = node.path("questions").getElements();
 			while(ite.hasNext()) {
 				JsonNode qnode = ite.next();
