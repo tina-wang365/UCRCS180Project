@@ -3,6 +3,9 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -11,6 +14,9 @@ import android.widget.Toast;
 
 public class Utility
 {
+	private static User CurrentUser;
+	private static final int TOAST_MESSAGE_LENGTH = 3500;
+
 	static public ProgressBar DisplaySpinner(Context iContext, ViewGroup iLayout)
 	{
 		ProgressBar ISpinner = new ProgressBar(iContext);
@@ -22,6 +28,26 @@ public class Utility
 	{
 		if (iSpinner != null)
 			((ViewGroup) iSpinner.getParent()).removeView(iSpinner);
+	}
+	static public void UploadDraft(Recipe draft)
+	{
+		new UploadDraftTask().execute(draft);
+	}
+	static public User GetLoggedInUser()
+	{
+		if (CurrentUser == null)
+		{
+			new UserTask().execute();
+			return new User();
+		}
+		return CurrentUser;
+	}
+	static public void displayErrorToast(Context iContext, String iMessage)
+	{
+		Toast toastErrorMessage;
+		toastErrorMessage = Toast.makeText(iContext, iMessage, TOAST_MESSAGE_LENGTH);
+		toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
+		toastErrorMessage.show();
 	}
 	static public void displayErrorToasts(Context context, Integer errorValue, Integer duration) {
 
@@ -37,14 +63,62 @@ public class Utility
 			toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
 			toastErrorMessage.show();
 			break;
-		case -3:
-			toastErrorMessage = Toast.makeText(context,  "Sorry! We could not post your question!", duration);
-			toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
-			toastErrorMessage.show();
 		default:
 			break;
-
 		}
+	}
+
+	static public Ingredient getFromIntent(Intent intent, String key)
+	{
+		Ingredient returnValue = new Ingredient(intent.getStringExtra(key + " name"), intent.getStringExtra(key + " amount"));
+		if (returnValue.name == null || returnValue.amount == null)
+			return null;
+		return returnValue;
+	}
+
+	static private class UploadDraftTask extends AsyncTask<Recipe, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Recipe... params) {
+			Comm IComm = new Comm();
+			int Status = IComm.saveDraft(params[0]);
+			return (Status == Comm.SUCCESS);
+		}
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result != true) {
+				Log.e("FailUpload","Could not upload draft to server.");
+			}
+			else {
+				Log.v("UploadSucess", "Sucessfully uploaded draft to server.");
+			}
+		}
+
+	}
+
+	static void setUser(User iUser)
+	{
+		CurrentUser = iUser;
+	}
+
+	static class UserTask extends AsyncTask<Void, Void, User>
+	{
+		@Override
+		protected User doInBackground(Void... params) {
+			User IUser = Comm.getUser();
+			return (IUser);
+		}
+		@Override
+		protected void onPostExecute(User result) {
+			if (result == null) {
+				Log.e("Fail_get_user","Could not obtain user from server.");
+			}
+			else {
+				Log.v("Got_user", "Sucessfully obtained user from server.");
+				setUser(result);
+			}
+		}
+
 	}
 }
 
