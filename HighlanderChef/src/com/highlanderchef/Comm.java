@@ -319,7 +319,7 @@ public class Comm {
 		}
 
 		if (imagecache.containsKey(relUrl)) {
-			System.out.println("Comm.getImage using cached bitmap");
+			System.out.println("Comm.getImage using cached bitmap... cache size is " + imagecace.size());
 			return imagecache.get(relUrl);
 		}
 
