@@ -85,8 +85,9 @@ public class MainMenu extends ActionBarActivity {
 	{
 		EditText et_search_query = (EditText) findViewById(R.id.editText1);
 		String search_query = et_search_query.getText().toString();
+
 		Intent intent = new Intent(this, SearchActivity.class);
-		intent.putExtra("search_query", search_query);
+		intent.putExtra("search_query", (String) null);
 		startActivity(intent);
 
 	}
