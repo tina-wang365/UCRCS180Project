@@ -358,6 +358,8 @@ public class Comm {
 			System.out.println("Comm.getImage using cached png... cache size in bytes is " + cachesize);
 			CacheItem ci = imagecache.get(relUrl);
 			ci.accessTime = System.currentTimeMillis();
+			ci.numAccess++;
+			System.out.println("  CacheItem.numAccess = " + ci.numAccess);
 			return pngToBitmap(ci.bytes);
 		}
 
@@ -391,6 +393,7 @@ public class Comm {
 				CacheItem ci = new CacheItem();
 				ci.accessTime = System.currentTimeMillis();
 				ci.bytes = stream.toByteArray();
+				ci.numAccess = 0;
 				if (ci.bytes.length + cachesize > MAX_CACHESIZE) {
 					evictImageCache(ci.bytes.length - (MAX_CACHESIZE - cachesize));
 				}
