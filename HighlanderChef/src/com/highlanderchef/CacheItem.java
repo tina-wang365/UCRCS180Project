@@ -1,8 +1,8 @@
 package com.highlanderchef;
 
 public class CacheItem {
-	long accessTime;
-	int numAccess;
+	long accessTime; //last time we used it
+	int numAccess;   //num times used
 	byte[] bytes;
 
 	public CacheItem() {

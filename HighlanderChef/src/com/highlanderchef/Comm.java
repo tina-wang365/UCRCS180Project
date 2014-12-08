@@ -58,13 +58,48 @@ public class Comm {
 			imagecache.clear();
 			return;
 		}
-
 		int numBytesFreed = 0;
-		while (numBytesFreed < numBytes && imagecache.size() > 0) {
-			int numEvicted = evictImageCacheHelper();
-			numBytesFreed += numEvicted;
-			cachesize -= numEvicted;
+		int temp = 0;
+		while (numBytesFreed < numBytes) {
+			// walk imagecache.keySet()
+			//       find member w/ min accessTime
+			//       evict it
+			//       numBytesFreed += size of evicted member
+			//       cachesize -= size of evicted member
+			temp = evictLeastAccessTime();
+			numBytesFreed += temp;
+			cachesize -= temp;
+			//remove is done in helper
 		}
+	}
+
+	private static int evictLeastAccessTime()
+	{
+		int numBytesFreed = 0;
+		CacheItem lruTemp = new CacheItem();
+		String tempMinAccessKey = "";
+		int tempFreed = 0;
+		for(Map.Entry<String, CacheItem> entry : imagecache.entrySet()) {
+			lruTemp = imagecache.entrySet().iterator().next().getValue();
+			tempMinAccessKey = entry.getKey(); //this is key of "first" element in HashMap
+			break;
+		}
+		long tempMinAccess = lruTemp.numAccess; //tempMinAccess is the numAccess of "first" element in HashMap
+
+		//Map.Entry<String, CacheItem> entry : imagecache.entrySet();
+		Iterator<Map.Entry<String, CacheItem>> it = imagecache.entrySet().iterator();
+		while(it.hasNext()){
+			if(it.next().getValue().accessTime > tempMinAccess) {
+				tempMinAccess = it.next().getValue().accessTime;
+				tempMinAccessKey = it.next().getKey();
+				tempFreed = it.next().getValue().bytes.length;
+			}
+		}
+		//at this point we should have LRU key in tempMinAccessKey and LRU minAccess in tempMinAccess
+		System.out.println("tempMinAccess = " + tempMinAccess);
+		System.out.println("tempMinAccessKey = " + tempMinAccessKey);
+		imagecache.remove(tempMinAccessKey);
+		return tempFreed;
 	}
 
 	private void registerMapperSerializers() {
