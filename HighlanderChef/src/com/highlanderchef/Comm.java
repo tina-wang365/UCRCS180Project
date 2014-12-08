@@ -59,6 +59,17 @@ public class Comm {
 			return;
 		}
 
+		int numBytesFreed = 0;
+		while (numBytesFreed < numBytes) {
+
+
+			int numEvicted = ...;
+			numBytesFreed += numEvicted;
+			cachesize -= numEvicted;
+
+			imagecache.remove(minAccessKey);
+		}
+
 		CacheItem lruTemp = new CacheItem();
 		String tempMinAccessKey = "";
 		for(Map.Entry<String, CacheItem> entry : imagecache.entrySet()) {
