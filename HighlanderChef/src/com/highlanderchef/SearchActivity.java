@@ -24,6 +24,10 @@ public class SearchActivity extends ActionBarActivity {
 	private final String SearchByString = "Search By String";
 	private final String SearchByCategory = "Search By Category";
 	private final String SearchByMyUID = "Search By UID";
+	private final String ViewDrafts = "ViewDrafts";
+	private final String ViewFavorites = "ViewFavorites";
+
+	private boolean ViewingDrafts = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +38,23 @@ public class SearchActivity extends ActionBarActivity {
 		String query = intent.getStringExtra("search_query");
 		String category = intent.getStringExtra("category_query");
 
-
 		if (query != null) {
+			System.out.println("SearchByString");
 			new SearchTask().execute(SearchByString, query);
 		} else if(category != null) {
+			System.out.println("SearchByCategory");
 			new SearchTask().execute(SearchByCategory, category);
+		} else if (intent.getStringExtra(ViewDrafts) != null){
+			System.out.println("SearchByDrafts");
+			new SearchTask().execute(ViewDrafts);
+			ViewingDrafts = true;
+		} else if (intent.getStringExtra(ViewFavorites) != null) {
+			System.out.println("SearchByFavorites");
+			new SearchTask().execute(ViewFavorites);
 		} else {
+			System.out.println("SearchByUID");
 			new SearchTask().execute(SearchByMyUID);
 		}
-
-		// TODO: now loading...
 	}
 
 	@Override
@@ -119,20 +130,43 @@ public class SearchActivity extends ActionBarActivity {
 			tv_cooktime.setText(recipies.get(i).getCookTime());
 			rl.addView(tv_cooktime);
 
-			final int j = recipies.get(i).id; //so java doesn't complain
+			final int j;
 
 			Button b_view = new Button(this);
-			b_view.setText("View");
+			if (ViewingDrafts == false) {
+				b_view.setText("View");
+				j = recipies.get(i).id; //so java doesn't complain
+			}
+			else {
+				b_view.setText("Edit");
+				j = recipies.get(i).did;
+			}
 
 			b_view.setOnClickListener(new View.OnClickListener(){
 				@Override
 				public void onClick(View v)
 				{
-
-					callRecipeIntent(j);
+					if (ViewingDrafts == false)
+						callRecipeIntent(j);
+					else
+						callEditIntent(j);
 				}
 			});
 			rl.addView(b_view);
+
+			if (ViewingDrafts == true) {
+				Button d_view = new Button(this);
+				d_view.setText("Delete");
+
+				d_view.setOnClickListener(new View.OnClickListener(){
+					@Override
+					public void onClick(View v)
+					{
+						callDeleteDraft(j);
+					}
+				});
+				rl.addView(d_view);
+			}
 		}
 	}
 
@@ -154,6 +188,21 @@ public class SearchActivity extends ActionBarActivity {
 		intent.putExtra("recipeID", index);
 		startActivity(intent);
 	}
+
+	public void callEditIntent(int index)
+	{
+		Intent intent = new Intent(this, MakeARecipe1.class);
+		intent.putExtra("DraftID", index);
+		startActivity(intent);
+	}
+
+	public void callDeleteDraft(int index)
+	{
+		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
+		rl.removeAllViews();
+		new DeleteTask().execute(index);
+	}
+
 	private class SearchTask extends AsyncTask<String, Void, Boolean>
 	{
 		ArrayList<Recipe> ret = new ArrayList<Recipe>();
@@ -166,6 +215,16 @@ public class SearchActivity extends ActionBarActivity {
 				ret = c.searchRecipesByCategory(Integer.parseInt(params[1]));
 			} else if (params[0] == SearchByMyUID) {
 				ret = c.searchRecipesByUID(c.getUserID());
+			} else if (params[0] == ViewDrafts) {
+				ArrayList<Integer> DraftsID = c.getDraftList();
+				for (int i = 0; i < DraftsID.size(); i++)
+					ret.add(c.getDraft(DraftsID.get(i)));
+			} else if (params[0] == ViewFavorites) {
+				System.out.println("searching favorites...");
+				for (int i = 0; i < c.getUser().favorites.size(); i++) {
+					System.out.println("getting id " + c.getUser().favorites.get(i));
+					ret.add(c.getRecipe(c.getUser().favorites.get(i)));
+				}
 			}
 			return (ret.size() > 0);
 		}
@@ -179,6 +238,25 @@ public class SearchActivity extends ActionBarActivity {
 			} else {
 				Log.v("login_fail","Search Failed");
 				SearchFailure(ret);
+			}
+		}
+
+	}
+
+	private class DeleteTask extends AsyncTask<Integer, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			Comm c = new Comm();
+			return (c.deleteDraft(params[0]) == Comm.SUCCESS);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				Log.v("DeleteDraft","Draft Delete Success");
+				new SearchTask().execute(ViewDrafts);
 			}
 		}
 

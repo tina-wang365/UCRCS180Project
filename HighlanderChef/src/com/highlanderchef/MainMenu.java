@@ -1,5 +1,6 @@
 package com.highlanderchef;
 
+//import android.R;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 public class MainMenu extends ActionBarActivity {
 
 	private static final int LENGTH_LONG = 3500;
+	private User currentUser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,34 +76,47 @@ public class MainMenu extends ActionBarActivity {
 
 	public void ViewMyRecipesPressed(View view)
 	{
-		//Intent intent = new Intent(this, ViewMyRecipes.class);
-		//startActivity(intent);
-
-		/*
-		//This currently opens up the Default view recipe activity, so it can
-		//be view for testing.
-		Intent intent = new Intent(this, RecipeForum.class);
-		intent.putExtra("recipeID", 50);
-		startActivity(intent);
-		 */
-
+		System.out.println("MM.ViewMyRecipes()");
 		Intent intent = new Intent(this, SearchActivity.class);
 		startActivity(intent);
 	}
 
 	public void SearchPressed(View view)
 	{
+		System.out.println("MM.SearchedPressed()");
 		EditText et_search_query = (EditText) findViewById(R.id.editText1);
 		String search_query = et_search_query.getText().toString();
 		Intent intent = new Intent(this, SearchActivity.class);
 		intent.putExtra("search_query", search_query);
 		startActivity(intent);
-
 	}
 
-	public void setUsername(String iName)
+	public void ViewHomepage(View view)
 	{
-		String username = iName;
+		Intent intent = new Intent(this, UserHomepage.class);
+		Utility.FillHomepageIntent(intent, currentUser.getUsername(), currentUser.getID());
+		startActivity(intent);
+	}
+
+	public void ViewDrafts(View view)
+	{
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra("ViewDrafts", "View Drafts");
+		startActivity(intent);
+	}
+
+	public void ViewFavorites(View view)
+	{
+		System.out.println("MM.ViewFavorites()");
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra("ViewFavorites", "ViewFavorites");
+		startActivity(intent);
+	}
+
+	public void setUser(User iUser)
+	{
+		currentUser = iUser;
+		String username = currentUser.getUsername();
 		String strWelcomeFormat = getResources().getString(R.string.Welcome_Chef);
 		String strWelcomeMsg = String.format(strWelcomeFormat,username);
 		((TextView) findViewById(R.id.textView1)).setText(strWelcomeMsg);
@@ -109,23 +124,24 @@ public class MainMenu extends ActionBarActivity {
 
 	private class UsernameTask extends AsyncTask<String, Void, Boolean>
 	{
-		String cUsername = new String();
+		User cUser = new User();
 		@Override
 		protected Boolean doInBackground(String... params) {
-			Comm iComm = new Comm();
-			cUsername = iComm.getEmail();
-			return (cUsername.length() > 0);
+			cUser = Comm.getUser();
+			if (cUser == null)
+				return false;
+			return (cUser.getUsername().length() > 0);
 		}
 
 
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result == true) {
-				setUsername(cUsername);
+				setUser(cUser);
 			}
 			else {
-				Log.e("get_username_fail","Could not get username from server.");
-				setUsername(new String());
+				Log.e("getUser Failed","Could not get user from server.");
+				setUser(new User());
 			}
 		}
 

@@ -12,16 +12,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-public class MakeARecipe1 extends ActionBarActivity {
+public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedListener {
 	Recipe recipe = new Recipe();
 	ArrayList<Category> categories;
 	ArrayList<Integer> categoryIDs;
@@ -29,13 +32,83 @@ public class MakeARecipe1 extends ActionBarActivity {
 	String errorMessage = "";
 	Spinner spinner;
 	Bundle b;
+	User currentUser;
+	int did = -1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_make_a_recipe1);
+
+		EditText t;
+		t = (EditText) findViewById(R.id.recipe_title);
+		t.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start,
+					int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start,
+					int before, int count) {
+				recipe.name = s.toString();
+			}
+		});
+
+		t = (EditText) findViewById(R.id.recipe_description);
+		t.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start,
+					int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start,
+					int before, int count) {
+				recipe.description = s.toString();
+			}
+		});
+
+		t = (EditText) findViewById(R.id.recipe_est_time);
+		t.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start,
+					int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start,
+					int before, int count) {
+				recipe.cookTime = s.toString();
+			}
+		});
+
+
 		categoryIDs = new ArrayList<>();
 		new GetCategoriesTask().execute(1);
+		currentUser = Comm.getUser();
+		Intent intent = this.getIntent();
+		int DraftID = intent.getIntExtra("DraftID", -1);
+		if (DraftID > 0){
+			System.out.println("MAR1 with draft ID: " + DraftID);
+			Utility.displayErrorToast(this, "Got DID: " + DraftID);
+			new GetDraft().execute(DraftID);
+		} else {
+			System.out.println("MAR1 with no draft ID");
+		}
 	}
 
 	@Override
@@ -45,42 +118,33 @@ public class MakeARecipe1 extends ActionBarActivity {
 		return true;
 	}
 
-	private Recipe getCurrentRecipeInfo()
-	{
-		Recipe returnRecipe = new Recipe();
-
-		EditText edittext_name = (EditText) findViewById(R.id.recipe_title);
-		String new_name = edittext_name.getText().toString();
-
-		EditText edittext_descr = (EditText) findViewById(R.id.recipe_description);
-		String new_descr = edittext_descr.getText().toString();
-
-		EditText edittext_time = (EditText) findViewById(R.id.recipe_est_time);
-		String new_time = edittext_time.getText().toString();
-
-		returnRecipe.setName(new_name);
-		returnRecipe.setDescription(new_descr);
-		returnRecipe.setCookTime(new_time);
-
-		return returnRecipe;
-	}
-
 	public void SaveAsDraftPressed(View iView)
 	{
-		recipe = getCurrentRecipeInfo();
-		new UploadDraft().execute(recipe);
+		Utility.UploadDraft(recipe);
 		Intent intent = new Intent(this, MainMenu.class);
 		startActivity(intent);
 	}
 
 	public void AddIngrediantPressed(View view)
 	{
-		recipe = getCurrentRecipeInfo();
+		if (recipe == null) {
+			System.out.println("Why is recipe null?");
+		}
+		if (recipe.name == null) {
+			System.out.println("Why is recipe name null?");
+		}
 		if (recipe.getName().length() <= 0)
+		{
+			Utility.displayErrorToast(this, "Please enter a name for the recipe");
 			return;
-
+		}
 		Intent intent = new Intent(this, MakeARecipe2.class);
+
+		recipe.mainImage = null;
+		System.out.println("MAR1 passing bitmap " + recipe.mainImage);
+		System.out.println("MAR1 passing bitmap path " + recipe.mainImagepath);
 		intent.putExtra("recipe", recipe);
+		System.out.println("MAR1 passing recipe categories: " + recipe.categories.toString());
 		startActivity(intent);
 	}
 	private static int RESULT_LOAD_IMAGE = 1;
@@ -94,10 +158,9 @@ public class MakeARecipe1 extends ActionBarActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null)
+
+		if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null)
 		{
-			recipe.categories.clear();
-			recipe.categories.add(categoryIDs.get(curSelCat));
 			Uri selectedImage = data.getData();
 			String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
@@ -135,11 +198,12 @@ public class MakeARecipe1 extends ActionBarActivity {
 			if(bitmap != null)
 			{
 				imageView.setImageBitmap(bitmap);
+				recipe.mainImage = bitmap;
 				recipe.mainImagepath = picturePath;
 			}
 			else
 			{
-				//TODO added error response
+				System.out.println("Error decoding to PNG in MAR1");
 			}
 		}
 	}
@@ -189,21 +253,56 @@ public class MakeARecipe1 extends ActionBarActivity {
 			ArrayAdapter<String> adapter_state = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, level0_spinner);
 			adapter_state.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spinner.setAdapter(adapter_state);
-			//spinner.setOnItemSelectedListener(this);
-
+			spinner.setOnItemSelectedListener(this);
 		}
 	}
 
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		// TODO Auto-generated method stub
+		System.out.println("NothingSelected");
+	}
+
+	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
-			long id) {
+			long id)
+	{
+		System.out.println("onItemSelected(" + position + ")");
 		spinner.setSelection(position);
 		String selState = (String) spinner.getSelectedItem();
 		curSelCat = spinner.getSelectedItemPosition();
 
+		recipe.categories.clear();
+		recipe.categories.add(categoryIDs.get(curSelCat));
+		System.out.println("MAR1 added recipe categories: " + recipe.categories.toString());
 	}
+
 	public void catOnFailure()
 	{
 
+	}
+
+	public void LoadDraft(Recipe iRecipe)
+	{
+		System.out.println("MAR1 LoadDraft(...)");
+		recipe = iRecipe;
+		((EditText) findViewById(R.id.recipe_title)).setText(iRecipe.getName());
+		((EditText) findViewById(R.id.recipe_description)).setText(iRecipe.getDescription());
+		((EditText) findViewById(R.id.recipe_est_time)).setText(iRecipe.getCookTime());
+
+		for (int i = 0; i < categories.size(); i++) {
+			if (recipe.categories.size() >= 1) {
+				if (categories.get(i).id == recipe.categories.get(0)) {
+					System.out.println("Setting category " + categories.get(i).id + " '" + categories.get(i).name + "'");
+					spinner.setSelection(i - 1);
+					break;
+				}
+			}
+		}
+
+		ImageView imageView = (ImageView) findViewById(R.id.added_image);
+		imageView.setImageBitmap(recipe.mainImage);
 	}
 
 	private class GetCategoriesTask extends AsyncTask<Object, Void, Boolean> {
@@ -229,19 +328,21 @@ public class MakeARecipe1 extends ActionBarActivity {
 			}
 		}
 	}
-}
 
-class UploadDraft extends AsyncTask<Recipe, Void, Boolean> {
+	private class GetDraft extends AsyncTask<Integer, Void, Recipe> {
 
-	@Override
-	protected Boolean doInBackground(Recipe... params) {
-		//Comm IComm = new Comm();
-		//IComm.uploadRecipe((Recipe)params[0]);
-		return true;
+		@Override
+		protected Recipe doInBackground(Integer... params) {
+			Comm iComm = new Comm();
+			return iComm.getDraft(params[0]);
+		}
+
+		@Override
+		protected void onPostExecute(Recipe result) {
+			if (result == null)
+				return;
+			LoadDraft(result);
+		}
 	}
 
-	@Override
-	protected void onPostExecute(Boolean result) {
-		;
-	}
 }

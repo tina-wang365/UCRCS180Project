@@ -101,4 +101,12 @@ public class User {
 		recipes.add(id);
 	}
 
+	public Boolean isFollowing(int id) {
+		for(int i = 0; i < following.size(); i++) {
+			if(following.get(i) == id)
+				return true;
+		}
+		return false;
+	}
+
 }

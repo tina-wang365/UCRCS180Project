@@ -7,12 +7,19 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 
 public class Recipe implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6967995128725451333L;
 	public int id;
 	public int uid;
+	public int did;
 	public String username;
 	public String name;
 	public String description;
@@ -35,6 +42,7 @@ public class Recipe implements Serializable{
 		this.name = name;
 		this.description = description;
 		this.mainImage = mainImage;
+		this.did = 0;
 
 		categories = new ArrayList<Integer>();
 		ingredients = new ArrayList<Ingredient>();
@@ -42,6 +50,20 @@ public class Recipe implements Serializable{
 		comments = new ArrayList<Comment>();
 		questions = new ArrayList<Question>();
 	}
+	public Recipe(int id, String name, String description, Bitmap mainImage, int did) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.mainImage = mainImage;
+		this.did = did;
+
+		categories = new ArrayList<Integer>();
+		ingredients = new ArrayList<Ingredient>();
+		directions = new ArrayList<Direction>();
+		comments = new ArrayList<Comment>();
+		questions = new ArrayList<Question>();
+	}
+
 	public Recipe()
 	{
 		categories = new ArrayList<Integer>();
@@ -112,7 +134,38 @@ public class Recipe implements Serializable{
 			e.printStackTrace();
 		}
 	}
-
+	public void putIntoIntent(Intent intent)
+	{
+		intent.putExtra("ID", this.id);
+		intent.putExtra("UID", this.uid);
+		intent.putExtra("Username", this.username);
+		intent.putExtra("Name", this.name);
+		intent.putExtra("Description", this.description);
+		intent.putExtra("Cook Time", this.cookTime);
+		intent.putExtra("Main Image", this.mainImage);
+		intent.putExtra("Main Image Path", this.mainImagepath);
+		intent.putExtra("Rating", this.rating);
+		intent.putExtra("Categories", this.categories.toArray());
+		for (int i = 0; i < ingredients.size(); i++)
+			ingredients.get(i).putIntoIntent(intent, "ingredient" + Integer.toString(i));
+		for (int i = 0; i < directions.size(); i++)
+			;
+		for (int i = 0; i < comments.size(); i++)
+			;
+		for (int i = 0; i < questions.size(); i++)
+			;
+		/*
+		 * public ArrayList<Integer> categories;
+	public ArrayList<Ingredient> ingredients;
+	public ArrayList<Direction> directions;
+	public ArrayList<Comment> comments;
+	public ArrayList<Question> questions;
+		 */
+	}
+	public void setID(int i)
+	{
+		this.id = i;
+	}
 	public void setIngredients(ArrayList<Ingredient> i)
 	{
 		this.ingredients = i;
@@ -162,6 +215,22 @@ public class Recipe implements Serializable{
 	{
 		return this.name;
 	}
+	public void setUsername(String name)
+	{
+		this.username = name;
+	}
+	public String getUsername()
+	{
+		return this.username;
+	}
+	public void setUID(int id)
+	{
+		this.uid = id;
+	}
+	public int getUID()
+	{
+		return this.uid;
+	}
 	public void setDescription(String d)
 	{
 		this.description = d;
@@ -186,10 +255,39 @@ public class Recipe implements Serializable{
 	{
 		return this.mainImage;
 	}
+	public int getDid()
+	{
+		return this.did;
+	}
 
 	public boolean isMainImage()
 	{
 		return (this.mainImage != null);
 	}
 
+	public void loadImageFromPath()
+	{
+		String picturePath = this.mainImagepath;
+
+		//load bitmap
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(picturePath, bmOptions);
+
+		// Decode the image file into a Bitmap sized to fill the View
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inPurgeable = true;
+
+		Bitmap bitmap = BitmapFactory.decodeFile(picturePath, bmOptions);
+
+		if(bitmap != null)
+		{
+			mainImage = bitmap;
+		}
+		else
+		{
+			System.out.println("Recipe.loadImageFromPath() failed");
+		}
+
+	}
 }

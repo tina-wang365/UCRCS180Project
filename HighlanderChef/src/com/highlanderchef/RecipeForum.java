@@ -1,5 +1,8 @@
 package com.highlanderchef;
 
+import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -7,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,20 +19,29 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class RecipeForum extends ActionBarActivity {
-
+public class RecipeForum extends ActionBarActivity implements Serializable{
+	ID_Maker MakerInstance = new ID_Maker();
+	private final int LENGTH_SHORT = 2000;
+	private final int LENGTH_LONG = 7000;
 	Recipe currentRecipe = null;
+	LinearLayout ll;
+	RelativeLayout questionsLayout = null;
 	//	Comment currentComment = null;
 	int recipeID = 0;
 	private Button btnComment;
 	private RatingBar ratingBar;
 	boolean ratingBarPressed = false;
-	//User ownerOfRecipe = new User();
+	User ownerOfRecipe = new User();
+	User currentlyLoggedIn = new User();
+	public static int ImageMatch = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		questionsLayout = new RelativeLayout(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recipe_forum);
 		//TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
@@ -40,9 +53,63 @@ public class RecipeForum extends ActionBarActivity {
 	}
 
 	@Override
+	public void onWindowFocusChanged (boolean hasFocus)
+	{
+		if(hasFocus)
+		{
+			if(ImageMatch == 1)
+			{
+				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Didn't Match", LENGTH_LONG);
+				followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+				followToast.show();
+				ImageMatch = 0;
+			}
+			else if(ImageMatch == 2)
+			{
+				Toast followToast = Toast.makeText(getApplicationContext(), "Comparison Matched: Good to move on", LENGTH_LONG);
+				followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+				followToast.show();
+				ImageMatch = 0;
+			}
+		}
+	}
+
+	public void ViewMyRecipesPressed(View view)
+	{
+		System.out.println("MM.ViewMyRecipes()");
+		//Intent intent = new Intent(this, ViewMyRecipes.class);
+		//startActivity(intent);
+	}
+
+	public void ViewHomePage(View view)
+	{
+		System.out.println("MM.ViewHomepage()");
+		System.out.println("User ID: " + ownerOfRecipe.getID());
+		Intent intent = new Intent(this, UserHomepage.class);
+		Utility.FillHomepageIntent(intent, ownerOfRecipe.getUsername(), ownerOfRecipe.getID());
+		startActivity(intent);
+	}
+
+	public void ViewDrafts(View view)
+	{
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra("ViewDrafts", "View Drafts");
+		startActivity(intent);
+	}
+
+	public void ViewFavorites(View view)
+	{
+		System.out.println("MM.ViewFavorites()");
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra("ViewFavorites", "ViewFavorites");
+		startActivity(intent);
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.recipe_forum, menu);
+
 		return true;
 	}
 
@@ -61,10 +128,16 @@ public class RecipeForum extends ActionBarActivity {
 	public void downloadRecipe() {
 		new getRecipeTask().execute(recipeID);
 	}
-	LinearLayout ll;
 
 
+
+	@SuppressWarnings("null")
 	public void displayRecipeSuccess(Recipe recipe) {
+		System.out.println("Recipe UID: " + recipe.uid);
+		System.out.println("Recipe ID: " + recipe.id);
+		System.out.println("Recipe DID: " + recipe.did);
+		ownerOfRecipe.username = recipe.getUsername();
+		ownerOfRecipe.id = recipe.uid;
 		ll = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		if (ll == null) {
 			System.out.println("ll is null in RA");
@@ -75,13 +148,32 @@ public class RecipeForum extends ActionBarActivity {
 
 		//Set objects for display on activity
 		TextView textViewTitle = new TextView(this);
-		textViewTitle.setText(recipe.name + "\n");
+		textViewTitle.setText("Title: " + recipe.name + "\n");
 		textViewTitle.setLayoutParams(params);
 		ll.addView(textViewTitle);
 
+		//button to add favorite
+		Button addFavorite = new Button(this);
+		addFavorite.setText("Add To Favorite");
+		final LinearLayout.LayoutParams params_addf =
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
+		addFavorite.setLayoutParams(params_addf);
+		addFavorite.setOnClickListener(new View.OnClickListener(){
+
+			@Override
+			public void onClick(View v)
+			{
+				new addCommentTask().execute();
+			}
+		});
+		ll.addView(addFavorite);
+
+
+
 		//Set objects for display on activity
 		TextView textViewDes = new TextView(this);
-		textViewDes.setText(recipe.description + "\n");
+		textViewDes.setText("Description: " + recipe.description + "\n");
 		textViewDes.setLayoutParams(params);
 		ll.addView(textViewDes);
 
@@ -93,8 +185,7 @@ public class RecipeForum extends ActionBarActivity {
 			System.out.println("Cook Time N/A");
 		}
 		else {
-			System.out.println("cookTime is not empty!");
-			textViewCookTime.setText(recipe.cookTime);
+			textViewCookTime.setText("Cook Time: " + recipe.cookTime);
 		}
 
 		textViewCookTime.setLayoutParams(params);
@@ -145,10 +236,12 @@ public class RecipeForum extends ActionBarActivity {
 				textViewIngredients.setLayoutParams(params);
 				ll.addView(textViewDirections);
 				formatOfDirection = "";
-
+				LinearLayout iLinearLayout = new LinearLayout(this);
+				iLinearLayout.setOrientation(LinearLayout.HORIZONTAL); //resume here
 				for(int j = 0; j < recipe.directions.get(i).images.size(); ++j)
 				{
 					//TODO set images horizontal    .setLayoutDirection()
+
 					ImageView iv_dir_image = new ImageView(this);
 					iv_dir_image.setImageBitmap(recipe.directions.get(i).images.get(j));
 					iv_dir_image.setLayoutParams(params);
@@ -180,43 +273,28 @@ public class RecipeForum extends ActionBarActivity {
 		}
 
 
-		ID_Maker MakerInstance = new ID_Maker();
+		Button viewForum = new Button(this);
+		viewForum.setId(MakerInstance.useCurrID());
+		viewForum.setText("View Forum");
 
-		//Set title of forum board
-		TextView tvQuestionBoardTitle = new TextView(this);
-		tvQuestionBoardTitle.setId(MakerInstance.useCurrID());
-		tvQuestionBoardTitle.setText("Highlander Chef Forum");
-		ll.addView(tvQuestionBoardTitle);
-
-		//postQuestion text field
-		EditText etPostQuestion = new EditText(this);
-		etPostQuestion.setHint("Add a question");
-		etPostQuestion.setId(MakerInstance.useCurrID());
-		etPostQuestion.setLayoutParams(params);
-		ll.addView(etPostQuestion);
-
-		Button bPostQuestion = new Button(this);
-		bPostQuestion.setText("Post Question");
 		final LinearLayout.LayoutParams paramsPostQuestion =
-				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT);
-		bPostQuestion.setLayoutParams(paramsPostQuestion);
-		/*
-		bPostQuestion.setOnClickListener(new View.OnClickListener(){
+		viewForum.setLayoutParams(paramsPostQuestion);
+		viewForum.setOnClickListener(new View.OnClickListener(){
 
-			//public Question(int uid, String username, String text) {
 			@Override
 			public void onClick(View v)
 			{
-				EditText et2 = (EditText) findViewById(1111);
-				final String comment_text = et2.getText().toString();
-				//Question = new Question(recipe.id, ratingBar.getRating(), comment_text, Comm.getEmail());
-				addComment(new_comment);
-				et2.getText().clear();
+				callQuestionBoardIntent(currentRecipe);
+
 			}
 		});
-		ll.addView(bPostQuestion);
-		 */
+		ll.addView(viewForum);
+
+
+
+
 
 		//comments edit text field
 		EditText et_comment = new EditText(this);
@@ -246,6 +324,7 @@ public class RecipeForum extends ActionBarActivity {
 				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT);
 		b_comment.setLayoutParams(params_com);
+		final TextView liveComment = new TextView(this);
 		b_comment.setOnClickListener(new View.OnClickListener(){
 
 			@Override
@@ -256,6 +335,21 @@ public class RecipeForum extends ActionBarActivity {
 				Comment new_comment = new Comment(id, ratingBar.getRating(), comment_text, Comm.getEmail());
 				addComment(new_comment);
 				et2.getText().clear();
+
+				if(Comm.getEmail() != null) {
+					System.out.println("username = " + Comm.getEmail());
+				}
+				else {
+					System.out.println("username is null!");
+				}
+
+
+				liveComment.setText(new_comment.username + "\t\t\"" +
+						new_comment.rating + " stars\"\n" +
+						new_comment.comment + "\n\n\n");
+				liveComment.setLayoutParams(params);
+				liveComment.setBackgroundColor(Color.WHITE);
+				ll.addView(liveComment);
 			}
 		});
 		ll.addView(b_comment);
@@ -271,15 +365,18 @@ public class RecipeForum extends ActionBarActivity {
 			tv_comment.setBackgroundColor(Color.WHITE);
 			ll.addView(tv_comment);
 		}
-	}
 
+	}
 	public void callImageCompIntent(Bitmap bmp)
 	{
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		byte[] bytes = stream.toByteArray();
+
 		Intent intent = new Intent(this, ImageComp.class);
-		intent.putExtra("image", bmp);
+		intent.putExtra("image", bytes);
 		startActivity(intent);
 	}
-
 	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 		// TODO Auto-generated method stub
 
@@ -294,7 +391,6 @@ public class RecipeForum extends ActionBarActivity {
 		tv_comment.setText(comment.username + "\t\t\"" +
 				comment.rating + " stars\"\n" +
 				comment.comment + "\n\n\n");
-		tv_comment.setBackgroundColor(Color.RED);
 
 
 		final LinearLayout.LayoutParams params =
@@ -309,12 +405,13 @@ public class RecipeForum extends ActionBarActivity {
 		new postCommentTask().execute(comment);
 	}
 
-
 	public void displayRecipeFailure(String text) {
-		//TextView failedToDisplayRecipe = (TextView) findViewById(R.id.errorCannotDisplayRecipe);
-		//failedToDisplayRecipe.setVisibility(View.VISIBLE);
-	}
+		//return to search activity.
+		Intent intent = new Intent(this, MainMenu.class);
+		intent.putExtra("errorDisplayRecipe", -1);
+		startActivity(intent);
 
+	}
 
 
 	public void postCommentSuccess() {
@@ -322,15 +419,31 @@ public class RecipeForum extends ActionBarActivity {
 	}
 
 	public void postCommentFailure() {
+		Utility.displayErrorToasts(getApplicationContext(), -2, LENGTH_LONG);
 
 	}
+	public void callQuestionBoardIntent(Recipe recipe)
+	{
+		Intent intent = new Intent(this, QuestionBoardActivity.class);
+		System.out.println(recipeID);
+		//TODO:  I NEED TO PASS RECIPE OBJECT THOUGH.
 
+		//intent.putExtra("currentRecipe", recipe.id);
+		startActivity(intent);
+	}
+
+	public void addFavorite(View view) {
+		Utility.displayErrorToast(this, "Favoriting recipe!!!");
+		new favoriteTask().execute(recipeID);
+	}
 
 	private class getRecipeTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
 			Comm c = new Comm();
 			Recipe ret = c.getRecipe(params[0]);
+			System.out.println("Recipe ID: " + ret.id);
+			System.out.println("Recipe IID: " + ret.uid);
 			currentRecipe = ret;
 			return (ret != null);
 		}
@@ -366,4 +479,71 @@ public class RecipeForum extends ActionBarActivity {
 			}
 		}
 	}
+
+	private void addCommentSuccess()
+	{
+		Toast followToast = Toast.makeText(getApplicationContext(), "Recipe added to favorites", LENGTH_LONG);
+		followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+		followToast.show();
+	}
+	private void addCommentFailure()
+	{
+		Toast followToast = Toast.makeText(getApplicationContext(), "Recipe failed to add to favorites", LENGTH_LONG);
+		followToast.setGravity(Gravity.TOP, 0, this.getResources().getDisplayMetrics().widthPixels); //gravity, x-offset, y-offset
+		followToast.show();
+	}
+
+	private class addCommentTask extends AsyncTask<Void, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Void... params)
+		{
+			Comm c = new Comm();
+			int ret = c.addFavorite(recipeID);
+			return (ret != Comm.SUCCESS);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				Log.v("postComment", "postCommentSuccess");
+				addCommentSuccess();
+			} else {
+				Log.v("postComment", "postComentFailure");
+				addCommentFailure();
+			}
+		}
+	}
+
+	private class favoriteTask extends AsyncTask<Integer, Void, Boolean>
+	{
+
+		@Override
+		protected Boolean doInBackground(Integer... params)
+		{
+			Comm IComm = new Comm();
+
+			IComm.addFavorite(params[0]);
+			return (true);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			if (result != true)
+			{
+				Log.e("addFavoriteFailed", "Failed to add favorite");
+			}
+			else
+			{
+				Log.v("addFavoriteSuccess", "successfully add favorite");
+			}
+		}
+
+	}
+
 }
+
+
+

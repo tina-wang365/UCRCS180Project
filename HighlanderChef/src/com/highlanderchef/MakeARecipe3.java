@@ -32,6 +32,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 	boolean newimage = false;
 	Bitmap newimagebm;
 
+	User currentUser;
 
 	ArrayList<Bitmap> added_images = new ArrayList<Bitmap>();
 	@Override
@@ -84,14 +85,12 @@ public class MakeARecipe3 extends ActionBarActivity {
 		{ return; }
 
 		//creates new text for ingredients list, includes newly added ingredient
-		LinearLayout linear_layout = (LinearLayout) findViewById(R.id.linearLayoutDirections);
+		LinearLayout linear_layout = (LinearLayout) findViewById(R.id.LinearLayout1);
 
 		++dir_added_count;
 		TextView tv = new TextView(MakeARecipe3.this);
 		tv.setText(dir_added_count + ") " + new_dir);
 		tv.setId(dir_added_count);
-
-
 
 		final RelativeLayout.LayoutParams params =
 				new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -106,8 +105,8 @@ public class MakeARecipe3 extends ActionBarActivity {
 		recipe.AddADirection(new_dir, added_images);
 		added_images.clear();
 		edittext_new_dir.getText().clear();
-		ImageView imageview = (ImageView) findViewById(R.id.added_image);
-		imageview.setImageResource(R.drawable.uploadimage);
+		//ImageView imageview = (ImageView) findViewById(R.id.added_image);
+		//imageview.setImageResource(R.drawable.uploadimage);
 	}
 
 	private static int RESULT_LOAD_IMAGE = 1;
@@ -132,7 +131,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 			picturePath = cursor.getString(columnIndex);
 			cursor.close();
 
-			LinearLayout linear_layout = (LinearLayout) findViewById(R.id.linearLayoutDirections);
+			LinearLayout linear_layout = (LinearLayout) findViewById(R.id.LinearLayout1);
 			ImageView imageView = new ImageView(this);
 
 			final RelativeLayout.LayoutParams params =
@@ -177,7 +176,10 @@ public class MakeARecipe3 extends ActionBarActivity {
 	}
 	public void SaveAsDraftPressed(View iView)
 	{
-		new UploadDraft().execute(recipe);
+		currentUser = Comm.getUser();
+		recipe.setUID(currentUser.getID());
+		recipe.setUsername(currentUser.getUsername());
+		Utility.UploadDraft(recipe);
 		Intent intent = new Intent(this, MainMenu.class);
 		startActivity(intent);
 	}
@@ -201,8 +203,14 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 		//TODO implement better case for failure.
 	}
-	private class UploadRecipeTask extends AsyncTask<Recipe, Void, Boolean> {
 
+	private void LoadDraft(Recipe iDraft)
+	{
+
+	}
+
+	private class UploadRecipeTask extends AsyncTask<Recipe, Void, Boolean>
+	{
 		@Override
 		protected Boolean doInBackground(Recipe... params) {
 			Comm c = new Comm();
@@ -228,26 +236,6 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 	public void setMainImage()
 	{
-		String picturePath = recipe.mainImagepath;
-
-		//load bitmap
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		bmOptions.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(picturePath, bmOptions);
-
-		// Decode the image file into a Bitmap sized to fill the View
-		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inPurgeable = true;
-
-		Bitmap bitmap = BitmapFactory.decodeFile(picturePath, bmOptions);
-
-		if(bitmap != null)
-		{
-			recipe.setMainImage(bitmap);
-		}
-		else
-		{
-			//TODO added error response
-		}
+		recipe.loadImageFromPath();
 	}
 }

@@ -21,9 +21,9 @@ import android.widget.Toast;
 
 public class UserHomepage extends ActionBarActivity {
 
-	//User UserLoggedIn;
-	//User UserBeingViewed;
-	int currentUserID; //
+	User UserLoggedIn;
+	User UserBeingViewed;
+	int loggedInUserID;
 
 	private static final int LENGTH_SHORT = 2000;
 
@@ -32,9 +32,31 @@ public class UserHomepage extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_homepage);
 		Intent intent = getIntent();
-		currentUserID = intent.getIntExtra("userID", Comm.staticGetUserID());
-		new UsernameTask().execute();
-		new UserRecipes().execute(Integer.toString(currentUserID));
+		UserBeingViewed = Utility.GetHomepageIntent(intent);
+		setUsername(UserBeingViewed.username);
+		new UserRecipes().execute(UserBeingViewed.id);
+		if(UserBeingViewed.id == Comm.getUser().id)
+		{
+			Button follow = (Button) findViewById(R.id.Follow);
+			follow.setVisibility(View.GONE);
+			TextView newNote = (TextView) findViewById(R.id.NewNotifications);
+
+			ArrayList<Integer> notifications = Comm.getUser().notifications;
+			String notetext = "";
+			for(int i = 0; i < notifications.size(); ++i)
+			{
+				notetext += notifications.get(i) + "\n";
+			}
+
+			newNote.setText(notetext);
+		}
+		else
+		{
+			TextView newNote = (TextView) findViewById(R.id.NewNotifications);
+			newNote.setVisibility(View.GONE);
+			Button clearNote = (Button) findViewById(R.id.ClearNote);
+			clearNote.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
@@ -61,10 +83,25 @@ public class UserHomepage extends ActionBarActivity {
 		int pos[] = {0 , 0};
 		Button follow = (Button) findViewById(R.id.Follow);
 		follow.getLocationOnScreen(pos);
+		boolean following = false;
+		ArrayList<Integer> followers = UserBeingViewed.followers;
 
-		Toast followToast = Toast.makeText(getApplicationContext(), "You are now following the user", LENGTH_SHORT);
-		followToast.setGravity(Gravity.TOP, 0, pos[1] + 20); //gravity, x-offset, y-offset
-		followToast.show();
+		for(int i = 0; i < followers.size(); ++i) {
+			if(UserBeingViewed.id == followers.get(i)) {
+				following = true;
+			}
+		}
+		if(following == true) {
+			Toast followToast = Toast.makeText(getApplicationContext(), "You are already following this chef!", LENGTH_SHORT);
+			followToast.setGravity(Gravity.TOP, 0, pos[1] + 20); //gravity, x-offset, y-offset
+			followToast.show();
+		}
+		else {
+			new followTask().execute(UserBeingViewed.id);
+			Toast followToast = Toast.makeText(getApplicationContext(), "You are now following this chef", LENGTH_SHORT);
+			followToast.setGravity(Gravity.TOP, 0, pos[1] + 20); //gravity, x-offset, y-offset
+			followToast.show();
+		}
 	}
 
 	public void setUsername(String iName)
@@ -72,12 +109,13 @@ public class UserHomepage extends ActionBarActivity {
 		((TextView) findViewById(R.id.Username)).setText(iName);
 	}
 
+
 	@SuppressWarnings("unused")
-	private class UsernameTask extends AsyncTask<String, Void, Boolean>
+	private class UsernameTask extends AsyncTask<Integer, Void, Boolean>
 	{
 		String cUsername = new String();
 		@Override
-		protected Boolean doInBackground(String... params) {
+		protected Boolean doInBackground(Integer... params) {
 			cUsername = Comm.getEmail();
 			return (cUsername.length() > 0);
 		}
@@ -98,7 +136,6 @@ public class UserHomepage extends ActionBarActivity {
 
 	public void PopulateRecipeList(ArrayList<Recipe> RecipeList)
 	{
-		//debug
 		RelativeLayout ILayout = (RelativeLayout) findViewById(R.id.RelativeLayout1);
 		ID_Maker MakerInstance = ID_Maker.getInstance();
 		View lastView = null;
@@ -220,16 +257,42 @@ public class UserHomepage extends ActionBarActivity {
 	}
 
 	@SuppressWarnings("unused")
-	private class UserRecipes extends AsyncTask<String, Void, Boolean>
+	private class UserRecipes extends AsyncTask<Integer, Void, Boolean>
 	{
 		ArrayList<Recipe> UserRecipeList;
 		@Override
-		protected Boolean doInBackground(String... params)
+		protected Boolean doInBackground(Integer... params)
 		{
 			Comm IComm = new Comm();
 			//Get Recipes of the User
-			UserRecipeList = IComm.searchRecipesByUID(Integer.parseInt(params[0]));
-			return (UserRecipeList != null);
+			System.out.println("User ID: " + params[0]);
+			UserRecipeList = IComm.searchRecipesByUID(params[0]);
+			return (UserRecipeList.size() >  0);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			if (result == false)
+			{
+				Log.e("LOAD_RECIPE", "Failed to load user's recipes");
+			}
+			PopulateRecipeList(UserRecipeList);
+		}
+
+	}
+
+	@SuppressWarnings("unused")
+	private class followTask extends AsyncTask<Integer, Void, Boolean>
+	{
+
+		@Override
+		protected Boolean doInBackground(Integer... params)
+		{
+			Comm IComm = new Comm();
+			IComm.follow(params[0]);
+			return (true);
 		}
 
 
@@ -238,11 +301,38 @@ public class UserHomepage extends ActionBarActivity {
 		{
 			if (result != true)
 			{
-				Log.e("LOAD_RECIPE", "Failed to load user's recipes");
-				UserRecipeList = new ArrayList<Recipe>();
-				//Display "User has no recipes"
+				Log.e("FOLLOW_USER", "Failed to follow target user");
 			}
-			PopulateRecipeList(UserRecipeList);
+			else
+			{
+				Log.v("FOLLOW_USER", "Sucessfully followed target user");
+			}
+		}
+
+	}
+
+	private class getNotifications extends AsyncTask<Integer, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Integer... params)
+		{
+			Comm IComm = new Comm();
+			IComm.follow(params[0]);
+			return (true);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			if (result != true)
+			{
+				Log.e("FOLLOW_USER", "Failed to follow target user");
+			}
+			else
+			{
+				Log.v("FOLLOW_USER", "Sucessfully followed target user");
+			}
 		}
 
 	}

@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
@@ -37,7 +38,11 @@ public class Comm {
 	private static volatile String authToken = "";
 
 	// Image cache
-	private static volatile HashMap<String, Bitmap> imagecache;
+	private static volatile HashMap<String, CacheItem> imagecache;
+	// current cache size in bytes
+	private static int cachesize = 0;
+	// max cache size in bytes
+	private static final int MAX_CACHESIZE = 4000000;
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
@@ -45,6 +50,21 @@ public class Comm {
 	public static final int NETWORK_FAIL = -60;
 	public static final int AUTH_FAIL = -70;
 
+	// evict according to LRU strategy (least recently used evicted first)
+	private static void evictImageCache(int numBytes) {
+		if (numBytes >= MAX_CACHESIZE) {
+			System.out.println("tried to evictImageCache >= cachesize");
+			// TODO: evict all the things!
+		}
+		int numBytesFreed = 0;
+		while (numBytesFreed < numBytes) {
+			// TODO: walk imagecache.keySet()
+			//       find member w/ min accessTime
+			//       evict it
+			//       numBytesFreed += size of evicted member
+			//       cachesize -= size of evicted member
+		}
+	}
 
 	private void registerMapperSerializers() {
 		SimpleModule module = new SimpleModule("DirectionModule", new Version(1,0,0,null));
@@ -67,15 +87,18 @@ public class Comm {
 		initMapper();
 		if (imagecache == null) {
 			imagecache = new HashMap<>();
+			cachesize = 0;
 		}
 	}
 
 	public static User getUser() {
-		System.out.println("Comm.getUser() => " + user);
 		return user;
 	}
 
 	public int getUserID() {
+		if (user == null) {
+			return -1;
+		}
 		return user.id;
 	}
 
@@ -157,66 +180,105 @@ public class Comm {
 		return apiRequest("logout", req);
 	}
 
+	private void parseUser(JsonNode un) {
+		try {
+			System.out.println("Comm.parseUser()");
+			prettyPrint(un);
+
+			User u = new User();
+			u.id = mapper.readValue(un.path("id"), Integer.class);
+			u.username = mapper.readValue(un.path("username"), String.class);
+			//debugging_system_out
+			System.out.println("u.id = " + u.id);
+			System.out.println("u.username = " + u.username);
+			Iterator<JsonNode> ite;
+
+			ite = un.path("recipes").getElements();
+			while (ite.hasNext()) {
+				u.recipes.add(ite.next().getIntValue());
+			}
+
+			ite = un.path("drafts").getElements();
+			while (ite.hasNext()) {
+				u.drafts.add(ite.next().getIntValue());
+			}
+
+			ite = un.path("followers").getElements();
+			while (ite.hasNext()) {
+				u.followers.add(ite.next().getIntValue());
+			}
+
+			ite = un.path("following").getElements();
+			while (ite.hasNext()) {
+				u.following.add(ite.next().getIntValue());
+			}
+
+			ite = un.path("favorites").getElements();
+			while (ite.hasNext()) {
+				u.favorites.add(ite.next().getIntValue());
+			}
+
+			ite = un.path("notifications").getElements();
+			while (ite.hasNext()) {
+				u.notifications.add(ite.next().getIntValue());
+			}
+
+			user = u;
+		} catch (Exception e) {
+			System.out.println("exception in Comm.parseUser: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	// gets new user info from the server
+	// including notifications, drafts, recipes, etc
+	public void updateUser() {
+		HashMap<String, String> req = new HashMap<>();
+		req.put("uid", Integer.toString(user.id));
+		int ret = apiRequest("userinfo", req);
+		if (lastStatus == 1) {
+			parseUser(rootNode.path("user"));
+		}
+	}
+
 	public int login(String email, String password) {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("email", email);
 		req.put("password", password);
-
+		//debugging_system_out
+		System.out.println("completed req.put email and password. about to call aipRequest");
 		int ret = apiRequest("login", req);
 
 		if (ret == 0) {
 			try {
 				if (lastStatus == 1) {
+					//debugging_system_out
+					System.out.println("last status == 1 if statement entered");
 					String token = mapper.readValue(rootNode.path("token"), String.class);
 					authToken = token;
-
-					User u = new User();
-					JsonNode un = rootNode.path("user");
-					u.id = mapper.readValue(un.path("id"), Integer.class);
-					u.username = mapper.readValue(un.path("username"), String.class);
-					Iterator<JsonNode> ite;
-
-					ite = un.path("recipes").getElements();
-					while (ite.hasNext()) {
-						u.recipes.add(ite.next().getIntValue());
-					}
-
-					ite = un.path("drafts").getElements();
-					while (ite.hasNext()) {
-						u.drafts.add(ite.next().getIntValue());
-					}
-
-					ite = un.path("followers").getElements();
-					while (ite.hasNext()) {
-						u.followers.add(ite.next().getIntValue());
-					}
-
-					ite = un.path("following").getElements();
-					while (ite.hasNext()) {
-						u.following.add(ite.next().getIntValue());
-					}
-
-					ite = un.path("favorites").getElements();
-					while (ite.hasNext()) {
-						u.favorites.add(ite.next().getIntValue());
-					}
-
-					ite = un.path("notifications").getElements();
-					while (ite.hasNext()) {
-						u.notifications.add(ite.next().getIntValue());
-					}
-
-					this.user = u;
+					//debugging_system_out
+					System.out.println("about to call parserUser");
+					parseUser(rootNode.path("user"));
+					//debugging_system_out
+					System.out.println("done parseUser");
+					System.out.println("user.id = " + user.id);
+					System.out.println("user.username = " + user.username);
 					return SUCCESS;
 				} else {
+					//debugging_system_out
+					System.out.println("returning API FAIL");
 					return API_FAIL;
 				}
 			} catch (Exception e) {
+				//debugging_system_out
+				System.out.println("return json error login fail");
 				System.out.println("LOGIN FAIL: ");
 				e.printStackTrace();
 				return JSON_ERROR;
 			}
 		} else {
+			//debugging_system_out
+			System.out.println("return ret in login");
 			return ret;
 		}
 	}
@@ -273,6 +335,18 @@ public class Comm {
 		return ls;
 	}
 
+	private Bitmap pngToBitmap(byte[] bytes) {
+		if (bytes == null) {
+			System.out.println("Comm.pngToBitmap got a null bytes");
+			return null;
+		}
+		Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		if (bmp == null) {
+			System.out.println("Comm.pngToBitmap failed to decode byte array of length " + bytes.length);
+		}
+		return bmp;
+	}
+
 	private Bitmap getImage(String relUrl) {
 		System.out.println("getImage(" + serverImgRoot + relUrl);
 		if (relUrl == null) {
@@ -281,8 +355,10 @@ public class Comm {
 		}
 
 		if (imagecache.containsKey(relUrl)) {
-			System.out.println("Comm.getImage using cached bitmap");
-			return imagecache.get(relUrl);
+			System.out.println("Comm.getImage using cached png... cache size in bytes is " + cachesize);
+			CacheItem ci = imagecache.get(relUrl);
+			ci.accessTime = System.currentTimeMillis();
+			return pngToBitmap(ci.bytes);
 		}
 
 		try {
@@ -308,7 +384,18 @@ public class Comm {
 				return null;
 			} else {
 				connection.disconnect();
-				imagecache.put(relUrl, bitmap);
+
+				// matt - let's cheat and recompress the png :)
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+				CacheItem ci = new CacheItem();
+				ci.accessTime = System.currentTimeMillis();
+				ci.bytes = stream.toByteArray();
+				if (ci.bytes.length + cachesize > MAX_CACHESIZE) {
+					evictImageCache(ci.bytes.length - (MAX_CACHESIZE - cachesize));
+				}
+				imagecache.put(relUrl, ci);
+
 				return bitmap;
 			}
 		} catch (Exception e) {
@@ -334,6 +421,7 @@ public class Comm {
 				apiRequestBytePayload("imageupload", stream.toByteArray());
 				if (lastStatus == 1) {
 					String url = mapper.readValue(rootNode.path("image_url"), String.class);
+					updateUser();
 					return url;
 				} else {
 					return "";
@@ -375,20 +463,23 @@ public class Comm {
 	}
 
 	private void parseComments(Recipe r, JsonNode node) {
+		if (node.isMissingNode()) {
+			return;
+		}
 		try {
-			System.out.print("comments node: ");
-			prettyPrint(node);
-			Float rRating = mapper.readValue(node.path("rating"), Float.class);
-			r.rating = rRating.floatValue();
-			Iterator<JsonNode> ite = node.path("comments").getElements();
-			while(ite.hasNext()) {
-				JsonNode cnode = ite.next();
-				System.out.print("cnode: ");
-				prettyPrint(cnode);
-				Integer rating = mapper.readValue(cnode.path("rating"), Integer.class);
-				String comment = mapper.readValue(cnode.path("comment"), String.class);
-				String username = mapper.readValue(cnode.path("username"), String.class);
-				r.comments.add(new Comment(r.id, rating.intValue(), comment, username));
+			if (!node.path("rating").isMissingNode()) {
+				Float rRating = mapper.readValue(node.path("rating"), Float.class);
+				r.rating = rRating.floatValue();
+				Iterator<JsonNode> ite = node.path("comments").getElements();
+				while(ite.hasNext()) {
+					JsonNode cnode = ite.next();
+					System.out.print("cnode: ");
+					prettyPrint(cnode);
+					Integer rating = mapper.readValue(cnode.path("rating"), Integer.class);
+					String comment = mapper.readValue(cnode.path("comment"), String.class);
+					String username = mapper.readValue(cnode.path("username"), String.class);
+					r.comments.add(new Comment(r.id, rating.intValue(), comment, username));
+				}
 			}
 		} catch (Exception e) {
 			System.out.println("parseRecipe had an exception parsing comments");
@@ -397,10 +488,10 @@ public class Comm {
 	}
 
 	private void parseQuestions(Recipe r, JsonNode node) {
+		if (node.isMissingNode()) {
+			return;
+		}
 		try {
-			System.out.print("question node: ");
-			prettyPrint(node);
-
 			Iterator<JsonNode> ite = node.path("questions").getElements();
 			while(ite.hasNext()) {
 				JsonNode qnode = ite.next();
@@ -454,7 +545,7 @@ public class Comm {
 			r = new Recipe(id, name, description, getImage(image_url));
 			String cooktime = mapper.readValue(node.path("cooktime"), String.class);
 			r.setCookTime(cooktime);
-			Integer uid = mapper.readValue(node.path("rid"), Integer.class);
+			Integer uid = mapper.readValue(node.path("uid"), Integer.class);
 			r.uid = uid;
 			String username = mapper.readValue(node.path("username"), String.class);
 			r.username = username;
@@ -488,7 +579,15 @@ public class Comm {
 		return parseRecipe(rootNode.path("recipe"));
 	}
 
-
+	public int clearNotifications() {
+		apiRequest("clearnotifications", null);
+		if (lastStatus == 1) {
+			updateUser();
+			return SUCCESS;
+		} else {
+			return API_FAIL;
+		}
+	}
 
 	public int uploadRecipe(Recipe r) {
 		HashMap<String, Object> req = new HashMap<>();
@@ -499,10 +598,12 @@ public class Comm {
 		recipe.put("description", r.description);
 		recipe.put("cooktime", r.cookTime);
 		System.out.println("uploadRecipe uploading main image");
+		if (r.mainImage == null && r.mainImagepath != null && r.mainImagepath != "") {
+			r.loadImageFromPath();
+		}
 		recipe.put("image_url", imageUpload(r.mainImage));
 		recipe.put("categories", r.categories);
 		recipe.put("ingredients", r.ingredients);
-
 		recipe.put("directions", r.directions);
 		try {
 			recipe.put("parseddirs", mapper.writeValueAsString(r.directions));
@@ -516,6 +617,7 @@ public class Comm {
 		apiRequest("uploadrecipe", req);
 
 		if (lastStatus == 1) {
+			updateUser();
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -530,6 +632,7 @@ public class Comm {
 		int ret = apiRequest("postquestion", req);
 		if (ret == 0) {
 			if (lastStatus == 1) {
+				updateUser();
 				return SUCCESS;
 			} else {
 				return API_FAIL;
@@ -547,6 +650,7 @@ public class Comm {
 		int ret = apiRequest("postquestion", req);
 		if (ret == 0) {
 			if (lastStatus == 1) {
+				updateUser();
 				return SUCCESS;
 			} else {
 				return API_FAIL;
@@ -561,6 +665,7 @@ public class Comm {
 		req.put("uid", Integer.toString(uid));
 		apiRequest("follow", req);
 		if (lastStatus == 1) {
+			updateUser();
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -572,6 +677,7 @@ public class Comm {
 		req.put("rid", Integer.toString(recipeID));
 		apiRequest("addfavorite", req);
 		if (lastStatus == 1) {
+			updateUser();
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -587,6 +693,7 @@ public class Comm {
 		int ret = apiRequest("rate", req);
 		if (ret == 0) {
 			if (lastStatus == 1) {
+				updateUser();
 				return SUCCESS;
 			} else {
 				return API_FAIL;
@@ -605,9 +712,13 @@ public class Comm {
 		recipe.put("description", r.description);
 		recipe.put("cooktime", r.cookTime);
 		System.out.println("savingDraft uploading main image");
+		if (r.mainImage == null && r.mainImagepath != null && r.mainImagepath != "") {
+			r.loadImageFromPath();
+		}
 		recipe.put("image_url", imageUpload(r.mainImage));
 
 		recipe.put("categories", r.categories);
+		System.out.println("Comm.saveDraft got categories " + r.toString());
 		recipe.put("ingredients", r.ingredients);
 
 		recipe.put("directions", r.directions);
@@ -618,10 +729,19 @@ public class Comm {
 			e.printStackTrace();
 		}
 
+		recipe.put("did", Integer.toString(r.did));
+
 		req.put("recipe", recipe);
-		int ret = apiRequest("savedraft", req);
+		int ret;
+		if (r.did != 0 && r.did != -1) {
+
+			ret = apiRequest("updatedraft", req);
+		} else {
+			ret = apiRequest("savedraft", req);
+		}
 		if(ret == 0) {
 			if(lastStatus == 1) {
+				updateUser();
 				return SUCCESS;
 			} else {
 				return API_FAIL;
@@ -635,25 +755,6 @@ public class Comm {
 	//   I guess we don't need this, because we are storing that in our User object
 	public ArrayList<Integer> getDraftList() {
 		return user.drafts;
-		/*
-		HashMap<String, String> req = new HashMap<>();
-		req.put("uid", Integer.toString(id));
-		apiRequest("getdraftlist", req);
-
-		if (lastStatus == 1) {
-			ArrayList<Integer> draftList = new ArrayList<Integer>();
-			Iterator<JsonNode> ite = rootNode.path("drafts").getElements();
-			while (ite.hasNext()) {
-				JsonNode r = ite.next();
-				Integer did = r.getIntValue();
-				draftList.add(did);
-			}
-
-			return draftList;
-		} else {
-			return null;
-		}
-		 */
 	}
 
 	public Recipe getDraft(int draftID) {
@@ -661,7 +762,10 @@ public class Comm {
 		req.put("did", Integer.toString(draftID));
 		apiRequest("getdraft", req);
 
-		return parseRecipe(rootNode.path("recipe"));
+		Recipe r = parseRecipe(rootNode.path("recipe"));
+		System.out.println("Comm.getDraft(" + draftID + ") has categories " + r.categories.toString());
+		r.did = draftID;
+		return r;
 	}
 
 	public int deleteDraft(int draftID) {
@@ -670,6 +774,7 @@ public class Comm {
 		apiRequest("deletedraft", req);
 
 		if (lastStatus == 1) {
+			updateUser();
 			return SUCCESS;
 		} else {
 			return API_FAIL;
@@ -686,7 +791,6 @@ public class Comm {
 		ArrayList<Category> cats = new ArrayList<>();
 		int ret = apiRequest("categories", null);
 		if (ret == 0) {
-			prettyPrint(rootNode);
 			if (lastStatus == 1) {
 				Iterator<JsonNode> ite = rootNode.path("categories").getElements();
 				while(ite.hasNext())
@@ -703,6 +807,7 @@ public class Comm {
 						return null;
 					}
 				}
+				updateUser();
 				return cats;
 			} else {
 				return null;
@@ -806,6 +911,7 @@ public class Comm {
 				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
 				lastStatus = status;
 				if (lastStatus == -1) {
+					updateUser();
 					return AUTH_FAIL;
 				} else {
 					return SUCCESS;
@@ -816,8 +922,8 @@ public class Comm {
 				return API_FAIL;
 			}
 		} catch (Exception e) {
-			System.out.println("apiRequestPayload caught an exception:");
-			System.out.println(e.getMessage());
+			System.out.println("apiRequestPayload caught an exception: " + e.getMessage());
+			e.printStackTrace();
 			return NETWORK_FAIL;
 		}
 	}

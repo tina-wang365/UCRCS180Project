@@ -1,8 +1,13 @@
 package com.highlanderchef;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Question {
+public class Question implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8686942949033916152L;
 	int uid;
 	String username;
 	String text;
@@ -24,5 +29,9 @@ public class Question {
 		} else {
 			this.replies = replies;
 		}
+	}
+
+	public void editQuestion(String text) {
+		this.text = text;
 	}
 }

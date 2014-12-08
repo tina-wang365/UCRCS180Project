@@ -3,12 +3,35 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class Utility
 {
+	private static final int TOAST_MESSAGE_LENGTH = 3500;
+
+	static public User GetHomepageIntent(Intent intent)
+	{
+		User returnUser = new User();
+		returnUser.id = intent.getIntExtra("userID", Comm.staticGetUserID());
+		returnUser.username = intent.getStringExtra("Username");
+		return returnUser;
+	}
+	static public void FillHomepageIntent(Intent intent, User UserToView)
+	{
+		FillHomepageIntent(intent, UserToView.getUsername(), UserToView.getID());
+	}
+	static public void FillHomepageIntent(Intent intent, String username, int userID)
+	{
+		intent.putExtra("userID", userID);
+		intent.putExtra("Username", username);
+	}
 	static public ProgressBar DisplaySpinner(Context iContext, ViewGroup iLayout)
 	{
 		ProgressBar ISpinner = new ProgressBar(iContext);
@@ -20,6 +43,63 @@ public class Utility
 	{
 		if (iSpinner != null)
 			((ViewGroup) iSpinner.getParent()).removeView(iSpinner);
+	}
+	static public void UploadDraft(Recipe draft)
+	{
+		new UploadDraftTask().execute(draft);
+	}
+	static public void displayErrorToast(Context iContext, String iMessage)
+	{
+		Toast toastErrorMessage;
+		toastErrorMessage = Toast.makeText(iContext, iMessage, TOAST_MESSAGE_LENGTH);
+		toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
+		toastErrorMessage.show();
+	}
+	static public void displayErrorToasts(Context context, Integer errorValue, Integer duration) {
+
+		Toast toastErrorMessage;
+		switch(errorValue) {
+		case -1:
+			toastErrorMessage = Toast.makeText(context, "Sorry! We could not load the recipe you want to view. Check your connection!", duration);
+			toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
+			toastErrorMessage.show();
+			break;
+		case -2:
+			toastErrorMessage = Toast.makeText(context, "Sorry! We could not load the recipe you want to view. Check your connection!", duration);
+			toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
+			toastErrorMessage.show();
+			break;
+		default:
+			break;
+		}
+	}
+
+	static public Ingredient getFromIntent(Intent intent, String key)
+	{
+		Ingredient returnValue = new Ingredient(intent.getStringExtra(key + " name"), intent.getStringExtra(key + " amount"));
+		if (returnValue.name == null || returnValue.amount == null)
+			return null;
+		return returnValue;
+	}
+
+	static private class UploadDraftTask extends AsyncTask<Recipe, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Recipe... params) {
+			Comm IComm = new Comm();
+			int Status = IComm.saveDraft(params[0]);
+			return (Status == Comm.SUCCESS);
+		}
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result != true) {
+				Log.e("FailUpload","Could not upload draft to server.");
+			}
+			else {
+				Log.v("UploadSucess", "Sucessfully uploaded draft to server.");
+			}
+		}
+
 	}
 }
 

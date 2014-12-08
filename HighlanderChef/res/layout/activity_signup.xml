@@ -8,6 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:gravity="center_horizontal"
     tools:context="com.highlander.SignupActivity" >
 
     <EditText
@@ -47,10 +48,19 @@
         android:text="@string/invalidSignUp" />
 
     <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
+		android:id="@+id/button1"
+		android:text="Submit"
+		android:textColor="#FFFFFF"
+		android:textSize="30sp"
+		android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="validateSignUpSubmitPressed"
-        android:text="@string/submit_button" />
+		android:background="@drawable/buttonshape"
+		android:shadowColor="#A8A8A8"
+		android:shadowDx="0"
+		android:shadowDy="0"
+		android:shadowRadius="5"
+		android:onClick="validateSignUpSubmitPressed"
+	/>
+
 
 </LinearLayout>
