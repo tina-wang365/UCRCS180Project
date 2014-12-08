@@ -41,6 +41,8 @@ public class Comm {
 	private static volatile HashMap<String, CacheItem> imagecache;
 	// current cache size in bytes
 	private static int cachesize = 0;
+	// max cache size in bytes
+	private static final int MAX_CACHESIZE = 4000000;
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
@@ -374,6 +376,9 @@ public class Comm {
 				CacheItem ci;
 				ci.accessTime = System.currentTimeMillis();
 				ci.bytes = stream.toByteArray();
+				if (ci.bytes.length + cachesize > MAX_CACHESIZE) {
+					evictImageCache(ci.bytes.length - (MAX_CACHESIZE - cachesize));
+				}
 				imagecache.put(relUrl, ci);
 
 				return bitmap;
