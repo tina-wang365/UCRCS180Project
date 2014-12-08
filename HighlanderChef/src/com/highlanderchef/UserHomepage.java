@@ -311,4 +311,29 @@ public class UserHomepage extends ActionBarActivity {
 
 	}
 
+	private class getNotifications extends AsyncTask<Integer, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Integer... params)
+		{
+			Comm IComm = new Comm();
+			IComm.follow(params[0]);
+			return (true);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			if (result != true)
+			{
+				Log.e("FOLLOW_USER", "Failed to follow target user");
+			}
+			else
+			{
+				Log.v("FOLLOW_USER", "Sucessfully followed target user");
+			}
+		}
+
+	}
 }

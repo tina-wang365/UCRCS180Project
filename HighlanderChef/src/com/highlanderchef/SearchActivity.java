@@ -140,7 +140,6 @@ public class SearchActivity extends ActionBarActivity {
 			else {
 				b_view.setText("Edit");
 				j = recipies.get(i).did;
-				System.out.println("DID: " + j);
 			}
 
 			b_view.setOnClickListener(new View.OnClickListener(){
@@ -154,6 +153,20 @@ public class SearchActivity extends ActionBarActivity {
 				}
 			});
 			rl.addView(b_view);
+
+			if (ViewingDrafts == true) {
+				Button d_view = new Button(this);
+				d_view.setText("Delete");
+
+				d_view.setOnClickListener(new View.OnClickListener(){
+					@Override
+					public void onClick(View v)
+					{
+						callDeleteDraft(j);
+					}
+				});
+				rl.addView(d_view);
+			}
 		}
 	}
 
@@ -181,6 +194,13 @@ public class SearchActivity extends ActionBarActivity {
 		Intent intent = new Intent(this, MakeARecipe1.class);
 		intent.putExtra("DraftID", index);
 		startActivity(intent);
+	}
+
+	public void callDeleteDraft(int index)
+	{
+		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
+		rl.removeAllViews();
+		new DeleteTask().execute(index);
 	}
 
 	private class SearchTask extends AsyncTask<String, Void, Boolean>
@@ -218,6 +238,25 @@ public class SearchActivity extends ActionBarActivity {
 			} else {
 				Log.v("login_fail","Search Failed");
 				SearchFailure(ret);
+			}
+		}
+
+	}
+
+	private class DeleteTask extends AsyncTask<Integer, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			Comm c = new Comm();
+			return (c.deleteDraft(params[0]) == Comm.SUCCESS);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				Log.v("DeleteDraft","Draft Delete Success");
+				new SearchTask().execute(ViewDrafts);
 			}
 		}
 
