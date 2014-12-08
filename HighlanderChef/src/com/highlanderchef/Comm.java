@@ -50,6 +50,20 @@ public class Comm {
 	public static final int NETWORK_FAIL = -60;
 	public static final int AUTH_FAIL = -70;
 
+	private static void evictImageCache(int numBytes) {
+		if (numBytes >= MAX_CACHESIZE) {
+			System.out.println("tried to evictImageCache >= cachesize");
+			// TODO: evict all the things!
+		}
+		int numBytesFreed = 0;
+		while (numBytesFreed < numBytes) {
+			// TODO: walk imagecache.keySet()
+			//       find member w/ min accessTime
+			//       evict it
+			//       numBytesFreed += size of evicted member
+			//       cachesize -= size of evicted member
+		}
+	}
 
 	private void registerMapperSerializers() {
 		SimpleModule module = new SimpleModule("DirectionModule", new Version(1,0,0,null));
