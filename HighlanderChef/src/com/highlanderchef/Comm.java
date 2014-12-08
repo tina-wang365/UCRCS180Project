@@ -64,10 +64,12 @@ public class Comm {
 			}
 			long tempMinAccess = lruTemp.numAccess; //tempMinAccess is the numAccess of "first" element in HashMap
 
-			for(Map.Entry<String, CacheItem> entry : imagecache.entrySet() ) {
-				if(entry.getValue().accessTime < tempMinAccess) {
-					tempMinAccess = entry.getValue().accessTime;
-					tempMinAccessKey = entry.getKey();
+			//Map.Entry<String, CacheItem> entry : imagecache.entrySet();
+			Iterator<Map.Entry<String, CacheItem>> it = imagecache.entrySet().iterator();
+			while(it.hasNext()){
+				if(it.next().getValue().accessTime < tempMinAccess) {
+					tempMinAccess = it.next().getValue().accessTime;
+					tempMinAccessKey = it.next().getKey();
 				}
 			}
 			//at this point we should have LRU key in tempMinAccessKey and LRU minAccess in tempMinAccess
