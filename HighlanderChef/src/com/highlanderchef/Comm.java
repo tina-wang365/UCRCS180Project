@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
@@ -320,6 +321,13 @@ public class Comm {
 
 		if (imagecache.containsKey(relUrl)) {
 			System.out.println("Comm.getImage using cached bitmap... cache size is " + imagecache.size());
+			//loop through cache and print out size of bitmap
+			Iterator it = imagecache.entrySet().iterator();
+			while(it.hasNext()) {
+				Map.Entry<String, Bitmap> pairs = (Map.Entry<String, Bitmap>)it.next();
+				System.out.println("key: " + pairs.getKey() + "      value: " + (pairs.getValue().getRowBytes() * pairs.getValue().getHeight()) );
+				it.remove();
+			}
 			return imagecache.get(relUrl);
 		}
 
