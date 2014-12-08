@@ -54,27 +54,31 @@ public class Comm {
 	private static void evictImageCache(int numBytes) {
 		if (numBytes >= MAX_CACHESIZE) {
 			System.out.println("tried to evictImageCache >= cachesize");
-			// TODO: evict all the things!
-			CacheItem lruTemp = new CacheItem();
-			String tempMinAccessKey = "";
-			for(Map.Entry<String, CacheItem> entry : imagecache.entrySet()) {
-				lruTemp = imagecache.entrySet().iterator().next().getValue();
-				tempMinAccessKey = entry.getKey(); //this is key of "first" element in HashMap
-				break;
-			}
-			long tempMinAccess = lruTemp.numAccess; //tempMinAccess is the numAccess of "first" element in HashMap
-
-			for(Map.Entry<String, CacheItem> entry : imagecache.entrySet() ) {
-				if(entry.getValue().accessTime < tempMinAccess) {
-					tempMinAccess = entry.getValue().accessTime;
-					tempMinAccessKey = entry.getKey();
-				}
-			}
-			//at this point we should have LRU key in tempMinAccessKey and LRU minAccess in tempMinAccess
-			System.out.println("tempMinAccess = " + tempMinAccess);
-			System.out.println("tempMinAccessKey = " + tempMinAccessKey);
-			imagecache.remove(tempMinAccessKey);
+			// evict all the things!
+			imagecache.clear();
+			return;
 		}
+
+		CacheItem lruTemp = new CacheItem();
+		String tempMinAccessKey = "";
+		for(Map.Entry<String, CacheItem> entry : imagecache.entrySet()) {
+			lruTemp = imagecache.entrySet().iterator().next().getValue();
+			tempMinAccessKey = entry.getKey(); //this is key of "first" element in HashMap
+			break;
+		}
+		long tempMinAccess = lruTemp.numAccess; //tempMinAccess is the numAccess of "first" element in HashMap
+
+		for(Map.Entry<String, CacheItem> entry : imagecache.entrySet() ) {
+			if(entry.getValue().accessTime < tempMinAccess) {
+				tempMinAccess = entry.getValue().accessTime;
+				tempMinAccessKey = entry.getKey();
+			}
+		}
+		//at this point we should have LRU key in tempMinAccessKey and LRU minAccess in tempMinAccess
+		System.out.println("tempMinAccess = " + tempMinAccess);
+		System.out.println("tempMinAccessKey = " + tempMinAccessKey);
+		imagecache.remove(tempMinAccessKey);
+
 		//		int numBytesFreed = 0;
 		//		while (numBytesFreed < numBytes) {
 		//			// TODO: walk imagecache.keySet()
