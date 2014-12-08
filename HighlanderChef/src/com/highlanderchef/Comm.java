@@ -338,15 +338,10 @@ public class Comm {
 		}
 
 		if (imagecache.containsKey(relUrl)) {
-			System.out.println("Comm.getImage using cached bitmap... cache size is " + imagecache.size());
-			//loop through cache and print out size of bitmap
-			Iterator it = imagecache.entrySet().iterator();
-			while(it.hasNext()) {
-				Map.Entry<String, Bitmap> pairs = (Map.Entry<String, Bitmap>)it.next();
-				System.out.println("key: " + pairs.getKey() + "      value: " + (pairs.getValue().getRowBytes() * pairs.getValue().getHeight()) );
-				it.remove();
-			}
-			return imagecache.get(relUrl);
+			System.out.println("Comm.getImage using cached png... cache size in bytes is " + cachesize);
+			CacheItem ci = imagecache.get(relUrl);
+			ci.accessTime = System.currentTimeMillis();
+			return pngToBitmap(ci.bytes);
 		}
 
 		try {
@@ -372,7 +367,15 @@ public class Comm {
 				return null;
 			} else {
 				connection.disconnect();
-				imagecache.put(relUrl, bitmap);
+
+				// matt - let's cheat and recompress the png :)
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+				CacheItem ci;
+				ci.accessTime = System.currentTimeMillis();
+				ci.bytes = stream.toByteArray();
+				imagecache.put(relUrl, ci);
+
 				return bitmap;
 			}
 		} catch (Exception e) {
