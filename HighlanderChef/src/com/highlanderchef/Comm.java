@@ -387,7 +387,7 @@ public class Comm {
 				// matt - let's cheat and recompress the png :)
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
-				CacheItem ci;
+				CacheItem ci = new CacheItem();
 				ci.accessTime = System.currentTimeMillis();
 				ci.bytes = stream.toByteArray();
 				if (ci.bytes.length + cachesize > MAX_CACHESIZE) {
