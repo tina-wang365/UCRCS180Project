@@ -50,6 +50,7 @@ public class Comm {
 	public static final int NETWORK_FAIL = -60;
 	public static final int AUTH_FAIL = -70;
 
+	// evict according to LRU strategy (least recently used evicted first)
 	private static void evictImageCache(int numBytes) {
 		if (numBytes >= MAX_CACHESIZE) {
 			System.out.println("tried to evictImageCache >= cachesize");
