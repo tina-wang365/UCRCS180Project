@@ -197,7 +197,7 @@ public class ImageComp extends ActionBarActivity implements CvCameraViewListener
 				int good_matches = 0;
 				for(int i = 0; i < matchesList.size(); ++i)
 				{
-					if(matchesList.get(i).distance <= 53)
+					if(matchesList.get(i).distance <= 50)
 					{
 						++good_matches;
 					}
