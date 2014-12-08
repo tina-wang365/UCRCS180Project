@@ -88,7 +88,7 @@ public class Comm {
 		//Map.Entry<String, CacheItem> entry : imagecache.entrySet();
 		Iterator<Map.Entry<String, CacheItem>> it = imagecache.entrySet().iterator();
 		while(it.hasNext()){
-			if(it.next().getValue().accessTime > tempMinAccess) {
+			if(it.next().getValue().accessTime < tempMinAccess) {
 				tempMinAccess = it.next().getValue().accessTime;
 				tempMinAccessKey = it.next().getKey();
 				tempFreed = it.next().getValue().bytes.length;
