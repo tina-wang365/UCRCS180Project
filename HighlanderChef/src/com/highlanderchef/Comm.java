@@ -60,12 +60,10 @@ public class Comm {
 		}
 
 		int numBytesFreed = 0;
-		while (numBytesFreed < numBytes) {
+		while (numBytesFreed < numBytes && imagecache.size() > 0) {
 			int numEvicted = evictImageCacheHelper();
 			numBytesFreed += numEvicted;
 			cachesize -= numEvicted;
-
-			imagecache.remove(minAccessKey);
 		}
 	}
 
