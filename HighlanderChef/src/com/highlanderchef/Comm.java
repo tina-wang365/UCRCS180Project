@@ -38,7 +38,9 @@ public class Comm {
 	private static volatile String authToken = "";
 
 	// Image cache
-	private static volatile HashMap<String, Bitmap> imagecache;
+	private static volatile HashMap<String, CacheItem> imagecache;
+	// current cache size in bytes
+	private static int cachesize = 0;
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
@@ -68,6 +70,7 @@ public class Comm {
 		initMapper();
 		if (imagecache == null) {
 			imagecache = new HashMap<>();
+			cachesize = 0;
 		}
 	}
 
@@ -313,6 +316,18 @@ public class Comm {
 			ls.add(parseRecipe(r, true));
 		}
 		return ls;
+	}
+
+	private Bitmap pngToBitmap(byte[] bytes) {
+		if (bytes == null) {
+			System.out.println("Comm.pngToBitmap got a null bytes");
+			return null;
+		}
+		Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		if (bmp == null) {
+			System.out.println("Comm.pngToBitmap failed to decode byte array of length " + bytes.length);
+		}
+		return bmp;
 	}
 
 	private Bitmap getImage(String relUrl) {
