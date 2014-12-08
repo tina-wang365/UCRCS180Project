@@ -75,7 +75,6 @@ public class Comm {
 
 	private static int evictLeastAccessTime()
 	{
-		int numBytesFreed = 0;
 		CacheItem lruTemp = new CacheItem();
 		String tempMinAccessKey = "";
 		int tempFreed = 0;
