@@ -76,6 +76,9 @@ public class Comm {
 	}
 
 	public int getUserID() {
+		if (user == null) {
+			return -1;
+		}
 		return user.id;
 	}
 
