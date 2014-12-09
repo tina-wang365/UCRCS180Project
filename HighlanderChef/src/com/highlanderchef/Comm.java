@@ -801,7 +801,9 @@ public class Comm {
 		apiRequest("getdraft", req);
 
 		Recipe r = parseRecipe(rootNode.path("recipe"));
+		r.mainImagepath = parseRecipe(rootNode.path("recipe")).mainImagepath;
 		System.out.println("Comm.getDraft(" + draftID + ") has categories " + r.categories.toString());
+		System.out.println("Comm.getDraft(" + draftID + ") has the mainImagepath = " + r.mainImagepath);
 		r.did = draftID;
 		return r;
 	}
