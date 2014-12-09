@@ -26,6 +26,7 @@ public class SearchActivity extends ActionBarActivity {
 	private final String SearchByMyUID = "Search By UID";
 	private final String ViewDrafts = "ViewDrafts";
 	private final String ViewFavorites = "ViewFavorites";
+	private final String ViewNotifications = "ViewNotifications";
 
 	private boolean ViewingDrafts = false;
 
@@ -51,6 +52,8 @@ public class SearchActivity extends ActionBarActivity {
 		} else if (intent.getStringExtra(ViewFavorites) != null) {
 			System.out.println("SearchByFavorites");
 			new SearchTask().execute(ViewFavorites);
+		} else if (Utility.GetNotificationIntent(intent).isEmpty() == false) {
+			new SearchTask().execute(ViewNotifications);
 		} else {
 			System.out.println("SearchByUID");
 			new SearchTask().execute(SearchByMyUID);
@@ -219,6 +222,10 @@ public class SearchActivity extends ActionBarActivity {
 				ArrayList<Integer> DraftsID = c.getDraftList();
 				for (int i = 0; i < DraftsID.size(); i++)
 					ret.add(c.getDraft(DraftsID.get(i)));
+			} else if (params[0] == ViewNotifications) {
+				ArrayList<Integer> NotificationID = Comm.getUser().notifications;
+				for (int i = 0; i < NotificationID.size(); i++)
+					ret.add(c.getRecipe(NotificationID.get(i)));
 			} else if (params[0] == ViewFavorites) {
 				System.out.println("searching favorites...");
 				for (int i = 0; i < c.getUser().favorites.size(); i++) {

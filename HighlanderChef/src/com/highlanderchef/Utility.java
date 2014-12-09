@@ -21,6 +21,8 @@ public class Utility
 	static public ArrayList<Integer> GetNotificationIntent(Intent intent)
 	{
 		ArrayList<Integer> notifications = intent.getIntegerArrayListExtra(NotificationIntentKey);
+		if (notifications == null)
+			notifications = new ArrayList<Integer>();
 		return notifications;
 	}
 	static public void FillNotificationIntent(Intent intent, ArrayList<Integer> notifications)
