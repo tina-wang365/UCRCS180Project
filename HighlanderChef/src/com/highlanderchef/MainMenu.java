@@ -119,6 +119,23 @@ public class MainMenu extends ActionBarActivity {
 		String username = currentUser.getUsername();
 		String strWelcomeFormat = getResources().getString(R.string.Welcome_Chef);
 		String strWelcomeMsg = String.format(strWelcomeFormat,username);
+		if (currentUser.notifications.isEmpty() == false)
+		{
+			((TextView) findViewById(R.id.textView1)).setTextColor(getResources().getColor(Utility.white));
+			findViewById(R.id.textView1).setBackground(getResources().getDrawable(R.drawable.buttonshape));
+			findViewById(R.id.textView1).setClickable(true);
+			findViewById(R.id.textView1).setOnClickListener(
+					new View.OnClickListener() {
+						@Override
+						public void onClick(View iView)
+						{
+							Intent intent = new Intent(MainMenu.this, SearchActivity.class);
+							Utility.FillNotificationIntent(intent, currentUser.notifications);
+							startActivity(intent);
+						}
+					});
+			strWelcomeMsg = strWelcomeMsg + "\n" + "You have " + currentUser.notifications.size() + " new notifications!";
+		}
 		((TextView) findViewById(R.id.textView1)).setText(strWelcomeMsg);
 	}
 
