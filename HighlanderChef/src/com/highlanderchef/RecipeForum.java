@@ -27,11 +27,10 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	ID_Maker MakerInstance = new ID_Maker();
 	private final int LENGTH_SHORT = 2000;
 	private final int LENGTH_LONG = 7000;
-	Recipe currentRecipe = null;
+	Recipe currentRecipe = new Recipe();
 	LinearLayout ll;
 	RelativeLayout questionsLayout = null;
 	//	Comment currentComment = null;
-	int recipeID = 0;
 	private Button btnComment;
 	private RatingBar ratingBar;
 	boolean ratingBarPressed = false;
@@ -41,6 +40,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		currentlyLoggedIn = Comm.getUser();
 		questionsLayout = new RelativeLayout(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recipe_forum);
@@ -48,7 +48,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		//failedToDisplayRecipe.setVisibility(View.INVISIBLE);
 
 		Intent intent = getIntent();
-		recipeID = intent.getIntExtra("recipeID", 0);
+		currentRecipe.id = intent.getIntExtra("recipeID", 0);
 		downloadRecipe();
 	}
 
@@ -126,16 +126,14 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	}
 
 	public void downloadRecipe() {
-		new getRecipeTask().execute(recipeID);
+		new getRecipeTask().execute(currentRecipe.id);
 	}
 
 
 
 	@SuppressWarnings("null")
 	public void displayRecipeSuccess(Recipe recipe) {
-		System.out.println("Recipe UID: " + recipe.uid);
-		System.out.println("Recipe ID: " + recipe.id);
-		System.out.println("Recipe DID: " + recipe.did);
+		currentRecipe = recipe;
 		ownerOfRecipe.username = recipe.getUsername();
 		ownerOfRecipe.id = recipe.uid;
 		ll = (LinearLayout) findViewById(R.id.linearLayoutResults);
@@ -151,25 +149,6 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		textViewTitle.setText("Title: " + recipe.name + "\n");
 		textViewTitle.setLayoutParams(params);
 		ll.addView(textViewTitle);
-
-		//button to add favorite
-		Button addFavorite = new Button(this);
-		addFavorite.setText("Add To Favorite");
-		final LinearLayout.LayoutParams params_addf =
-				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT);
-		addFavorite.setLayoutParams(params_addf);
-		addFavorite.setOnClickListener(new View.OnClickListener(){
-
-			@Override
-			public void onClick(View v)
-			{
-				new addCommentTask().execute();
-			}
-		});
-		ll.addView(addFavorite);
-
-
 
 		//Set objects for display on activity
 		TextView textViewDes = new TextView(this);
@@ -425,7 +404,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	public void callQuestionBoardIntent(Recipe recipe)
 	{
 		Intent intent = new Intent(this, QuestionBoardActivity.class);
-		System.out.println(recipeID);
+		System.out.println(currentRecipe.id);
 		//TODO:  I NEED TO PASS RECIPE OBJECT THOUGH.
 
 		//intent.putExtra("currentRecipe", recipe.id);
@@ -433,8 +412,12 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	}
 
 	public void addFavorite(View view) {
-		Utility.displayErrorToast(this, "Favoriting recipe!!!");
-		new favoriteTask().execute(recipeID);
+		if (currentlyLoggedIn.isInFavorites(currentRecipe.id))
+			Utility.displayToast(this, "Already in your favorites!");
+		else {
+			Utility.displayErrorToast(this, "Add recipe to favorites!");
+			new favoriteTask().execute(currentRecipe.id);
+		}
 	}
 
 	private class getRecipeTask extends AsyncTask<Integer, Void, Boolean> {
@@ -499,7 +482,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		protected Boolean doInBackground(Void... params)
 		{
 			Comm c = new Comm();
-			int ret = c.addFavorite(recipeID);
+			int ret = c.addFavorite(currentRecipe.id);
 			return (ret != Comm.SUCCESS);
 		}
 
@@ -522,7 +505,6 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		protected Boolean doInBackground(Integer... params)
 		{
 			Comm IComm = new Comm();
-
 			IComm.addFavorite(params[0]);
 			return (true);
 		}
@@ -539,6 +521,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 			{
 				Log.v("addFavoriteSuccess", "successfully add favorite");
 			}
+			currentlyLoggedIn = Comm.getUser();
 		}
 
 	}

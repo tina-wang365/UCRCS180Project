@@ -48,12 +48,16 @@ public class Utility
 	{
 		new UploadDraftTask().execute(draft);
 	}
-	static public void displayErrorToast(Context iContext, String iMessage)
+	static public void displayToast(Context iContext, String iMessage)
 	{
 		Toast toastErrorMessage;
 		toastErrorMessage = Toast.makeText(iContext, iMessage, TOAST_MESSAGE_LENGTH);
 		toastErrorMessage.setGravity(Gravity.CENTER, 0, 0); //gravity, x-offset, y-offset
 		toastErrorMessage.show();
+	}
+	static public void displayErrorToast(Context iContext, String iMessage)
+	{
+		displayToast(iContext, iMessage);
 	}
 	static public void displayErrorToasts(Context context, Integer errorValue, Integer duration) {
 
