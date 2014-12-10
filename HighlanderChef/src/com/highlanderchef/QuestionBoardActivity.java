@@ -46,7 +46,14 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		if(intent != null) {
 			System.out.println("MM.intent.get(recipe)");
 			recipeID = intent.getIntExtra("recipeID", 0);
-			questions = (ArrayList<Question>)intent.getSerializableExtra("question");
+
+			Question[] q = (Question[])intent.getSerializableExtra("question");
+
+			questions = new ArrayList<>();
+			for (int i = 0; i < q.length; i++) {
+				questions.add(q[i]);
+			}
+
 			if (questions == null) {
 				System.out.println("questions is null!");
 				questions = new ArrayList<>();
