@@ -281,7 +281,7 @@ public class Comm {
 		req.put("email", email);
 		req.put("password", password);
 		//debugging_system_out
-		System.out.println("completed req.put email and password. about to call aipRequest");
+		System.out.println("completed req.put email and password. about to call apiRequest");
 		int ret = apiRequest("login", req);
 
 		if (ret == 0) {

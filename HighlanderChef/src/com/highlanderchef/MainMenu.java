@@ -65,6 +65,7 @@ public class MainMenu extends ActionBarActivity {
 	public void logout(View view) {
 		new LogoutTask().execute();
 		Intent intent = new Intent(this, StartupScreen.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 
