@@ -121,9 +121,9 @@ public class MainMenu extends ActionBarActivity {
 		if (currentUser.notifications.isEmpty() == false)
 		{
 			((TextView) findViewById(R.id.textView1)).setTextColor(getResources().getColor(Utility.white));
-			findViewById(R.id.textView1).setBackground(getResources().getDrawable(R.drawable.buttonshape));
-			findViewById(R.id.textView1).setClickable(true);
-			findViewById(R.id.textView1).setOnClickListener(
+			((TextView) findViewById(R.id.textView1)).setBackground(getResources().getDrawable(R.drawable.buttonshape));
+			((TextView) findViewById(R.id.textView1)).setClickable(true);
+			((TextView) findViewById(R.id.textView1)).setOnClickListener(
 					new View.OnClickListener() {
 						@Override
 						public void onClick(View iView)
