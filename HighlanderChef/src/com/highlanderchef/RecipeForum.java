@@ -405,6 +405,8 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 	{
 		Intent intent = new Intent(this, QuestionBoardActivity.class);
 		System.out.println(currentRecipe.id);
+		System.out.println("questions is " + recipe.questions);
+		System.out.println("questions is " + recipe.questions.toString());
 		intent.putExtra("questions", recipe.questions);
 		intent.putExtra("recipeID", recipe.id);
 		startActivity(intent);
@@ -425,7 +427,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 			Comm c = new Comm();
 			Recipe ret = c.getRecipe(params[0]);
 			System.out.println("Recipe ID: " + ret.id);
-			System.out.println("Recipe IID: " + ret.uid);
+			System.out.println("Recipe UID: " + ret.uid);
 			currentRecipe = ret;
 			return (ret != null);
 		}
