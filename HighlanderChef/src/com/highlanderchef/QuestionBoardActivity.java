@@ -22,6 +22,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 
 	private final int LENGTH_SHORT = 2000;
 	int recipeID = 0;
+	ArrayList<Question> questions = null;
 
 	ID_Maker MakerInstance = ID_Maker.getInstance();
 	RelativeLayout rflayout;
@@ -44,7 +45,9 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		Intent intent = getIntent();
 		if(intent != null) {
 			System.out.println("MM.intent.get(recipe)");
-			currentRecipe = (Recipe)intent.getSerializableExtra("recipe");
+			recipeID = intent.getIntExtra("recipeID", 0);
+			questions = (ArrayList<Question>)intent.getSerializableExtra("question");
+			//currentRecipe = (Recipe)intent.getSerializableExtra("recipe");
 		}
 		else {
 			System.out.println("Intent is null!");
@@ -76,7 +79,9 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		btnAddQuestion.setLayoutParams(rlParams);
 		rflayout.addView(btnAddQuestion);
 		lastView = btnAddQuestion;
-		//
+
+		displayListOfQuestions(questions, lastView);
+
 		tv_questions = new TextView(this);
 		rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		rlParams.addRule(RelativeLayout.BELOW, lastView.getId());
@@ -146,9 +151,11 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		tv_question.setText(question.text);
 		rflayout.addView(tv_question);
 
+
 		Toast toastSuccessfullyPostQuestion = Toast.makeText(getApplicationContext(), "You have added a Question!", LENGTH_SHORT);
 		toastSuccessfullyPostQuestion.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
 		toastSuccessfullyPostQuestion.show();
+		System.out.println("MM.postQuestionSuccess()");
 	}
 
 	void postQuestionFailure(Question question) {
@@ -160,8 +167,8 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		protected Boolean doInBackground(Question... params) {
 			Comm c = new Comm();
 			newQuestion = params[0];
-			int ret = c.postQuestion(currentRecipe.id, params[0].text);
-			return (ret != Comm.SUCCESS);
+			int ret = c.postQuestion(recipeID, params[0].text);
+			return (ret == Comm.SUCCESS);
 		}
 
 		@Override
