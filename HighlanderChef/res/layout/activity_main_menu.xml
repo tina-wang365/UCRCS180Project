@@ -19,24 +19,9 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="@string/Welcome_Chef"
             android:textSize="36sp" />
-
-        <Button
-            android:id="@+id/search"
-            android:layout_width="95dp"
-            android:layout_height="50dp"
-            android:layout_above="@+id/button2"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/buttonshape"
-            android:onClick="SearchPressed"
-            android:shadowColor="#A8A8A8"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="5"
-            android:text="Search"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/editText1"
@@ -49,6 +34,23 @@
             android:inputType="text"
         	android:imeOptions="actionDone|flagForceAscii" >
         </EditText>
+        
+        <Button
+            android:id="@+id/search"
+            android:layout_width="95dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/editText1"
+            android:layout_toRightOf="@id/editText1"
+            android:background="@drawable/buttonshape"
+            android:onClick="SearchPressed"
+            android:shadowColor="#A8A8A8"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
+            android:text="Search"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/button1"
