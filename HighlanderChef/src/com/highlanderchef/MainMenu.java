@@ -112,6 +112,7 @@ public class MainMenu extends ActionBarActivity {
 		startActivity(intent);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void setUser(User iUser)
 	{
 		currentUser = iUser;
@@ -121,7 +122,7 @@ public class MainMenu extends ActionBarActivity {
 		if (currentUser.notifications.isEmpty() == false)
 		{
 			((TextView) findViewById(R.id.textView1)).setTextColor(getResources().getColor(Utility.white));
-			findViewById(R.id.textView1).setBackground(getResources().getDrawable(R.drawable.buttonshape));
+			findViewById(R.id.textView1).setBackgroundDrawable((getResources().getDrawable(R.drawable.buttonshape)));
 			findViewById(R.id.textView1).setClickable(true);
 			findViewById(R.id.textView1).setOnClickListener(
 					new View.OnClickListener() {
@@ -134,6 +135,10 @@ public class MainMenu extends ActionBarActivity {
 						}
 					});
 			strWelcomeMsg = strWelcomeMsg + "\n" + "You have " + currentUser.notifications.size() + " new notifications!";
+		}
+		else
+		{
+			Utility.displayToast(this, "You have no new notifications.");
 		}
 		((TextView) findViewById(R.id.textView1)).setText(strWelcomeMsg);
 	}
