@@ -360,14 +360,17 @@ public class Comm {
 		req.put("uid", userID);
 		apiRequest("searchuid", req);
 
-		ArrayList<Recipe> ls = new ArrayList<>();
-		Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
-		while(ite.hasNext())
-		{
-			JsonNode r = ite.next();
-			ls.add(parseRecipe(r, true));
+		if (lastStatus == 1) {
+			ArrayList<Recipe> ls = new ArrayList<>();
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while(ite.hasNext())
+			{
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r, true));
+			}
+			return ls;
 		}
-		return ls;
+		return new ArrayList<>();
 	}
 
 	public ArrayList<Recipe> getAllDrafts(int userID) {
@@ -375,13 +378,16 @@ public class Comm {
 		req.put("uid", userID);
 		apiRequest("getalldrafts", req);
 
-		ArrayList<Recipe> ls = new ArrayList<>();
-		Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
-		while (ite.hasNext()) {
-			JsonNode r = ite.next();
-			ls.add(parseRecipe(r, false));
+		if (lastStatus == 1) {
+			ArrayList<Recipe> ls = new ArrayList<>();
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while (ite.hasNext()) {
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r, false));
+			}
+			return ls;
 		}
-		return ls;
+		return new ArrayList<>();
 	}
 
 	public ArrayList<Recipe> getAllNotifs(int userID) {
@@ -389,13 +395,16 @@ public class Comm {
 		req.put("uid", userID);
 		apiRequest("getallnotifs", req);
 
-		ArrayList<Recipe> ls = new ArrayList<>();
-		Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
-		while (ite.hasNext()) {
-			JsonNode r = ite.next();
-			ls.add(parseRecipe(r, false));
+		if (lastStatus == 1) {
+			ArrayList<Recipe> ls = new ArrayList<>();
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while (ite.hasNext()) {
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r, false));
+			}
+			return ls;
 		}
-		return ls;
+		return new ArrayList<>();
 	}
 
 	private Bitmap pngToBitmap(byte[] bytes) {

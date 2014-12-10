@@ -221,9 +221,7 @@ public class SearchActivity extends ActionBarActivity {
 			} else if (params[0] == ViewDrafts) {
 				ret = c.getAllDrafts(c.getUserID());
 			} else if (params[0] == ViewNotifications) {
-				ArrayList<Integer> NotificationID = Comm.getUser().notifications;
-				for (int i = 0; i < NotificationID.size(); i++)
-					ret.add(c.getRecipe(NotificationID.get(i)));
+				ret = c.getAllNotifs(c.getUserID());
 			} else if (params[0] == ViewFavorites) {
 				System.out.println("searching favorites...");
 				for (int i = 0; i < c.getUser().favorites.size(); i++) {
