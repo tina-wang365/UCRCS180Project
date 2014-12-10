@@ -754,7 +754,7 @@ public class Comm {
 			r.loadImageFromPath();
 		}
 		recipe.put("image_url", imageUpload(r.mainImage));
-
+		recipe.put("mainImagepath", r.mainImagepath);
 		recipe.put("categories", r.categories);
 		System.out.println("Comm.saveDraft got categories " + r.toString());
 		recipe.put("ingredients", r.ingredients);
