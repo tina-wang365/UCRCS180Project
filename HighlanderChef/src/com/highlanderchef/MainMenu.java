@@ -62,6 +62,13 @@ public class MainMenu extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	public void logout(View view) {
+		new LogoutTask().execute();
+		Intent intent = new Intent(this, StartupScreen.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+	}
+
 	public void BrowsePressed(View view)
 	{
 		Intent intent = new Intent(this, BrowseActivity.class);
@@ -143,6 +150,27 @@ public class MainMenu extends ActionBarActivity {
 		((TextView) findViewById(R.id.textView1)).setText(strWelcomeMsg);
 	}
 
+	private class LogoutTask extends AsyncTask<String, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(String... params) {
+
+			Comm c = new Comm();
+			return (c.logout() == Comm.SUCCESS);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				System.out.println("Logout success");
+			}
+			else {
+				System.out.println("Logout failure");
+			}
+		}
+
+	}
 	private class UsernameTask extends AsyncTask<String, Void, Boolean>
 	{
 		User cUser = new User();

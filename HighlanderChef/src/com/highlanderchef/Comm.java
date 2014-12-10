@@ -38,7 +38,11 @@ public class Comm {
 	private static volatile String authToken = "";
 
 	// Image cache
-	private static volatile HashMap<String, Bitmap> imagecache;
+	private static volatile HashMap<String, CacheItem> imagecache;
+	// current cache size in bytes
+	private static int cachesize = 0;
+	// max cache size in bytes
+	private static final int MAX_CACHESIZE = 4000000;
 
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
@@ -46,6 +50,56 @@ public class Comm {
 	public static final int NETWORK_FAIL = -60;
 	public static final int AUTH_FAIL = -70;
 
+	// evict according to LRU strategy (least recently used evicted first)
+	private static void evictImageCache(int numBytes) {
+		if (numBytes >= MAX_CACHESIZE) {
+			System.out.println("tried to evictImageCache >= cachesize");
+			// evict all the things!
+			imagecache.clear();
+			return;
+		}
+		int numBytesFreed = 0;
+		int temp = 0;
+		while (numBytesFreed < numBytes) {
+			// walk imagecache.keySet()
+			//       find member w/ min accessTime
+			//       evict it
+			//       numBytesFreed += size of evicted member
+			//       cachesize -= size of evicted member
+			temp = evictLeastAccessTime();
+			numBytesFreed += temp;
+			cachesize -= temp;
+			//remove is done in helper
+		}
+	}
+
+	private static int evictLeastAccessTime()
+	{
+		CacheItem lruTemp = new CacheItem();
+		String tempMinAccessKey = "";
+		int tempFreed = 0;
+		for(Map.Entry<String, CacheItem> entry : imagecache.entrySet()) {
+			lruTemp = imagecache.entrySet().iterator().next().getValue();
+			tempMinAccessKey = entry.getKey(); //this is key of "first" element in HashMap
+			break;
+		}
+		long tempMinAccess = lruTemp.numAccess; //tempMinAccess is the numAccess of "first" element in HashMap
+
+		//Map.Entry<String, CacheItem> entry : imagecache.entrySet();
+		Iterator<Map.Entry<String, CacheItem>> it = imagecache.entrySet().iterator();
+		while(it.hasNext()){
+			if(it.next().getValue().accessTime < tempMinAccess) {
+				tempMinAccess = it.next().getValue().accessTime;
+				tempMinAccessKey = it.next().getKey();
+				tempFreed = it.next().getValue().bytes.length;
+			}
+		}
+		//at this point we should have LRU key in tempMinAccessKey and LRU minAccess in tempMinAccess
+		System.out.println("tempMinAccess = " + tempMinAccess);
+		System.out.println("tempMinAccessKey = " + tempMinAccessKey);
+		imagecache.remove(tempMinAccessKey);
+		return tempFreed;
+	}
 
 	private void registerMapperSerializers() {
 		SimpleModule module = new SimpleModule("DirectionModule", new Version(1,0,0,null));
@@ -68,6 +122,7 @@ public class Comm {
 		initMapper();
 		if (imagecache == null) {
 			imagecache = new HashMap<>();
+			cachesize = 0;
 		}
 	}
 
@@ -226,7 +281,7 @@ public class Comm {
 		req.put("email", email);
 		req.put("password", password);
 		//debugging_system_out
-		System.out.println("completed req.put email and password. about to call aipRequest");
+		System.out.println("completed req.put email and password. about to call apiRequest");
 		int ret = apiRequest("login", req);
 
 		if (ret == 0) {
@@ -305,14 +360,63 @@ public class Comm {
 		req.put("uid", userID);
 		apiRequest("searchuid", req);
 
-		ArrayList<Recipe> ls = new ArrayList<>();
-		Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
-		while(ite.hasNext())
-		{
-			JsonNode r = ite.next();
-			ls.add(parseRecipe(r, true));
+		if (lastStatus == 1) {
+			ArrayList<Recipe> ls = new ArrayList<>();
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while(ite.hasNext())
+			{
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r, true));
+			}
+			return ls;
 		}
-		return ls;
+		return new ArrayList<>();
+	}
+
+	public ArrayList<Recipe> getAllDrafts(int userID) {
+		HashMap<String, Integer> req = new HashMap<>();
+		req.put("uid", userID);
+		apiRequest("getalldrafts", req);
+
+		if (lastStatus == 1) {
+			ArrayList<Recipe> ls = new ArrayList<>();
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while (ite.hasNext()) {
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r, false));
+			}
+			return ls;
+		}
+		return new ArrayList<>();
+	}
+
+	public ArrayList<Recipe> getAllNotifs(int userID) {
+		HashMap<String, Integer> req = new HashMap<>();
+		req.put("uid", userID);
+		apiRequest("getallnotifs", req);
+
+		if (lastStatus == 1) {
+			ArrayList<Recipe> ls = new ArrayList<>();
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while (ite.hasNext()) {
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r, false));
+			}
+			return ls;
+		}
+		return new ArrayList<>();
+	}
+
+	private Bitmap pngToBitmap(byte[] bytes) {
+		if (bytes == null) {
+			System.out.println("Comm.pngToBitmap got a null bytes");
+			return null;
+		}
+		Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		if (bmp == null) {
+			System.out.println("Comm.pngToBitmap failed to decode byte array of length " + bytes.length);
+		}
+		return bmp;
 	}
 
 	private Bitmap getImage(String relUrl) {
@@ -323,15 +427,12 @@ public class Comm {
 		}
 
 		if (imagecache.containsKey(relUrl)) {
-			System.out.println("Comm.getImage using cached bitmap... cache size is " + imagecache.size());
-			//loop through cache and print out size of bitmap
-			Iterator it = imagecache.entrySet().iterator();
-			while(it.hasNext()) {
-				Map.Entry<String, Bitmap> pairs = (Map.Entry<String, Bitmap>)it.next();
-				System.out.println("key: " + pairs.getKey() + "      value: " + (pairs.getValue().getRowBytes() * pairs.getValue().getHeight()) );
-				it.remove();
-			}
-			return imagecache.get(relUrl);
+			System.out.println("Comm.getImage using cached png... cache size in bytes is " + cachesize);
+			CacheItem ci = imagecache.get(relUrl);
+			ci.accessTime = System.currentTimeMillis();
+			ci.numAccess++;
+			System.out.println("  CacheItem.numAccess = " + ci.numAccess);
+			return pngToBitmap(ci.bytes);
 		}
 
 		try {
@@ -357,7 +458,19 @@ public class Comm {
 				return null;
 			} else {
 				connection.disconnect();
-				imagecache.put(relUrl, bitmap);
+
+				// matt - let's cheat and recompress the png :)
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+				CacheItem ci = new CacheItem();
+				ci.accessTime = System.currentTimeMillis();
+				ci.bytes = stream.toByteArray();
+				ci.numAccess = 0;
+				if (ci.bytes.length + cachesize > MAX_CACHESIZE) {
+					evictImageCache(ci.bytes.length - (MAX_CACHESIZE - cachesize));
+				}
+				imagecache.put(relUrl, ci);
+
 				return bitmap;
 			}
 		} catch (Exception e) {
@@ -511,6 +624,11 @@ public class Comm {
 			r.uid = uid;
 			String username = mapper.readValue(node.path("username"), String.class);
 			r.username = username;
+
+			if (!node.path("did").isMissingNode()) {
+				Integer draftID = mapper.readValue(node.path("did"), Integer.class);
+				r.did = draftID;
+			}
 
 			if (!brief) {
 				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
@@ -678,7 +796,7 @@ public class Comm {
 			r.loadImageFromPath();
 		}
 		recipe.put("image_url", imageUpload(r.mainImage));
-
+		recipe.put("mainImagepath", r.mainImagepath);
 		recipe.put("categories", r.categories);
 		System.out.println("Comm.saveDraft got categories " + r.toString());
 		recipe.put("ingredients", r.ingredients);
@@ -725,7 +843,9 @@ public class Comm {
 		apiRequest("getdraft", req);
 
 		Recipe r = parseRecipe(rootNode.path("recipe"));
+		r.mainImagepath = parseRecipe(rootNode.path("recipe")).mainImagepath;
 		System.out.println("Comm.getDraft(" + draftID + ") has categories " + r.categories.toString());
+		System.out.println("Comm.getDraft(" + draftID + ") has the mainImagepath = " + r.mainImagepath);
 		r.did = draftID;
 		return r;
 	}

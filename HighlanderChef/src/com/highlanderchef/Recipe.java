@@ -13,9 +13,6 @@ import android.graphics.BitmapFactory;
 
 
 public class Recipe implements Serializable{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6967995128725451333L;
 	public int id;
 	public int uid;
