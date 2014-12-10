@@ -56,6 +56,10 @@ public class User {
 		this.recipes = recipes;
 		this.drafts = drafts;
 	}
+	public boolean isInFavorites(int RecipeID)
+	{
+		return favorites.indexOf(RecipeID) >= 0;
+	}
 	public int getID() {
 		return id;
 	}
