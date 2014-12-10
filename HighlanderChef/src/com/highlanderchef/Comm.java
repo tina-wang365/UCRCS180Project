@@ -384,6 +384,20 @@ public class Comm {
 		return ls;
 	}
 
+	public ArrayList<Recipe> getAllNotifs(int userID) {
+		HashMap<String, Integer> req = new HashMap<>();
+		req.put("uid", userID);
+		apiRequest("getallnotifs", req);
+
+		ArrayList<Recipe> ls = new ArrayList<>();
+		Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+		while (ite.hasNext()) {
+			JsonNode r = ite.next();
+			ls.add(parseRecipe(r, false));
+		}
+		return ls;
+	}
+
 	private Bitmap pngToBitmap(byte[] bytes) {
 		if (bytes == null) {
 			System.out.println("Comm.pngToBitmap got a null bytes");
