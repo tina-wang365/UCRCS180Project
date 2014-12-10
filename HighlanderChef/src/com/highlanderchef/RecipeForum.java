@@ -264,8 +264,8 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 
 			@Override
 			public void onClick(View v)
-			{
-				callQuestionBoardIntent(currentRecipe);
+			{	System.out.println("MM.viewForum button clicked!");
+			callQuestionBoardIntent(currentRecipe);
 
 			}
 		});
@@ -407,7 +407,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		System.out.println(currentRecipe.id);
 		//TODO:  I NEED TO PASS RECIPE OBJECT THOUGH.
 
-		//intent.putExtra("currentRecipe", recipe.id);
+		intent.putExtra("currentRecipe", recipe);
 		startActivity(intent);
 	}
 

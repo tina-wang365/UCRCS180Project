@@ -3,6 +3,7 @@ package com.highlanderchef;
 import java.util.ArrayList;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -32,6 +33,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 
 	Recipe currentRecipe;
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,22 +42,22 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		etQuestionToPost = new EditText(this);
 		btnAddQuestion = new Button(this);
 		Intent intent = getIntent();
-		//new getRecipeTask().execute(recipeID);
 		if(intent != null) {
-			System.out.println("Intent is NOT null");
-			//recipeID = intent.getIntExtra("recipeID", 0);
+			System.out.println("MM.intent.get(recipe)");
+			currentRecipe = (Recipe)intent.getSerializableExtra("recipe");
 		}
 		else {
 			System.out.println("Intent is null!");
 		}
 
+		//TODO:Edittext - text field to post a question
 		etQuestionToPost.setId(MakerInstance.useCurrID());
 		RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		rlParams.addRule(RelativeLayout.BELOW, R.id.textView2);
 		etQuestionToPost.setLayoutParams(rlParams);
 		rflayout.addView(etQuestionToPost);
 
-
+		//TODO:button Add Question - upon click, a user adds a question
 		btnAddQuestion.setId(MakerInstance.useCurrID());
 		btnAddQuestion.setText("Ask a Question");
 		rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -68,19 +70,20 @@ public class QuestionBoardActivity extends ActionBarActivity {
 				tv_questions.setText(tv_questions.getText() + "\n\n" + etQuestionToPost.getText());
 				Question q = new Question(Comm.staticGetUserID(), Comm.getEmail(), etQuestionToPost.getText().toString());
 				new postQuestionTask().execute(q);
-
+				etQuestionToPost.getText().clear();
 			}
 		});
 		btnAddQuestion.setLayoutParams(rlParams);
 		rflayout.addView(btnAddQuestion);
-
 		lastView = btnAddQuestion;
+		//
 		tv_questions = new TextView(this);
-		tv_questions.setText("");
 		rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		rlParams.addRule(RelativeLayout.BELOW, lastView.getId());
 		tv_questions.setLayoutParams(rlParams);
+		tv_questions.setBackgroundColor(Color.WHITE);
 		rflayout.addView(tv_questions);
+
 
 		//new postQuestionTask()
 	}
@@ -157,7 +160,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		protected Boolean doInBackground(Question... params) {
 			Comm c = new Comm();
 			newQuestion = params[0];
-			int ret = c.postQuestion(recipeID, params[0].text);
+			int ret = c.postQuestion(currentRecipe.id, params[0].text);
 			return (ret != Comm.SUCCESS);
 		}
 
