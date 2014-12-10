@@ -219,9 +219,7 @@ public class SearchActivity extends ActionBarActivity {
 			} else if (params[0] == SearchByMyUID) {
 				ret = c.searchRecipesByUID(c.getUserID());
 			} else if (params[0] == ViewDrafts) {
-				ArrayList<Integer> DraftsID = c.getDraftList();
-				for (int i = 0; i < DraftsID.size(); i++)
-					ret.add(c.getDraft(DraftsID.get(i)));
+				ret = c.getAllDrafts(c.getUserID());
 			} else if (params[0] == ViewNotifications) {
 				ArrayList<Integer> NotificationID = Comm.getUser().notifications;
 				for (int i = 0; i < NotificationID.size(); i++)
