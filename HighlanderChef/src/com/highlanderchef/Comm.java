@@ -625,6 +625,11 @@ public class Comm {
 			String username = mapper.readValue(node.path("username"), String.class);
 			r.username = username;
 
+			if (!node.path("did").isMissingNode()) {
+				Integer draftID = mapper.readValue(node.path("did"), Integer.class);
+				r.did = draftID;
+			}
+
 			if (!brief) {
 				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
 				r.parseIngredientsFromJson(ingredientsJson);

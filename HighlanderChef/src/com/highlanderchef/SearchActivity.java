@@ -86,6 +86,8 @@ public class SearchActivity extends ActionBarActivity {
 		{
 			if(recipies.get(i) == null )
 				continue;
+
+			System.out.println("SearchSuccess processing item " + i + " with did " + recipies.get(i).did);
 			//LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 			//code for dividers
 			if(i >= 1)
