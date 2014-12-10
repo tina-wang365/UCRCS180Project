@@ -62,6 +62,13 @@ public class MainMenu extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	public void logout(View view) {
+		new LogoutTask().execute();
+		Intent intent = new Intent(this, StartupScreen.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+	}
+
 	public void BrowsePressed(View view)
 	{
 		Intent intent = new Intent(this, BrowseActivity.class);
@@ -84,8 +91,7 @@ public class MainMenu extends ActionBarActivity {
 	public void SearchPressed(View view)
 	{
 		System.out.println("MM.SearchedPressed()");
-		EditText et_search_query = (EditText) findViewById(R.id.editText1);
-		String search_query = et_search_query.getText().toString();
+		String search_query = ((EditText) findViewById(R.id.editText1)).getText().toString();
 		Intent intent = new Intent(this, SearchActivity.class);
 		intent.putExtra("search_query", search_query);
 		startActivity(intent);
@@ -119,9 +125,47 @@ public class MainMenu extends ActionBarActivity {
 		String username = currentUser.getUsername();
 		String strWelcomeFormat = getResources().getString(R.string.Welcome_Chef);
 		String strWelcomeMsg = String.format(strWelcomeFormat,username);
+		if (currentUser.notifications.isEmpty() == false)
+		{
+			((TextView) findViewById(R.id.textView1)).setTextColor(getResources().getColor(Utility.white));
+			//((TextView) findViewById(R.id.textView1)).setBackground(getResources().getDrawable(R.drawable.buttonshape));
+			((TextView) findViewById(R.id.textView1)).setClickable(true);
+			((TextView) findViewById(R.id.textView1)).setOnClickListener(
+					new View.OnClickListener() {
+						@Override
+						public void onClick(View iView)
+						{
+							Intent intent = new Intent(MainMenu.this, SearchActivity.class);
+							Utility.FillNotificationIntent(intent, currentUser.notifications);
+							startActivity(intent);
+						}
+					});
+			strWelcomeMsg = strWelcomeMsg + "\n" + "You have " + currentUser.notifications.size() + " new notifications!";
+		}
 		((TextView) findViewById(R.id.textView1)).setText(strWelcomeMsg);
 	}
 
+	private class LogoutTask extends AsyncTask<String, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(String... params) {
+
+			Comm c = new Comm();
+			return (c.logout() == Comm.SUCCESS);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				System.out.println("Logout success");
+			}
+			else {
+				System.out.println("Logout failure");
+			}
+		}
+
+	}
 	private class UsernameTask extends AsyncTask<String, Void, Boolean>
 	{
 		User cUser = new User();

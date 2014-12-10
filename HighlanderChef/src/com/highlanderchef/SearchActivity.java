@@ -26,6 +26,7 @@ public class SearchActivity extends ActionBarActivity {
 	private final String SearchByMyUID = "Search By UID";
 	private final String ViewDrafts = "ViewDrafts";
 	private final String ViewFavorites = "ViewFavorites";
+	private final String ViewNotifications = "ViewNotifications";
 
 	private boolean ViewingDrafts = false;
 
@@ -51,6 +52,8 @@ public class SearchActivity extends ActionBarActivity {
 		} else if (intent.getStringExtra(ViewFavorites) != null) {
 			System.out.println("SearchByFavorites");
 			new SearchTask().execute(ViewFavorites);
+		} else if (Utility.GetNotificationIntent(intent).isEmpty() == false) {
+			new SearchTask().execute(ViewNotifications);
 		} else {
 			System.out.println("SearchByUID");
 			new SearchTask().execute(SearchByMyUID);
@@ -83,6 +86,8 @@ public class SearchActivity extends ActionBarActivity {
 		{
 			if(recipies.get(i) == null )
 				continue;
+
+			System.out.println("SearchSuccess processing item " + i + " with did " + recipies.get(i).did);
 			//LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 			//code for dividers
 			if(i >= 1)
@@ -216,9 +221,9 @@ public class SearchActivity extends ActionBarActivity {
 			} else if (params[0] == SearchByMyUID) {
 				ret = c.searchRecipesByUID(c.getUserID());
 			} else if (params[0] == ViewDrafts) {
-				ArrayList<Integer> DraftsID = c.getDraftList();
-				for (int i = 0; i < DraftsID.size(); i++)
-					ret.add(c.getDraft(DraftsID.get(i)));
+				ret = c.getAllDrafts(c.getUserID());
+			} else if (params[0] == ViewNotifications) {
+				ret = c.getAllNotifs(c.getUserID());
 			} else if (params[0] == ViewFavorites) {
 				System.out.println("searching favorites...");
 				for (int i = 0; i < c.getUser().favorites.size(); i++) {

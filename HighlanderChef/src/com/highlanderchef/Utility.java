@@ -15,7 +15,20 @@ import android.widget.Toast;
 public class Utility
 {
 	private static final int TOAST_MESSAGE_LENGTH = 3500;
+	private static final String NotificationIntentKey = "ViewNotifications";
+	public static int white = 0x0106000b;
 
+	static public ArrayList<Integer> GetNotificationIntent(Intent intent)
+	{
+		ArrayList<Integer> notifications = intent.getIntegerArrayListExtra(NotificationIntentKey);
+		if (notifications == null)
+			notifications = new ArrayList<Integer>();
+		return notifications;
+	}
+	static public void FillNotificationIntent(Intent intent, ArrayList<Integer> notifications)
+	{
+		intent.putExtra(NotificationIntentKey, 	notifications);
+	}
 	static public User GetHomepageIntent(Intent intent)
 	{
 		User returnUser = new User();
