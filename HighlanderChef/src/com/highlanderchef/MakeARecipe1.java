@@ -97,6 +97,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		});
 
 
+
 		categoryIDs = new ArrayList<>();
 		new GetCategoriesTask().execute(1);
 		currentUser = Comm.getUser();
@@ -241,10 +242,10 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 
 				if (i == (categories.size() - 1)) {
 					level0_spinner.add(cat_prefix.peek());
-					categoryIDs.add(new Integer(categories.get(i).id));
+					categoryIDs.add(Integer.valueOf(categories.get(i).id));
 				} else if (categories.get(i + 1).level <= categories.get(i).level) {
 					level0_spinner.add(cat_prefix.peek());
-					categoryIDs.add(new Integer(categories.get(i).id));
+					categoryIDs.add(Integer.valueOf(categories.get(i).id));
 				}
 
 				last_level = categories.get(i).level;
@@ -280,7 +281,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 
 	public void catOnFailure()
 	{
-
+		System.out.println("MAR1 catOnFailure()");
 	}
 
 	public void LoadDraft(Recipe iRecipe)
@@ -291,10 +292,10 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		((EditText) findViewById(R.id.recipe_description)).setText(iRecipe.getDescription());
 		((EditText) findViewById(R.id.recipe_est_time)).setText(iRecipe.getCookTime());
 
-		for (int i = 0; i < categories.size(); i++) {
+		for (int i = 0; i < categoryIDs.size(); i++) {
 			if (recipe.categories.size() >= 1) {
-				if (categories.get(i).id == recipe.categories.get(0)) {
-					System.out.println("Setting category " + categories.get(i).id + " '" + categories.get(i).name + "'");
+				if (categoryIDs.get(i) == recipe.categories.get(0)) {
+					System.out.println("Setting category " + categoryIDs.get(i) + " '");
 					spinner.setSelection(i - 1);
 					break;
 				}

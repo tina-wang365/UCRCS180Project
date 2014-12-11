@@ -44,6 +44,9 @@ public class Comm {
 	// max cache size in bytes
 	private static final int MAX_CACHESIZE = 4000000;
 
+	// Let's not load categories a bunch
+	private static volatile ArrayList<Category> categories;
+
 	public static final int SUCCESS = 0;
 	public static final int JSON_ERROR = -3;
 	public static final int API_FAIL = -50;
@@ -81,6 +84,7 @@ public class Comm {
 		for(Map.Entry<String, CacheItem> entry : imagecache.entrySet()) {
 			lruTemp = imagecache.entrySet().iterator().next().getValue();
 			tempMinAccessKey = entry.getKey(); //this is key of "first" element in HashMap
+			tempFreed = entry.getValue().bytes.length;
 			break;
 		}
 		long tempMinAccess = lruTemp.numAccess; //tempMinAccess is the numAccess of "first" element in HashMap
@@ -88,6 +92,7 @@ public class Comm {
 		//Map.Entry<String, CacheItem> entry : imagecache.entrySet();
 		Iterator<Map.Entry<String, CacheItem>> it = imagecache.entrySet().iterator();
 		while(it.hasNext()){
+			CacheItem ci = it.next().getValue();
 			if(it.next().getValue().accessTime < tempMinAccess) {
 				tempMinAccess = it.next().getValue().accessTime;
 				tempMinAccessKey = it.next().getKey();
@@ -120,6 +125,9 @@ public class Comm {
 		System.out.println("Creating new Comm");
 		lastJSON = "";
 		initMapper();
+		if (categories == null) {
+			categories = new ArrayList<>();
+		}
 		if (imagecache == null) {
 			imagecache = new HashMap<>();
 			cachesize = 0;
@@ -280,7 +288,6 @@ public class Comm {
 		HashMap<String, String> req = new HashMap<>();
 		req.put("email", email);
 		req.put("password", password);
-		//debugging_system_out
 		System.out.println("completed req.put email and password. about to call apiRequest");
 		int ret = apiRequest("login", req);
 
@@ -298,6 +305,8 @@ public class Comm {
 					System.out.println("done parseUser");
 					System.out.println("user.id = " + user.id);
 					System.out.println("user.username = " + user.username);
+
+					getCategories();
 					return SUCCESS;
 				} else {
 					//debugging_system_out
@@ -880,6 +889,10 @@ public class Comm {
 	 *      and they are followed by their children in hierarchical order.
 	 */
 	public ArrayList<Category> getCategories() {
+		if (categories != null && categories.size() > 0) {
+			return categories;
+		}
+
 		ArrayList<Category> cats = new ArrayList<>();
 		int ret = apiRequest("categories", null);
 		if (ret == 0) {
@@ -900,6 +913,7 @@ public class Comm {
 					}
 				}
 				updateUser();
+				categories = cats;
 				return cats;
 			} else {
 				return null;
