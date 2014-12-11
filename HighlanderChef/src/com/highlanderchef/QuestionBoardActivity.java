@@ -27,6 +27,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 	ID_Maker MakerInstance = ID_Maker.getInstance();
 	RelativeLayout rflayout;
 	Question newQuestion = null;
+	Question newReply = null;
 	EditText etQuestionToPost = null;
 	EditText etToPostReply = null;
 	Button btnAddQuestion = null;
@@ -144,18 +145,19 @@ public class QuestionBoardActivity extends ActionBarActivity {
 
 	void displayListOfReplies(ArrayList<Question> replies) {
 		System.out.println("MM.displayListOfReplies");
-		if(replies != null) {
+		if(replies != null && replies.size () > 0) {
+			System.out.println("size of replies: " + replies.size());
 			for(int i = 0; i < replies.size(); ++i) {
 				displayQuestion(replies.get(i));
+				System.out.println("replies.get(" + i + ") =" + replies.get(i).text);
 			}
-
 		}
 		else {
-			System.out.println("replies are null");
+			System.out.println("Size of replies: " + replies.size());
 		}
 
 
-		EditText QustionReplyET = new EditText(this);
+		final EditText QustionReplyET = new EditText(this);
 		QustionReplyET.setId(MakerInstance.useCurrID());
 		QustionReplyET.setHint("Type a reply here");
 		RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -163,6 +165,37 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		QustionReplyET.setLayoutParams(rlParams);
 		rflayout.addView(QustionReplyET);
 		lastView = QustionReplyET;
+
+		Button replyButton = new Button(this);
+		replyButton.setId(MakerInstance.useCurrID());
+		replyButton.setHint("Reply");
+		rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		rlParams.addRule(RelativeLayout.BELOW, lastView.getId());
+		replyButton.setLayoutParams(rlParams);
+		rflayout.addView(replyButton);
+		lastView = replyButton;
+
+		final TextView reply = new TextView(this);
+		reply.setId(MakerInstance.useCurrID());
+		replyButton.setOnClickListener(new View.OnClickListener(){
+
+			@Override
+			public void onClick(View v)
+			{
+				reply.setText(QustionReplyET.getText() + "\n\n" + QustionReplyET.getText());
+				Question r = new Question(Comm.staticGetUserID(), Comm.getEmail(), QustionReplyET.getText().toString());
+				new postReplyTask().execute(r);
+				RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+				//rlParams.addRule(RelativeLayout.BELOW, QustionReplyET.getId() - 1);
+				rlParams.addRule(RelativeLayout.ABOVE, QustionReplyET.getId());
+				rlParams.addRule(RelativeLayout.ALIGN_LEFT, QustionReplyET.getId());
+				//rlParams.setMargins(0, 5, 0, 5);
+				reply.setBackgroundColor(Color.RED);
+				reply.setLayoutParams(rlParams);
+				rflayout.addView(reply);
+				QustionReplyET.getText().clear();
+			}
+		});
 	}
 	void displayListOfQuestions(ArrayList<Question> questions, View lastView) {
 		for(int i = 0; i < questions.size(); ++i) {
@@ -177,7 +210,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		RelativeLayout.LayoutParams tParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		tParams.addRule(RelativeLayout.BELOW, lastView.getId());
 		tParams.addRule(RelativeLayout.ALIGN_LEFT, lastView.getId());
-		tParams.setMargins(0, 5, 0, 5);
+		tParams.setMargins(0, 10, 0, 0);
 		tv_question.setLayoutParams(tParams);
 		tv_question.setId(MakerInstance.useCurrID());
 		tv_question.setText(question.username + "\n" + question.text);
@@ -213,6 +246,21 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		Utility.displayErrorToasts(getApplicationContext(), -3, LENGTH_SHORT);
 	}
 
+	public void postReplySuccess(Question reply) {
+		//displayQuestion(reply);
+
+		Toast toastSuccessfullyPostQuestion = Toast.makeText(getApplicationContext(), "You have added a Question!", LENGTH_SHORT);
+		toastSuccessfullyPostQuestion.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+		toastSuccessfullyPostQuestion.show();
+		System.out.println("MM.postReplySuccess()");
+
+	}
+
+	public void postReplyFailure() {
+		System.out.println("Error: could not post reply");
+		//Utility.displayErrorToasts(getApplicationContext(), -3, LENGTH_SHORT);
+	}
+
 	private class postQuestionTask extends AsyncTask<Question, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Question... params) {
@@ -230,6 +278,27 @@ public class QuestionBoardActivity extends ActionBarActivity {
 			}
 			else {
 				Log.v("postQuestionFailure", "Failed to post a question!");
+			}
+		}
+	}
+	private class postReplyTask extends AsyncTask<Question, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Question... params) {
+			Comm c = new Comm();
+			newReply = params[0];
+			int ret = c.postReply(params[0].uid, params[0].text);
+			return (ret == Comm.SUCCESS);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if(result == true) {
+				Log.v("postReplySuccess","Successfully posted a reply!");
+				postReplySuccess(newReply);
+			}
+			else {
+				Log.v("postReplyFailure", "Failed to post a reply!");
+				postReplyFailure();
 			}
 		}
 	}
