@@ -105,7 +105,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		int DraftID = intent.getIntExtra("DraftID", -1);
 		if (DraftID > 0){
 			System.out.println("MAR1 with draft ID: " + DraftID);
-			Utility.displayErrorToast(this, "Got DID: " + DraftID);
+			//Utility.displayErrorToast(this, "Got DID: " + DraftID);
 			new GetDraft().execute(DraftID);
 		} else {
 			System.out.println("MAR1 with no draft ID");
@@ -292,10 +292,11 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		((EditText) findViewById(R.id.recipe_description)).setText(iRecipe.getDescription());
 		((EditText) findViewById(R.id.recipe_est_time)).setText(iRecipe.getCookTime());
 
-		for (int i = 0; i < categoryIDs.size(); i++) {
-			if (recipe.categories.size() >= 1) {
-				if (categoryIDs.get(i) == recipe.categories.get(0)) {
-					System.out.println("Setting category " + categoryIDs.get(i) + " '");
+		if (recipe.categories.size() >= 1) {
+			for (int i = 0; i < categoryIDs.size(); i++) {
+				System.out.println("testing cat ids " + categoryIDs.get(i) + ", " + recipe.categories.get(0));
+				if (categoryIDs.get(i).intValue() == recipe.categories.get(0).intValue()) {
+					System.out.println("Setting category " + categoryIDs.get(i));
 					spinner.setSelection(i - 1);
 					break;
 				}
@@ -312,10 +313,8 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		protected Boolean doInBackground(Object... params) {
 			Comm c = new Comm();
 			categories = c.getCategories();
-			if(categories != null) {
+			if(categories == null) {
 				errorMessage = "Error! Network Failed to connect. Check your network";
-			} else if(categories == null) {
-				errorMessage = "Sorry! There was an error making your recipe";
 			}
 			return (categories != null);
 		}
