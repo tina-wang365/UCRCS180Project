@@ -844,8 +844,11 @@ public class Comm {
 
 		Recipe r = parseRecipe(rootNode.path("recipe"));
 		r.mainImagepath = parseRecipe(rootNode.path("recipe")).mainImagepath;
+		r.ingredients = parseRecipe(rootNode.path("recipe")).ingredients;
+		r.categories = parseRecipe(rootNode.path("recipe")).categories;
+		r.directions = parseRecipe(rootNode.path("recipe")).directions;
 		System.out.println("Comm.getDraft(" + draftID + ") has categories " + r.categories.toString());
-		System.out.println("Comm.getDraft(" + draftID + ") has the mainImagepath = " + r.mainImagepath);
+		System.out.println("Comm.getDraft(" + draftID + ") has the mainImagepath = " + r.mainImagepath.toString());
 		r.did = draftID;
 		return r;
 	}
