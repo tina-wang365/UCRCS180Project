@@ -162,7 +162,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		rlParams.addRule(RelativeLayout.BELOW, lastView.getId());
 		QustionReplyET.setLayoutParams(rlParams);
 		rflayout.addView(QustionReplyET);
-		lastView = etToPostReply;
+		lastView = QustionReplyET;
 	}
 	void displayListOfQuestions(ArrayList<Question> questions, View lastView) {
 		for(int i = 0; i < questions.size(); ++i) {
