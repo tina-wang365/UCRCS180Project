@@ -26,7 +26,7 @@ import android.widget.Spinner;
 
 public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedListener {
 	Recipe recipe = new Recipe();
-	ArrayList<Category> categories;
+	volatile ArrayList<Category> categories;
 	ArrayList<Integer> categoryIDs;
 	int curSelCat = 0;
 	String errorMessage = "";
@@ -97,6 +97,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		});
 
 
+
 		categoryIDs = new ArrayList<>();
 		new GetCategoriesTask().execute(1);
 		currentUser = Comm.getUser();
@@ -104,7 +105,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		int DraftID = intent.getIntExtra("DraftID", -1);
 		if (DraftID > 0){
 			System.out.println("MAR1 with draft ID: " + DraftID);
-			Utility.displayErrorToast(this, "Got DID: " + DraftID);
+			//Utility.displayErrorToast(this, "Got DID: " + DraftID);
 			new GetDraft().execute(DraftID);
 		} else {
 			System.out.println("MAR1 with no draft ID");
@@ -121,7 +122,9 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 	public void SaveAsDraftPressed(View iView)
 	{
 		Utility.UploadDraft(recipe);
+		finish();
 		Intent intent = new Intent(this, MainMenu.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 
@@ -138,13 +141,10 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 			Utility.displayErrorToast(this, "Please enter a name for the recipe");
 			return;
 		}
+		finish();
 		Intent intent = new Intent(this, MakeARecipe2.class);
-
-		recipe.mainImage = null;
-		System.out.println("MAR1 passing bitmap " + recipe.mainImage);
-		System.out.println("MAR1 passing bitmap path " + recipe.mainImagepath);
-		intent.putExtra("recipe", recipe);
-		System.out.println("MAR1 passing recipe categories: " + recipe.categories.toString());
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		RecipeCache.recipe = recipe;
 		startActivity(intent);
 	}
 	private static int RESULT_LOAD_IMAGE = 1;
@@ -241,10 +241,10 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 
 				if (i == (categories.size() - 1)) {
 					level0_spinner.add(cat_prefix.peek());
-					categoryIDs.add(new Integer(categories.get(i).id));
+					categoryIDs.add(Integer.valueOf(categories.get(i).id));
 				} else if (categories.get(i + 1).level <= categories.get(i).level) {
 					level0_spinner.add(cat_prefix.peek());
-					categoryIDs.add(new Integer(categories.get(i).id));
+					categoryIDs.add(Integer.valueOf(categories.get(i).id));
 				}
 
 				last_level = categories.get(i).level;
@@ -280,7 +280,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 
 	public void catOnFailure()
 	{
-
+		System.out.println("MAR1 catOnFailure()");
 	}
 
 	public void LoadDraft(Recipe iRecipe)
@@ -291,11 +291,12 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		((EditText) findViewById(R.id.recipe_description)).setText(iRecipe.getDescription());
 		((EditText) findViewById(R.id.recipe_est_time)).setText(iRecipe.getCookTime());
 
-		for (int i = 0; i < categories.size(); i++) {
-			if (recipe.categories.size() >= 1) {
-				if (categories.get(i).id == recipe.categories.get(0)) {
-					System.out.println("Setting category " + categories.get(i).id + " '" + categories.get(i).name + "'");
-					spinner.setSelection(i - 1);
+		if (recipe.categories.size() >= 1) {
+			for (int i = 0; i < categoryIDs.size(); i++) {
+				System.out.println("testing cat ids " + categoryIDs.get(i) + ", " + recipe.categories.get(0));
+				if (categoryIDs.get(i).intValue() == recipe.categories.get(0).intValue()) {
+					System.out.println("Setting category " + categoryIDs.get(i));
+					spinner.setSelection(i);
 					break;
 				}
 			}
@@ -311,10 +312,8 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 		protected Boolean doInBackground(Object... params) {
 			Comm c = new Comm();
 			categories = c.getCategories();
-			if(categories != null) {
+			if(categories == null) {
 				errorMessage = "Error! Network Failed to connect. Check your network";
-			} else if(categories == null) {
-				errorMessage = "Sorry! There was an error making your recipe";
 			}
 			return (categories != null);
 		}

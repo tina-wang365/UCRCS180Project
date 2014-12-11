@@ -25,16 +25,10 @@ public class MakeARecipe2 extends ActionBarActivity {
 		String header = tv_header.getText().toString();
 
 		Intent intent = getIntent();
-		int DraftID = intent.getIntExtra("DraftID", -1);
-		if (DraftID < 0) {
-			recipe = (Recipe)intent.getSerializableExtra("recipe");
-			System.out.println("MAR2 recipe categories: " + recipe.categories.toString());
+		recipe = RecipeCache.recipe;
+		RecipeCache.recipe = null;
 
-			tv_header.setText(header + " for " + recipe.getName());
-		} else {
-			new GetDraft().execute(DraftID);
-			tv_header.setText(header + " for " + intent.getStringExtra("DraftName"));
-		}
+		tv_header.setText(header + " for " + recipe.getName());
 
 		RemakeIngredList();
 		recipe.loadImageFromPath();
@@ -102,18 +96,18 @@ public class MakeARecipe2 extends ActionBarActivity {
 		recipe.setUID(currentUser.getID());
 		recipe.setUsername(currentUser.getUsername());
 		Utility.UploadDraft(recipe);
+		finish();
 		Intent intent = new Intent(this, MainMenu.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 
 	public void addDirectionsPressed(View view)
 	{
+		finish();
 		Intent intent = new Intent(this, MakeARecipe3.class);
-		if (ViewingDraft == false)
-			intent.putExtra("recipe", recipe);
-		else
-			intent.putExtra("DraftID", recipe.did);
-		recipe.mainImage = null;
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		RecipeCache.recipe = recipe;
 		startActivity(intent);
 	}
 
