@@ -40,7 +40,7 @@ public class Comm {
 	// Image cache
 	private static volatile HashMap<String, CacheItem> imagecache;
 	// current cache size in bytes
-	private static int cachesize = 0;
+	private static volatile int cachesize = 0;
 	// max cache size in bytes
 	private static final int MAX_CACHESIZE = 4000000;
 
@@ -92,11 +92,11 @@ public class Comm {
 		//Map.Entry<String, CacheItem> entry : imagecache.entrySet();
 		Iterator<Map.Entry<String, CacheItem>> it = imagecache.entrySet().iterator();
 		while(it.hasNext()){
-			CacheItem ci = it.next().getValue();
-			if(it.next().getValue().accessTime < tempMinAccess) {
-				tempMinAccess = it.next().getValue().accessTime;
-				tempMinAccessKey = it.next().getKey();
-				tempFreed = it.next().getValue().bytes.length;
+			Map.Entry<String, CacheItem> entry = it.next();
+			if(entry.getValue().accessTime < tempMinAccess) {
+				tempMinAccess = entry.getValue().accessTime;
+				tempMinAccessKey = entry.getKey();
+				tempFreed = entry.getValue().bytes.length;
 			}
 		}
 		//at this point we should have LRU key in tempMinAccessKey and LRU minAccess in tempMinAccess

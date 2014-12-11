@@ -41,7 +41,26 @@ public class MakeARecipe3 extends ActionBarActivity {
 		setContentView(R.layout.activity_make_a_recipe3);
 
 		Intent intent = getIntent();
-		recipe = (Recipe)intent.getSerializableExtra("recipe");
+		recipe = RecipeCache.recipe;
+		System.out.println("MAR3 recipe categories: " + recipe.categories.toString());
+
+		for (int i = 0; i < recipe.directions.size(); i++) {
+			Direction d = recipe.directions.get(i);
+			addDirectionToLayout(d.text);
+			for (int j = 0; j < d.images.size(); j++) {
+				LinearLayout linear_layout = (LinearLayout) findViewById(R.id.LinearLayout1);
+				ImageView imageView = new ImageView(this);
+				final RelativeLayout.LayoutParams params =
+						new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+								RelativeLayout.LayoutParams.WRAP_CONTENT);
+				params.addRule(RelativeLayout.BELOW, prevTextViewId);
+				imageView.setLayoutParams(params);
+
+				imageView.setImageBitmap(d.images.get(j));
+				linear_layout.addView(imageView, params);
+				added_images.add(d.images.get(j));
+			}
+		}
 
 		setMainImage();
 
@@ -73,13 +92,8 @@ public class MakeARecipe3 extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void addADirectionPressed(View view)
+	public void addDirectionToLayout(String new_dir)
 	{
-		//gets text for newly added direction
-		EditText edittext_new_dir = (EditText) findViewById(R.id.addadirection);
-		String new_dir = edittext_new_dir.getText().toString();
-
-
 		//checks if inputed text length is greater than zero
 		if(new_dir.length() == 0 )
 		{ return; }
@@ -100,6 +114,17 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 		prevTextViewId = dir_added_count;
 		linear_layout.addView(tv, params);
+	}
+
+	public void addADirectionPressed(View view)
+	{
+		//gets text for newly added direction
+		EditText edittext_new_dir = (EditText) findViewById(R.id.addadirection);
+		String new_dir = edittext_new_dir.getText().toString();
+
+		addDirectionToLayout(new_dir);
+
+
 
 
 		recipe.AddADirection(new_dir, added_images);
@@ -202,11 +227,6 @@ public class MakeARecipe3 extends ActionBarActivity {
 		tv_error.setVisibility(View.VISIBLE);
 
 		//TODO implement better case for failure.
-	}
-
-	private void LoadDraft(Recipe iDraft)
-	{
-
 	}
 
 	private class UploadRecipeTask extends AsyncTask<Recipe, Void, Boolean>

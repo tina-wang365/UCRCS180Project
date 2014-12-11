@@ -25,16 +25,9 @@ public class MakeARecipe2 extends ActionBarActivity {
 		String header = tv_header.getText().toString();
 
 		Intent intent = getIntent();
-		int DraftID = intent.getIntExtra("DraftID", -1);
-		if (DraftID < 0) {
-			recipe = (Recipe)intent.getSerializableExtra("recipe");
-			System.out.println("MAR2 recipe categories: " + recipe.categories.toString());
+		recipe = RecipeCache.recipe;
 
-			tv_header.setText(header + " for " + recipe.getName());
-		} else {
-			new GetDraft().execute(DraftID);
-			tv_header.setText(header + " for " + intent.getStringExtra("DraftName"));
-		}
+		tv_header.setText(header + " for " + recipe.getName());
 
 		RemakeIngredList();
 		recipe.loadImageFromPath();
@@ -109,11 +102,7 @@ public class MakeARecipe2 extends ActionBarActivity {
 	public void addDirectionsPressed(View view)
 	{
 		Intent intent = new Intent(this, MakeARecipe3.class);
-		if (ViewingDraft == false)
-			intent.putExtra("recipe", recipe);
-		else
-			intent.putExtra("DraftID", recipe.did);
-		recipe.mainImage = null;
+		RecipeCache.recipe = recipe;
 		startActivity(intent);
 	}
 

@@ -74,12 +74,12 @@
                 android:text="@string/Add_another_ingredient_button" />
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/button1"
                 android:onClick="addDirectionsPressed"
-                android:text="@string/Add_directions_button" />
+                android:text="Continue to Directions" />
         </RelativeLayout>
     </ScrollView>
 
