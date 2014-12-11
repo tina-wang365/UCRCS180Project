@@ -143,7 +143,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 	//TODO: Test display of questions first
 	//TODO: Create a function that also displays replies
 
-	void displayListOfReplies(ArrayList<Question> replies) {
+	void displayListOfReplies(ArrayList<Question> replies, final int qid) {
 		System.out.println("MM.displayListOfReplies");
 		if(replies != null && replies.size () > 0) {
 			System.out.println("size of replies: " + replies.size());
@@ -184,6 +184,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 			{
 				reply.setText(QustionReplyET.getText() + "\n\n" + QustionReplyET.getText());
 				Question r = new Question(Comm.staticGetUserID(), Comm.getEmail(), QustionReplyET.getText().toString());
+				r.qid = qid;
 				new postReplyTask().execute(r);
 				RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 				//rlParams.addRule(RelativeLayout.BELOW, QustionReplyET.getId() - 1);
@@ -200,7 +201,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 	void displayListOfQuestions(ArrayList<Question> questions, View lastView) {
 		for(int i = 0; i < questions.size(); ++i) {
 			displayQuestion(questions.get(i));
-			displayListOfReplies(questions.get(i).replies);
+			displayListOfReplies(questions.get(i).replies, questions.get(i).qid);
 		}
 	}
 
@@ -286,7 +287,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		protected Boolean doInBackground(Question... params) {
 			Comm c = new Comm();
 			newReply = params[0];
-			int ret = c.postReply(params[0].uid, params[0].text);
+			int ret = c.postReply(params[0].qid, params[0].text);
 			return (ret == Comm.SUCCESS);
 		}
 
