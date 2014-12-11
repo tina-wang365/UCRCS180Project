@@ -672,6 +672,10 @@ public class Comm {
 		req.put("rid", Integer.toString(recipeID));
 		apiRequest("get", req);
 
+		if (rootNode.path("recipe").isMissingNode()) {
+			System.out.println("getRecipe() got null recipe -- returning blank");
+			return new Recipe();
+		}
 		return parseRecipe(rootNode.path("recipe"));
 	}
 
