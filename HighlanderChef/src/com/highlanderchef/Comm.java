@@ -281,7 +281,7 @@ public class Comm {
 		req.put("email", email);
 		req.put("password", password);
 		//debugging_system_out
-		System.out.println("completed req.put email and password. about to call aipRequest");
+		System.out.println("completed req.put email and password. about to call apiRequest");
 		int ret = apiRequest("login", req);
 
 		if (ret == 0) {
@@ -360,14 +360,51 @@ public class Comm {
 		req.put("uid", userID);
 		apiRequest("searchuid", req);
 
-		ArrayList<Recipe> ls = new ArrayList<>();
-		Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
-		while(ite.hasNext())
-		{
-			JsonNode r = ite.next();
-			ls.add(parseRecipe(r, true));
+		if (lastStatus == 1) {
+			ArrayList<Recipe> ls = new ArrayList<>();
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while(ite.hasNext())
+			{
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r, true));
+			}
+			return ls;
 		}
-		return ls;
+		return new ArrayList<>();
+	}
+
+	public ArrayList<Recipe> getAllDrafts(int userID) {
+		HashMap<String, Integer> req = new HashMap<>();
+		req.put("uid", userID);
+		apiRequest("getalldrafts", req);
+
+		if (lastStatus == 1) {
+			ArrayList<Recipe> ls = new ArrayList<>();
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while (ite.hasNext()) {
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r, false));
+			}
+			return ls;
+		}
+		return new ArrayList<>();
+	}
+
+	public ArrayList<Recipe> getAllNotifs(int userID) {
+		HashMap<String, Integer> req = new HashMap<>();
+		req.put("uid", userID);
+		apiRequest("getallnotifs", req);
+
+		if (lastStatus == 1) {
+			ArrayList<Recipe> ls = new ArrayList<>();
+			Iterator<JsonNode> ite = rootNode.path("recipes").getElements();
+			while (ite.hasNext()) {
+				JsonNode r = ite.next();
+				ls.add(parseRecipe(r, false));
+			}
+			return ls;
+		}
+		return new ArrayList<>();
 	}
 
 	private Bitmap pngToBitmap(byte[] bytes) {
@@ -588,6 +625,11 @@ public class Comm {
 			String username = mapper.readValue(node.path("username"), String.class);
 			r.username = username;
 
+			if (!node.path("did").isMissingNode()) {
+				Integer draftID = mapper.readValue(node.path("did"), Integer.class);
+				r.did = draftID;
+			}
+
 			if (!brief) {
 				String ingredientsJson = mapper.readValue(node.path("ingredients"), String.class);
 				r.parseIngredientsFromJson(ingredientsJson);
@@ -802,8 +844,11 @@ public class Comm {
 
 		Recipe r = parseRecipe(rootNode.path("recipe"));
 		r.mainImagepath = parseRecipe(rootNode.path("recipe")).mainImagepath;
+		r.ingredients = parseRecipe(rootNode.path("recipe")).ingredients;
+		r.categories = parseRecipe(rootNode.path("recipe")).categories;
+		r.directions = parseRecipe(rootNode.path("recipe")).directions;
 		System.out.println("Comm.getDraft(" + draftID + ") has categories " + r.categories.toString());
-		System.out.println("Comm.getDraft(" + draftID + ") has the mainImagepath = " + r.mainImagepath);
+		System.out.println("Comm.getDraft(" + draftID + ") has the mainImagepath = " + r.mainImagepath.toString());
 		r.did = draftID;
 		return r;
 	}

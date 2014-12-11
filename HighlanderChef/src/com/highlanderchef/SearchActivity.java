@@ -29,6 +29,7 @@ public class SearchActivity extends ActionBarActivity {
 	private final String ViewNotifications = "ViewNotifications";
 
 	private boolean ViewingDrafts = false;
+	private boolean ViewingNotifications = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,19 @@ public class SearchActivity extends ActionBarActivity {
 			System.out.println("SearchByFavorites");
 			new SearchTask().execute(ViewFavorites);
 		} else if (Utility.GetNotificationIntent(intent).isEmpty() == false) {
+			ViewingNotifications = true;
+			LinearLayout rl = (LinearLayout) findViewById(R.id.SearchTopLayout);
+			Button clearNotificationsButton = new Button(this);
+			clearNotificationsButton.setText(R.string.ClearNotifications);
+			clearNotificationsButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new ClearNotificationsTask().execute();
+					Utility.displayToast(SearchActivity.this, "Clearing your notifications!");
+					((LinearLayout) findViewById(R.id.linearLayoutResults)).removeAllViews();
+				}
+			});
+			rl.addView(clearNotificationsButton);
 			new SearchTask().execute(ViewNotifications);
 		} else {
 			System.out.println("SearchByUID");
@@ -86,6 +100,8 @@ public class SearchActivity extends ActionBarActivity {
 		{
 			if(recipies.get(i) == null )
 				continue;
+
+			System.out.println("SearchSuccess processing item " + i + " with did " + recipies.get(i).did);
 			//LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 			//code for dividers
 			if(i >= 1)
@@ -177,7 +193,10 @@ public class SearchActivity extends ActionBarActivity {
 	{
 		LinearLayout rl = (LinearLayout) findViewById(R.id.linearLayoutResults);
 		TextView tv_descr = new TextView(this);
-		tv_descr.setText("No Recipes Found!");
+		if (ViewingNotifications == true)
+			tv_descr.setText("You have no notifications.");
+		else
+			tv_descr.setText("No Recipes Found!");
 		rl.addView(tv_descr);
 		//TextView searchNoResults = (TextView) findViewById(R.id.linearLayoutResults);//darren
 		//searchNoResults.setText("No Recipes Found!");
@@ -219,13 +238,9 @@ public class SearchActivity extends ActionBarActivity {
 			} else if (params[0] == SearchByMyUID) {
 				ret = c.searchRecipesByUID(c.getUserID());
 			} else if (params[0] == ViewDrafts) {
-				ArrayList<Integer> DraftsID = c.getDraftList();
-				for (int i = 0; i < DraftsID.size(); i++)
-					ret.add(c.getDraft(DraftsID.get(i)));
+				ret = c.getAllDrafts(c.getUserID());
 			} else if (params[0] == ViewNotifications) {
-				ArrayList<Integer> NotificationID = Comm.getUser().notifications;
-				for (int i = 0; i < NotificationID.size(); i++)
-					ret.add(c.getRecipe(NotificationID.get(i)));
+				ret = c.getAllNotifs(c.getUserID());
 			} else if (params[0] == ViewFavorites) {
 				System.out.println("searching favorites...");
 				for (int i = 0; i < c.getUser().favorites.size(); i++) {
@@ -264,6 +279,28 @@ public class SearchActivity extends ActionBarActivity {
 			if (result == true) {
 				Log.v("DeleteDraft","Draft Delete Success");
 				new SearchTask().execute(ViewDrafts);
+			}
+		}
+
+	}
+
+	private class ClearNotificationsTask extends AsyncTask<Integer, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			Comm c = new Comm();
+			return (c.clearNotifications() == Comm.SUCCESS);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				Log.v("ClearNotifications"," Notifications Cleared Successfully");
+				new SearchTask().execute(ViewNotifications);
+			}
+			else {
+				Log.e("ClearNotifications"," Failed To Clear Notifications");
 			}
 		}
 

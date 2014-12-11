@@ -62,6 +62,13 @@ public class MainMenu extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	public void logout(View view) {
+		new LogoutTask().execute();
+		Intent intent = new Intent(this, StartupScreen.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+	}
+
 	public void BrowsePressed(View view)
 	{
 		Intent intent = new Intent(this, BrowseActivity.class);
@@ -112,6 +119,7 @@ public class MainMenu extends ActionBarActivity {
 		startActivity(intent);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void setUser(User iUser)
 	{
 		currentUser = iUser;
@@ -121,7 +129,7 @@ public class MainMenu extends ActionBarActivity {
 		if (currentUser.notifications.isEmpty() == false)
 		{
 			((TextView) findViewById(R.id.textView1)).setTextColor(getResources().getColor(Utility.white));
-			findViewById(R.id.textView1).setBackground(getResources().getDrawable(R.drawable.buttonshape));
+			findViewById(R.id.textView1).setBackgroundDrawable((getResources().getDrawable(R.drawable.buttonshape)));
 			findViewById(R.id.textView1).setClickable(true);
 			findViewById(R.id.textView1).setOnClickListener(
 					new View.OnClickListener() {
@@ -135,9 +143,34 @@ public class MainMenu extends ActionBarActivity {
 					});
 			strWelcomeMsg = strWelcomeMsg + "\n" + "You have " + currentUser.notifications.size() + " new notifications!";
 		}
+		else
+		{
+			Utility.displayToast(this, "You have no new notifications.");
+		}
 		((TextView) findViewById(R.id.textView1)).setText(strWelcomeMsg);
 	}
 
+	private class LogoutTask extends AsyncTask<String, Void, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(String... params) {
+
+			Comm c = new Comm();
+			return (c.logout() == Comm.SUCCESS);
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result == true) {
+				System.out.println("Logout success");
+			}
+			else {
+				System.out.println("Logout failure");
+			}
+		}
+
+	}
 	private class UsernameTask extends AsyncTask<String, Void, Boolean>
 	{
 		User cUser = new User();
