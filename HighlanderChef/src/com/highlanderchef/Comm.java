@@ -747,7 +747,7 @@ public class Comm {
 		req.put("uid", Integer.toString(user.id));
 		req.put("qid", Integer.toString(questionId));
 		req.put("reply", reply);
-		int ret = apiRequest("postquestion", req);
+		int ret = apiRequest("postreply", req);
 		if (ret == 0) {
 			if (lastStatus == 1) {
 				updateUser();
