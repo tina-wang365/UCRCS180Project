@@ -33,6 +33,8 @@ public class UserHomepage extends ActionBarActivity {
 		setContentView(R.layout.activity_user_homepage);
 		Intent intent = getIntent();
 		UserBeingViewed = Utility.GetHomepageIntent(intent);
+		if (UserBeingViewed.id == 0)
+			this.finish();
 		setUsername(UserBeingViewed.username);
 		new UserRecipes().execute(UserBeingViewed.id);
 		if(UserBeingViewed.id == Comm.getUser().id)
