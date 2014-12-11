@@ -42,6 +42,7 @@ public class MakeARecipe3 extends ActionBarActivity {
 
 		Intent intent = getIntent();
 		recipe = RecipeCache.recipe;
+		RecipeCache.recipe = null;
 		System.out.println("MAR3 recipe categories: " + recipe.categories.toString());
 
 		for (int i = 0; i < recipe.directions.size(); i++) {
@@ -205,7 +206,9 @@ public class MakeARecipe3 extends ActionBarActivity {
 		recipe.setUID(currentUser.getID());
 		recipe.setUsername(currentUser.getUsername());
 		Utility.UploadDraft(recipe);
+		finish();
 		Intent intent = new Intent(this, MainMenu.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 	public void submitRecipePressed(View view)
@@ -216,7 +219,9 @@ public class MakeARecipe3 extends ActionBarActivity {
 	}
 	public void onSuccess()
 	{
+		finish();
 		Intent intent = new Intent(this, MainMenu.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.putExtra("Recipe Confirmation", "Recipe added successfully");
 		startActivity(intent);
 	}

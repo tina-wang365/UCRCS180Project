@@ -26,6 +26,7 @@ public class MakeARecipe2 extends ActionBarActivity {
 
 		Intent intent = getIntent();
 		recipe = RecipeCache.recipe;
+		RecipeCache.recipe = null;
 
 		tv_header.setText(header + " for " + recipe.getName());
 
@@ -95,13 +96,17 @@ public class MakeARecipe2 extends ActionBarActivity {
 		recipe.setUID(currentUser.getID());
 		recipe.setUsername(currentUser.getUsername());
 		Utility.UploadDraft(recipe);
+		finish();
 		Intent intent = new Intent(this, MainMenu.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 
 	public void addDirectionsPressed(View view)
 	{
+		finish();
 		Intent intent = new Intent(this, MakeARecipe3.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		RecipeCache.recipe = recipe;
 		startActivity(intent);
 	}

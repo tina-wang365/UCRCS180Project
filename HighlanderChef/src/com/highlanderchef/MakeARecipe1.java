@@ -122,7 +122,9 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 	public void SaveAsDraftPressed(View iView)
 	{
 		Utility.UploadDraft(recipe);
+		finish();
 		Intent intent = new Intent(this, MainMenu.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 
@@ -139,7 +141,9 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 			Utility.displayErrorToast(this, "Please enter a name for the recipe");
 			return;
 		}
+		finish();
 		Intent intent = new Intent(this, MakeARecipe2.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		RecipeCache.recipe = recipe;
 		startActivity(intent);
 	}
