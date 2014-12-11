@@ -1021,7 +1021,6 @@ public class Comm {
 				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
 				lastStatus = status;
 				if (lastStatus == -1) {
-					updateUser();
 					return AUTH_FAIL;
 				} else {
 					return SUCCESS;
