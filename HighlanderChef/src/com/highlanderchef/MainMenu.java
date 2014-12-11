@@ -129,7 +129,7 @@ public class MainMenu extends ActionBarActivity {
 		if (currentUser.notifications.isEmpty() == false)
 		{
 			((TextView) findViewById(R.id.ForumBoardTitle)).setTextColor(getResources().getColor(Utility.white));
-			//((TextView) findViewById(R.id.ForumBoardTitle)).setBackgroundDrawable((getResources().getDrawable(R.drawable.buttonshape)));
+			((TextView) findViewById(R.id.ForumBoardTitle)).setBackgroundDrawable((getResources().getDrawable(R.drawable.buttonshape)));
 			((TextView) findViewById(R.id.ForumBoardTitle)).setClickable(true);
 			((TextView) findViewById(R.id.ForumBoardTitle)).setOnClickListener(
 					new View.OnClickListener() {
