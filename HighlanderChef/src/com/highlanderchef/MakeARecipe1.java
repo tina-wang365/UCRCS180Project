@@ -26,7 +26,7 @@ import android.widget.Spinner;
 
 public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedListener {
 	Recipe recipe = new Recipe();
-	ArrayList<Category> categories;
+	volatile ArrayList<Category> categories;
 	ArrayList<Integer> categoryIDs;
 	int curSelCat = 0;
 	String errorMessage = "";
@@ -297,7 +297,7 @@ public class MakeARecipe1 extends ActionBarActivity implements OnItemSelectedLis
 				System.out.println("testing cat ids " + categoryIDs.get(i) + ", " + recipe.categories.get(0));
 				if (categoryIDs.get(i).intValue() == recipe.categories.get(0).intValue()) {
 					System.out.println("Setting category " + categoryIDs.get(i));
-					spinner.setSelection(i - 1);
+					spinner.setSelection(i);
 					break;
 				}
 			}
