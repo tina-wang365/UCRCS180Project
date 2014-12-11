@@ -23,19 +23,6 @@
         android:layout_height="wrap_content"
         android:onClick="FollowUser"
         android:text="@string/Follow" />
-    
-   <TextView
-        android:id="@+id/NewNotifications"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="" />
-   
-   <Button
-        android:id="@+id/ClearNote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="clearNotificationPressed"
-        android:text="Clear Notification" />
 
     <ScrollView
         android:id="@+id/scrollView1"

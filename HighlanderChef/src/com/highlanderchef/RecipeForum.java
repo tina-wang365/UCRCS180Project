@@ -281,7 +281,10 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		et_comment.setId(1111);
 		//et_params.addRule(RelativeLayout.BELOW, ll.getChildAt(ll.getChildCount()-1).getId());
 		et_comment.setLayoutParams(params);
-		ll.addView(et_comment);
+		if (Comm.staticGetUserID() != currentRecipe.uid) {
+			ll.addView(et_comment);
+		}
+
 
 		//comments rating bar
 		final LinearLayout.LayoutParams params_rb =
@@ -294,7 +297,9 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		ratingBar.setId(1);
 		ratingBar.setRating(2.5f);
 		ratingBar.setNumStars(5);
-		ll.addView(ratingBar, params_rb);
+		if (Comm.staticGetUserID() != currentRecipe.uid) {
+			ll.addView(ratingBar, params_rb);
+		}
 
 		//submit comment button
 		Button b_comment = new Button(this);
@@ -331,7 +336,9 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 				ll.addView(liveComment);
 			}
 		});
-		ll.addView(b_comment);
+		if (Comm.staticGetUserID() != currentRecipe.uid) {
+			ll.addView(b_comment);
+		}
 
 		//display comments
 		for(int i = 0; i < recipe.comments.size(); ++i)

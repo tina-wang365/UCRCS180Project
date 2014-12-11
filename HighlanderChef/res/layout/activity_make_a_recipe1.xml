@@ -75,11 +75,11 @@
 
             <Button
                 android:id="@+id/add_ingrediant"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/added_image"
                 android:onClick="AddIngrediantPressed"
-                android:text="@string/Add_ingredients" />
+                android:text="Continue to Ingredients" />
 
             <Spinner
                 android:id="@+id/spinner"

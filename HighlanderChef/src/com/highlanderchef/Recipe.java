@@ -269,6 +269,8 @@ public class Recipe implements Serializable{
 		//load bitmap
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		bmOptions.inJustDecodeBounds = true;
+		bmOptions.outHeight = 768;
+		bmOptions.outWidth = 1024;
 		BitmapFactory.decodeFile(picturePath, bmOptions);
 
 		// Decode the image file into a Bitmap sized to fill the View

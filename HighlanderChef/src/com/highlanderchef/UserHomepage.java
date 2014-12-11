@@ -33,29 +33,14 @@ public class UserHomepage extends ActionBarActivity {
 		setContentView(R.layout.activity_user_homepage);
 		Intent intent = getIntent();
 		UserBeingViewed = Utility.GetHomepageIntent(intent);
+		if (UserBeingViewed.id == 0)
+			this.finish();
 		setUsername(UserBeingViewed.username);
 		new UserRecipes().execute(UserBeingViewed.id);
 		if(UserBeingViewed.id == Comm.getUser().id)
 		{
 			Button follow = (Button) findViewById(R.id.Follow);
 			follow.setVisibility(View.GONE);
-			TextView newNote = (TextView) findViewById(R.id.NewNotifications);
-
-			ArrayList<Integer> notifications = Comm.getUser().notifications;
-			String notetext = "";
-			for(int i = 0; i < notifications.size(); ++i)
-			{
-				notetext += notifications.get(i) + "\n";
-			}
-
-			newNote.setText(notetext);
-		}
-		else
-		{
-			TextView newNote = (TextView) findViewById(R.id.NewNotifications);
-			newNote.setVisibility(View.GONE);
-			Button clearNote = (Button) findViewById(R.id.ClearNote);
-			clearNote.setVisibility(View.GONE);
 		}
 	}
 
