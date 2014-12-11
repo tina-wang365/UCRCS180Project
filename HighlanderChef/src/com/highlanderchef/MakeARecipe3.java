@@ -45,6 +45,9 @@ public class MakeARecipe3 extends ActionBarActivity {
 		RecipeCache.recipe = null;
 		System.out.println("MAR3 recipe categories: " + recipe.categories.toString());
 
+		if (recipe.directions == null) {
+			recipe.directions = new ArrayList<>();
+		}
 		for (int i = 0; i < recipe.directions.size(); i++) {
 			Direction d = recipe.directions.get(i);
 			addDirectionToLayout(d.text);
