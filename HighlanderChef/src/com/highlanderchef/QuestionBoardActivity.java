@@ -28,6 +28,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 	RelativeLayout rflayout;
 	Question newQuestion = null;
 	EditText etQuestionToPost = null;
+	EditText etToPostReply = null;
 	Button btnAddQuestion = null;
 	View lastView = null;
 	TextView tv_questions;
@@ -42,30 +43,13 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		rflayout = (RelativeLayout) findViewById(R.id.questionBoardLayout);
 		TextView infoTextView = new TextView(this);
 		etQuestionToPost = new EditText(this);
+		etToPostReply = new EditText(this);
 		btnAddQuestion = new Button(this);
 		Intent intent = getIntent();
 		if(intent != null) {
 			System.out.println("MM.intent.get(recipe)");
 			recipeID = intent.getIntExtra("recipeID", 0);
 			new getRecipeTask().execute(recipeID);
-			//			Question[] q = (Question[])intent.getSerializableExtra("question");
-			//			if (q == null)
-			//				System.out.println("q is null!");
-			//			else
-			//				System.out.println("size of q: " + q.length);
-
-			//			questions = new ArrayList<>();
-			//			for (int i = 0; i < q.length; i++) {
-			//				questions.add(q[i]);
-			//			}
-			//
-			//			if (questions == null) {
-			//				System.out.println("questions is null!");
-			//				questions = new ArrayList<>();
-			//			} else {
-			//				System.out.println("got num questions: " + questions.size());
-			//			}
-			//			//currentRecipe = (Recipe)intent.getSerializableExtra("recipe");
 		}
 		else {
 			System.out.println("Intent is null!");
@@ -158,9 +142,31 @@ public class QuestionBoardActivity extends ActionBarActivity {
 	//TODO: Test display of questions first
 	//TODO: Create a function that also displays replies
 
+	void displayListOfReplies(ArrayList<Question> replies) {
+		System.out.println("MM.displayListOfReplies");
+		if(replies != null) {
+			for(int i = 0; i < questions.size(); ++i) {
+				displayQuestion(replies.get(i));
+			}
+
+		}
+		else {
+			System.out.println("replies are null");
+		}
+
+
+		etToPostReply.setId(MakerInstance.useCurrID());
+		etToPostReply.setText("Type a reply here");
+		RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		rlParams.addRule(RelativeLayout.BELOW, lastView.getId());
+		etToPostReply.setLayoutParams(rlParams);
+		rflayout.addView(etToPostReply);
+		lastView = etToPostReply;
+	}
 	void displayListOfQuestions(ArrayList<Question> questions, View lastView) {
 		for(int i = 0; i < questions.size(); ++i) {
 			displayQuestion(questions.get(i));
+			displayListOfReplies(questions.get(i).replies);
 		}
 	}
 
@@ -174,8 +180,23 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		tv_question.setLayoutParams(tParams);
 		tv_question.setId(MakerInstance.useCurrID());
 		tv_question.setText(question.username + "\n" + question.text);
+		tv_question.setBackgroundColor(Color.WHITE);
 		rflayout.addView(tv_question);
 		lastView = tv_question;
+	}
+
+	void displayReply(Question reply) {
+		TextView tv_questionReply = new TextView(this);
+		RelativeLayout.LayoutParams tParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		tParams.addRule(RelativeLayout.BELOW, lastView.getId());
+		tParams.addRule(RelativeLayout.ALIGN_LEFT, lastView.getId());
+		tParams.setMargins(0, 5, 0, 5);
+		tv_questionReply.setLayoutParams(tParams);
+		tv_questionReply.setText("\t" + reply.username + "\n\t" + reply.text);
+		tv_questionReply.setBackgroundColor(Color.CYAN);
+		rflayout.addView(tv_questionReply);
+		lastView = tv_questionReply;
+
 	}
 
 	void postQuestionSuccess(Question question) {
@@ -213,14 +234,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 	}
 	private void displayRecipeSuccess()
 	{
-		//		if (questions == null)
-		//			return;
-		//		for(int i = 0; i < currentRecipe.questions.size();++i)
-		//		{
-		//			questions.add(new Question(currentRecipe.uid, currentRecipe.username, currentRecipe.questions.get(i).text));
-		//		}
 		displayListOfQuestions(currentRecipe.questions, lastView);
-		//tv_questions.setText();
 	}
 
 	private class getRecipeTask extends AsyncTask<Integer, Void, Boolean> {
