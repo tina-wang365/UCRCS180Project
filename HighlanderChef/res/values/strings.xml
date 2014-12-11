@@ -4,21 +4,21 @@
     <string name="app_name">HighlanderChef</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_start_screen">StartScreen</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_signup">SignupActivity</string>
-    <string name="title_activity_browse">BrowseActivity</string>
+    <string name="title_activity_start_screen">Highlander Chef</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_signup">Signup</string>
+    <string name="title_activity_browse">Browse</string>
     <string name="login">Login</string>
     <string name="signup">Signup</string>
     <string name="browse">Browse</string>
     <string name="input_username">Username</string>
     <string name="input_password">Password</string>
-    <string name="title_activity_startup_screen">StartupScreen</string>
+    <string name="title_activity_startup_screen">Highlander Chef</string>
     <string name="enterusername_msg">Enter Username</string>
     <string name="enterpassword_msg">Enter Password</string>
     <string name="Invalidlogin">ERROR: Invalid Login</string>
     <string name="submit_button">Submit</string>
-    <string name="title_activity_main_menu">MainMenu</string>
+    <string name="title_activity_main_menu">Main Menu</string>
     <string name="Welcome_Chef">Welcome Chef %1$s</string>
     <string name="Compose_Recipe">Compose Recipe</string>
     <string name="Browse_Recipes">Browse Recipes</string>
@@ -63,12 +63,12 @@
     <string name="New_directions_header">Added Directions </string>
     <string name="Submit_Recipe">Submit Recipe</string>
     <string name="ConfirmationMessage">Recipe successfully added</string>
-    <string name="title_activity_recipe_forum">RecipeForumActivity</string>
+    <string name="title_activity_recipe_forum">Recipe Forum</string>
     <string name="AddImagetoDirection">Add image to direction</string>
     <string name="title_activity_recipe__forum">Recipe_Forum</string>
     <string name="submit_error">ERROR submitting recipe. Try Again</string>
     <string name="Search">Search</string>
-    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_search">Searching</string>
     <string name="title_activity_user_homepage">UserHomepage</string>
     <!-- Refer to layout/activity_user_homepage.xml -->
     <string name="Follow">Follow</string>
@@ -76,6 +76,6 @@
     <string name="title_activity_camera">Camera</string>
     <string name="title_activity_cam">Cam</string>
     <string name="title_activity_preferences">PreferencesActivity</string>
-    <string name="title_activity_question_board">QuestionBoardActivity</string>
+    <string name="title_activity_question_board">Question Board</string>
 	<string name="ClearNotifications">Clear All Notifications</string>
 </resources>
