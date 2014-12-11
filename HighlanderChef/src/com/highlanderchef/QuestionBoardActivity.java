@@ -145,7 +145,7 @@ public class QuestionBoardActivity extends ActionBarActivity {
 	void displayListOfReplies(ArrayList<Question> replies) {
 		System.out.println("MM.displayListOfReplies");
 		if(replies != null) {
-			for(int i = 0; i < questions.size(); ++i) {
+			for(int i = 0; i < replies.size(); ++i) {
 				displayQuestion(replies.get(i));
 			}
 
@@ -155,12 +155,13 @@ public class QuestionBoardActivity extends ActionBarActivity {
 		}
 
 
-		etToPostReply.setId(MakerInstance.useCurrID());
-		etToPostReply.setText("Type a reply here");
+		EditText QustionReplyET = new EditText(this);
+		QustionReplyET.setId(MakerInstance.useCurrID());
+		QustionReplyET.setHint("Type a reply here");
 		RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		rlParams.addRule(RelativeLayout.BELOW, lastView.getId());
-		etToPostReply.setLayoutParams(rlParams);
-		rflayout.addView(etToPostReply);
+		QustionReplyET.setLayoutParams(rlParams);
+		rflayout.addView(QustionReplyET);
 		lastView = etToPostReply;
 	}
 	void displayListOfQuestions(ArrayList<Question> questions, View lastView) {
