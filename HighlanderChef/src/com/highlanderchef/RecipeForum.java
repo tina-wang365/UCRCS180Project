@@ -409,7 +409,7 @@ public class RecipeForum extends ActionBarActivity implements Serializable{
 		System.out.println("questions is " + recipe.questions.toString());
 
 		// pass questions as java array, NOT arraylist
-		intent.putExtra("questions", recipe.questions.toArray());
+		//intent.putExtra("questions", recipe.questions.toArray());
 		intent.putExtra("recipeID", recipe.id);
 		startActivity(intent);
 	}

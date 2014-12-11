@@ -127,10 +127,10 @@ public class MainMenu extends ActionBarActivity {
 		String strWelcomeMsg = String.format(strWelcomeFormat,username);
 		if (currentUser.notifications.isEmpty() == false)
 		{
-			((TextView) findViewById(R.id.textView1)).setTextColor(getResources().getColor(Utility.white));
+			((TextView) findViewById(R.id.ForumBoardTitle)).setTextColor(getResources().getColor(Utility.white));
 			//((TextView) findViewById(R.id.textView1)).setBackground(getResources().getDrawable(R.drawable.buttonshape));
-			((TextView) findViewById(R.id.textView1)).setClickable(true);
-			((TextView) findViewById(R.id.textView1)).setOnClickListener(
+			((TextView) findViewById(R.id.ForumBoardTitle)).setClickable(true);
+			((TextView) findViewById(R.id.ForumBoardTitle)).setOnClickListener(
 					new View.OnClickListener() {
 						@Override
 						public void onClick(View iView)
@@ -142,7 +142,7 @@ public class MainMenu extends ActionBarActivity {
 					});
 			strWelcomeMsg = strWelcomeMsg + "\n" + "You have " + currentUser.notifications.size() + " new notifications!";
 		}
-		((TextView) findViewById(R.id.textView1)).setText(strWelcomeMsg);
+		((TextView) findViewById(R.id.ForumBoardTitle)).setText(strWelcomeMsg);
 	}
 
 	private class LogoutTask extends AsyncTask<String, Void, Boolean>
