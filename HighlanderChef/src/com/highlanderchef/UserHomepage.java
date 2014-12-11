@@ -39,23 +39,6 @@ public class UserHomepage extends ActionBarActivity {
 		{
 			Button follow = (Button) findViewById(R.id.Follow);
 			follow.setVisibility(View.GONE);
-			TextView newNote = (TextView) findViewById(R.id.NewNotifications);
-
-			ArrayList<Integer> notifications = Comm.getUser().notifications;
-			String notetext = "";
-			for(int i = 0; i < notifications.size(); ++i)
-			{
-				notetext += notifications.get(i) + "\n";
-			}
-
-			newNote.setText(notetext);
-		}
-		else
-		{
-			TextView newNote = (TextView) findViewById(R.id.NewNotifications);
-			newNote.setVisibility(View.GONE);
-			Button clearNote = (Button) findViewById(R.id.ClearNote);
-			clearNote.setVisibility(View.GONE);
 		}
 	}
 
