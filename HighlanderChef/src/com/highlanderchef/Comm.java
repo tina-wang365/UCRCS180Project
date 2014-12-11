@@ -470,6 +470,7 @@ public class Comm {
 					evictImageCache(ci.bytes.length - (MAX_CACHESIZE - cachesize));
 				}
 				imagecache.put(relUrl, ci);
+				cachesize += ci.bytes.length;
 
 				return bitmap;
 			}
@@ -628,6 +629,12 @@ public class Comm {
 			if (!node.path("did").isMissingNode()) {
 				Integer draftID = mapper.readValue(node.path("did"), Integer.class);
 				r.did = draftID;
+			}
+
+			if (!node.path("mainImagepath").isMissingNode()) {
+				r.mainImagepath = mapper.readValue(node.path("mainImagepath"), String.class);
+			} else {
+				r.mainImagepath = "";
 			}
 
 			if (!brief) {
@@ -843,10 +850,10 @@ public class Comm {
 		apiRequest("getdraft", req);
 
 		Recipe r = parseRecipe(rootNode.path("recipe"));
-		r.mainImagepath = parseRecipe(rootNode.path("recipe")).mainImagepath;
-		r.ingredients = parseRecipe(rootNode.path("recipe")).ingredients;
-		r.categories = parseRecipe(rootNode.path("recipe")).categories;
-		r.directions = parseRecipe(rootNode.path("recipe")).directions;
+		if (r.mainImagepath == null) {
+			System.out.println("r.mainImagepath was null, making it empty");
+			r.mainImagepath = "";
+		}
 		System.out.println("Comm.getDraft(" + draftID + ") has categories " + r.categories.toString());
 		System.out.println("Comm.getDraft(" + draftID + ") has the mainImagepath = " + r.mainImagepath.toString());
 		r.did = draftID;
