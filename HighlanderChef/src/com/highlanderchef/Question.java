@@ -29,7 +29,10 @@ public class Question implements Serializable {
 		if (replies == null) {
 			replies = new ArrayList<Question>();
 		} else {
-			this.replies = replies;
+			this.replies = (ArrayList<Question>) replies.clone();
+		}
+		for (int i = 0; i < replies.size(); i++) {
+			System.out.println("QUESTION with reply " + replies.get(i).text);
 		}
 	}
 
