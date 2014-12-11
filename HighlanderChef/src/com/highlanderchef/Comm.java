@@ -583,6 +583,7 @@ public class Comm {
 				System.out.print("qnode: ");
 				prettyPrint(qnode);
 
+				Integer qid = mapper.readValue(qnode.path("qid"), Integer.class);
 				Integer quid = mapper.readValue(qnode.path("uid"), Integer.class);
 				String qusername = mapper.readValue(qnode.path("username"), String.class);
 				String qtext = mapper.readValue(qnode.path("question"), String.class);
@@ -603,7 +604,7 @@ public class Comm {
 				if (r.questions == null) {
 					r.questions = new ArrayList<Question>();
 				}
-				r.questions.add(new Question(quid, qusername, qtext, replies));
+				r.questions.add(new Question(qid, quid, qusername, qtext, replies));
 			}
 		} catch (Exception e) {
 			System.out.println("parseQuestions had an exception parsing questions");
@@ -1021,7 +1022,6 @@ public class Comm {
 				Integer status = mapper.readValue(rootNode.path("status"), Integer.class);
 				lastStatus = status;
 				if (lastStatus == -1) {
-					updateUser();
 					return AUTH_FAIL;
 				} else {
 					return SUCCESS;
