@@ -583,12 +583,13 @@ public class Comm {
 				System.out.print("qnode: ");
 				prettyPrint(qnode);
 
+				Integer qid = mapper.readValue(qnode.path("qid"), Integer.class);
 				Integer quid = mapper.readValue(qnode.path("uid"), Integer.class);
 				String qusername = mapper.readValue(qnode.path("username"), String.class);
 				String qtext = mapper.readValue(qnode.path("question"), String.class);
 
 				ArrayList<Question> replies = new ArrayList<Question>();
-				Iterator<JsonNode> iter = node.path("replies").getElements();
+				Iterator<JsonNode> iter = qnode.path("replies").getElements();
 				while (iter.hasNext()) {
 					JsonNode rnode = iter.next();
 					System.out.print("rnode: ");
@@ -596,6 +597,7 @@ public class Comm {
 					Integer uid = mapper.readValue(rnode.path("uid"), Integer.class);
 					String username = mapper.readValue(rnode.path("username"), String.class);
 					String text = mapper.readValue(rnode.path("reply"), String.class);
+					System.out.println("Parsing reply " + text);
 
 					replies.add(new Question(uid, username, text));
 				}
@@ -603,7 +605,7 @@ public class Comm {
 				if (r.questions == null) {
 					r.questions = new ArrayList<Question>();
 				}
-				r.questions.add(new Question(quid, qusername, qtext, replies));
+				r.questions.add(new Question(qid, quid, qusername, qtext, replies));
 			}
 		} catch (Exception e) {
 			System.out.println("parseQuestions had an exception parsing questions");
